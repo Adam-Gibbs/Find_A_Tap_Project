@@ -165,3 +165,6 @@ $RECYCLE.BIN/
 # Swap Files #
 .*.kate-swp
 .swp.*
+
+# ignores all databases
+*.db
