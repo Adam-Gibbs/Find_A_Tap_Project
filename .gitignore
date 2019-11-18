@@ -168,4 +168,4 @@ $RECYCLE.BIN/
 .swp.*
 
 # ignores all databases
-*.db
+*.db*
