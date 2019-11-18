@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<!-- comment -->
+<html>
+  <head>
+    <title> Add entry </title>
+  </head>
+
+  <body >
+    <h3> Add a Comment</h3>
+
+    <form id='myForm' action='/WeDontWantThis' method='get' onsubmit="return loadName()">
+        <label for="comments">Comments:</label><textarea id="comments"rows="5" cols="50"name="text"></textarea>
+      <button type = "submit"> submit </button>
+    </form>
+    <span id='txt'></span>
+
+    <script>
+        function loadName() {
+          var comments = document.forms["myForm"]["comments"].value;
+          var params = 'comments='+comments;
+          var xhttp = new XMLHttpRequest();
+          xhttp.open("POST", '/AddComment', true); // true is asynchronous
+          xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+          xhttp.onreadystatechange = function() {
+            if (xhttp.readyState === 4 && xhttp.status === 200) {
+              console.log(xhttp.responseText);
+              document.getElementById("txt").innerHTML = xhttp.responseText;
+            } else {
+              console.error(xhttp.statusText);
+            }
+          };
+          xhttp.send(params);
+          return false;
+        }
+      </script>
+
+    </body>
+</html>

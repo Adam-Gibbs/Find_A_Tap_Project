@@ -2,18 +2,19 @@ import os
 import json
 from flask import Flask, redirect, request,render_template, jsonify
 
-app = Flask(__name__)
+ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
+directory = {}
 
-@app.route("/AddContact", methods=['POST'])
-def addContact():
+app = Flask(__name__)
+@app.route("/AddComment", methods=['POST'])
+def addComment():
     print('processing Data')
     message ='already there'
     if request.method == 'POST':
-        name = request.form['name']
-        num = request.form['num']
-        if not(name in directory):
-            message = 'ok'
-            directory[name] =  num
+        comments = request.form['comments']
+        if not(comments in directory):
+            message = comments
+            directory[comments] =  comments
         print(directory)
     return message
 
