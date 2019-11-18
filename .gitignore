@@ -1,5 +1,6 @@
 # PipEnv data
-Pipfile
+Pipfile*
+
 
 # VSCode
 .vscode/*
@@ -167,4 +168,4 @@ $RECYCLE.BIN/
 .swp.*
 
 # ignores all databases
-*.db
+*.db*

@@ -11,7 +11,7 @@ function getDistanceFromLatLonInKm() {
 
   var d = 12742 * Math.asin(Math.sqrt(a)); // 2 * R; R = 6371 km
   var data = document.getElementById('ans');
-  data.innerHTML = d;
+  data.innerHTML = d + " km";
 }
 
 document.getElementById('submit').onclick = getDistanceFromLatLonInKm;

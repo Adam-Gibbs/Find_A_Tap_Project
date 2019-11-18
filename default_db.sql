@@ -1,7 +1,0 @@
-CREATE TABLE IF NOT EXISTS "taps" (
-	"tap-id"	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
-	"address"	TEXT NOT NULL UNIQUE,
-	"x-coordinate"	NUMERIC NOT NULL,
-	"y-coordinate"	NUMERIC NOT NULL,
-	"picutre"	BLOB
-);
