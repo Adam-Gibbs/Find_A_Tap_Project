@@ -3,5 +3,5 @@ CREATE TABLE IF NOT EXISTS "taps" (
 	"address"	TEXT NOT NULL UNIQUE,
 	"longitude"	NUMERIC NOT NULL,
 	"latitude"	NUMERIC NOT NULL,
-	"picutre"	BLOB
+	"picture"	BLOB
 );
