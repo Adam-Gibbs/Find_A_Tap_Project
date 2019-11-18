@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Water-Web</title>
+  </head>
+
+  <body>
+    <header>
+      <h1>Test Location</h1>
+    </header>
+    <button type="button" onclick="getLocation()">Get Location</button>
+
+  <p id="ERROR"></p>
+  <p>Longitude: </p>
+  <p id="lon">0.0</p>
+  <p>Latitude: </p>
+  <p id="lat">0.0</p>
+
+  <form method="post" name="findDistance">
+    Longitude:<br>
+    <input type="text" name="longitude" value="0"><br>
+    Latitude:<br>
+    <input type="text" name="latitude" value="0"><br><br>
+  </form>
+
+  <button id='submit'>Calculate</button>
+
+  <p id='ans'></p>
+
+  <script type="text/javascript" src="js/Distance.js"></script>
+  <script type="text/javascript" src="js/Location.js"></script>
+
+</body>
+
+</html>
