@@ -1,3 +1,4 @@
+// probably copied from w3school ADAM YOU NEED TO REFERENCE - IAN SAID SO
 function getLocation() {
   var x = document.getElementById('ERROR');
   if (navigator.geolocation) {
@@ -10,6 +11,23 @@ function getLocation() {
 function showPosition(position) {
   var lngText = document.getElementById('lon');
   var latText = document.getElementById('lat');
+  var address = getAddress();
   latText.innerHTML = position.coords.latitude;
   lngText.innerHTML = position.coords.longitude;
+  sendData(address, lngText, latText)
+}
+
+function getAddress(){
+    var address = prompt("What is the address of the water tap? ");
+    return address
+}
+
+function sendData(address, long, lat){
+  var params = "address="+address+"&longitude="+long.innerHTML+"&latitude="+lat.innerHTML;
+  var IPPacket = new XMLHttpRequest();
+  IPPacket.open("POST", '/saveCoordinates', true); // true is asynchronous
+  IPPacket.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+  IPPacket.send(params);
+  console.log(params)
+  return false;
 }
