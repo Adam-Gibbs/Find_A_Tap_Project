@@ -1,0 +1,21 @@
+.Header {
+  background-color: lightblue;
+  padding: 10px;
+}
+
+.navbar a{
+ text-decoration: none;
+
+}
+
+body{
+  font-family: ;
+  font-size: 19px;
+
+}
+
+.footer{
+  text-align: center;
+  background-color: lightblue;
+  height: auto;
+}
