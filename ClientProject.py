@@ -6,6 +6,13 @@ ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
 directory = {}
 
 app = Flask(__name__)
+
+@app.route("/Directory", methods=['GET'])
+def returnDir():
+    if request.method == 'GET':
+        print("getting directory.")
+        return json.dumps(directory)
+
 @app.route("/AddComment", methods=['POST'])
 def addComment():
     print('processing Data')
