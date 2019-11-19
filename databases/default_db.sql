@@ -1,9 +1,9 @@
 CREATE TABLE IF NOT EXISTS "taps" (
-	"tap-id"	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
-	"address"	TEXT NOT NULL UNIQUE,
+	"tap-id" INTEGER NOT NULL UNIQUE AUTOINCREMENT,
 	"longitude"	NUMERIC NOT NULL,
 	"latitude"	NUMERIC NOT NULL,
-	"picture"	BLOB
+	"picture"	BLOB,
+	PRIMARY KEY(longitude, latitude)
 );
 
 CREATE TABLE IF NOT EXISTS "reviews"(
