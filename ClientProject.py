@@ -3,7 +3,7 @@ import json
 from flask import Flask, redirect, request,render_template, jsonify
 
 ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
-directory = {}
+directory = []
 
 app = Flask(__name__)
 
@@ -21,7 +21,7 @@ def addComment():
         comments = request.form['comments']
         if not(comments in directory):
             message = comments
-            directory[comments] =  comments
+            directory.append(comments)
         print(directory)
     return message
 
