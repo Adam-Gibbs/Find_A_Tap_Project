@@ -15,14 +15,13 @@ def addLocation():
         params = request.form
         params = params.to_dict() # This is from flask
         print("------------------------------------------------------------------------",params)
-        longitude = params['longitude']
-        latitude = params['latitude']
+        coordinates = params['coordinates']
         address = params['address']
         try:
             conn = sqlite3.connect(DATABASE)
             cur = conn.cursor()
-            cur.execute("INSERT INTO taps (address, longitude, latitude) VALUES (?,?,?)",
-            (address, longitude, latitude))
+            cur.execute("INSERT INTO taps (address, coordinates) VALUES (?,?)",
+            (address, coordinates))
             conn.commit()
             executed = True
         except:

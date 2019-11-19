@@ -14,16 +14,18 @@ function showPosition(position) {
   var address = getAddress();
   latText.innerHTML = position.coords.latitude;
   lngText.innerHTML = position.coords.longitude;
-  sendData(address, lngText, latText)
+  sendData(address, lngText, latText);
 }
 
 function getAddress(){
     var address = prompt("What is the address of the water tap? ");
-    return address
+    return address;
 }
 
 function sendData(address, long, lat){
-  var params = "address="+address+"&longitude="+long.innerHTML+"&latitude="+lat.innerHTML;
+  var coordinates = long.innerHTML +","+ lat.innerHTML;
+  var params = "address="+address+"&coordinates="+coordinates;
+  console.log(params);
   var IPPacket = new XMLHttpRequest();
   IPPacket.open("POST", '/saveCoordinates', true); // true is asynchronous
   IPPacket.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
