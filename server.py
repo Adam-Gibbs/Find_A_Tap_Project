@@ -57,6 +57,11 @@ def HomePage():
 	if request.method =='GET':
 		return render_template('HomePage.html')
 
+@app.route("/about", methods = ['GET'])
+def AboutPage():
+	if request.method =='GET':
+		return render_template('About.html')
+
 if __name__ == "__main__":
 	app.run(host='0.0.0.0', port=5000, ssl_context='adhoc')
 

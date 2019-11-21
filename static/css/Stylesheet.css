@@ -1,43 +1,5 @@
 /* CSS styling below is for WebTemplate.html (Main webpage!!) */
 
-.Header {
-  background-color: lightblue;
-  padding: 10px;
-}
-
-.navbar a{
-  text-decoration: none;
-  color: #666;
-}
-
-li a:hover:not(.navbar){
-  background-color: lightgrey;
-  padding: 5px;
-}
-
-li {
-  float: left;
-}
-
-ul{
-  list-style-type: none;
-  margin: 0px;
-  padding: 5px;
-  overflow: hidden;
-  border: 1px solid: lightgrey;
-  background-color: #f3f3f3;
-}
-
 body{
-  font-family: arial, helvetica, sans-serif;
-  font-size: 19px;
-}
-
-.footer{
-  position: fixed;
-  text-align: center;
-  background-color: lightblue;
-  left: 0;
-  bottom: 0;
-  width: 100%;
+  padding-top: 56px;
 }
