@@ -57,10 +57,20 @@ def HomePage():
 	if request.method =='GET':
 		return render_template('HomePage.html')
 
-@app.route("/about", methods = ['GET'])
+@app.route("/home/about", methods = ['GET'])
 def AboutPage():
 	if request.method =='GET':
 		return render_template('About.html')
+
+@app.route("/home/taps/new", methods = ['GET'])
+def NewTapPage():
+	if request.method =='GET':
+		return render_template('TapList.html')
+
+@app.route("/home/taps", methods = ['GET'])
+def AllTapsPage():
+	if request.method =='GET':
+		return render_template('TapList.html')
 
 if __name__ == "__main__":
 	app.run(host='0.0.0.0', port=5000, ssl_context='adhoc')
