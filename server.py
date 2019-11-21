@@ -62,7 +62,7 @@ def AboutPage():
 	if request.method =='GET':
 		return render_template('About.html')
 
-@app.route("/home/taps/new", methods = ['GET'])
+@app.route("/home/taps/near", methods = ['GET'])
 def NewTapPage():
 	if request.method =='GET':
 		return render_template('TapList.html')
