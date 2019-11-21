@@ -72,6 +72,11 @@ def AllTapsPage():
 	if request.method =='GET':
 		return render_template('TapList.html')
 
+@app.route("/home/faq", methods = ['GET'])
+def FAQPage():
+	if request.method =='GET':
+		return render_template('FAQ.html')
+
 @app.errorhandler(404)
 def page_not_found(e):
   return render_template('404.html'), 404
