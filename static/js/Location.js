@@ -17,10 +17,10 @@ function showPosition(position) {
   sendData(address, lngText, latText);
 }
 
-function getAddress(){
-    var address = prompt("What is the address of the water tap? ");
-    return address;
-}
+// function getAddress(){
+//     var address = prompt("What is the address of the water tap? ");
+//     return address;
+// }
 
 function sendData(address, long, lat){
   var coordinates = long.innerHTML +","+ lat.innerHTML;
