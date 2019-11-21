@@ -1,4 +1,4 @@
-// probably copied from w3school ADAM YOU NEED TO REFERENCE - IAN SAID SO
+// function getLocation taken from w3school - https://www.w3schools.com/html/html5_geolocation.asp
 function getLocation() {
   var x = document.getElementById('ERROR');
   if (navigator.geolocation) {
@@ -23,7 +23,7 @@ function getAddress(){
 }
 
 function sendData(address, long, lat){
-  var coordinates = long.innerHTML +","+ lat.innerHTML;
+  var coordinates = lat.innerHTML +","+ long.innerHTML;
   var params = "address="+address+"&coordinates="+coordinates;
   console.log(params);
   var IPPacket = new XMLHttpRequest();
