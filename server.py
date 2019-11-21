@@ -5,6 +5,8 @@ import sqlite3
 
 DATABASE = 'databases/main_db.db'
 app = Flask(__name__)
+ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
+directory = []
 
 @app.route("/saveCoordinates", methods=['POST','GET'])
 def addLocation():
@@ -32,5 +34,29 @@ def addLocation():
             conn.close()
             return f"Task was executed: {executed}"
 
+@app.route("/Directory", methods=['GET'])
+def returnDir():
+    if request.method == 'GET':
+        print("getting directory.")
+        return json.dumps(directory)
+
+@app.route("/AddComment", methods=['POST'])
+def addComment():
+    print('processing Data')
+    message ='already there'
+    if request.method == 'POST':
+        comments = request.form['comments']
+        if not(comments in directory):
+            message = comments
+            directory.append(comments)
+        print(directory)
+    return message
+
+@app.route("/home", methods = ['GET'])
+def HomePage():
+	if request.method =='GET':
+		return render_template('HomePage.html')
+
 if __name__ == "__main__":
-    app.run(debug=True)
+	app.run(host='0.0.0.0', port=5000, ssl_context='adhoc')
+
