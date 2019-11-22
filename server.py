@@ -52,6 +52,11 @@ def addComment():
         print(directory)
     return message
 
+@app.route("/", methods = ['GET'])
+def HomeRedirect():
+	if request.method =='GET':
+		return redirect('/home')
+
 @app.route("/home", methods = ['GET'])
 def HomePage():
 	if request.method =='GET':
@@ -76,6 +81,11 @@ def AllTapsPage():
 def FAQPage():
 	if request.method =='GET':
 		return render_template('FAQ.html')
+
+@app.route("/home/about/contact", methods = ['GET'])
+def ContactPage():
+	if request.method =='GET':
+		return render_template('Contact.html')
 
 @app.errorhandler(404)
 def page_not_found(e):

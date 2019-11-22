@@ -34,8 +34,8 @@
                 <li class="nav-item {% if request.path == '/home/about'%} active{%endif%}">
                     <a class="nav-link" href="/home/about">About</a>
                 </li>
-                <li class="nav-item {% if request.path == '/place'%} active{%endif%}">
-                    <a class="nav-link" href="contact.html">Contact Us</a>
+                <li class="nav-item {% if request.path == '/home/about/contact'%} active{%endif%}">
+                    <a class="nav-link" href="/home/about/contact">Contact Us</a>
                 </li>
                 <li class="nav-item {% if request.path == '/home/taps/near'%} active{%endif%}">
                     <a class="nav-link" href="/home/taps/near">Nearby Taps</a>
@@ -53,10 +53,6 @@
                     <a class="dropdown-item" href="#">Profile Settings</a>
                 </div>
                 </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownBlog" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Other Pages
-                </a>
                 <li class="nav-item {% if request.path == '/home/faq'%} active{%endif%}">
                     <a class="nav-link" href="/home/faq">FAQ</a>
                 </li>
