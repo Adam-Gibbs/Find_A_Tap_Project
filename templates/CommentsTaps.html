@@ -31,5 +31,24 @@
     </div>
     <!-- /.row -->
 
+    <!-- Comments form -->
+    <h2>Comments form</h2>
+    <div class="row">
+        <div class="col-lg-8 mb-4">
+            <form>
+            <div class="control-group form-group">
+            <div class="controls">
+                <label>Input your comment:</label>
+                <textarea rows="10" cols="100" class="form-control" id="message" required data-validation-required-message="Please enter your Comment" maxlength="999" style="resize:none"></textarea>
+            </div>
+            </div>
+            <div id="success"></div>
+            <!-- For success/fail messages -->
+            <button type="submit" class="btn btn-primary" id="sendMessageButton">Send Comment</button>
+            </form>
+        </div>
+
+    </div>
+
 </div>
 {%endblock%}
