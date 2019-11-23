@@ -92,6 +92,11 @@ def CommentsPage():
 	if request.method =='GET':
 		return render_template('CommentsTaps.html')
 
+@app.route("/home/taps/tapID/location", methods = ['GET'])
+def MapPage():
+	if request.method =='GET':
+		return render_template('PlainMap.html')
+
 @app.errorhandler(404)
 def page_not_found(e):
   return render_template('404.html'), 404
