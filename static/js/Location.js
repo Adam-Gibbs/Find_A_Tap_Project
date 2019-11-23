@@ -9,26 +9,45 @@ function getLocation() {
 }
 
 function showPosition(position) {
+<<<<<<< HEAD
   // var lngText = document.getElementById('lon');
   // var latText = document.getElementById('lat');
   // var address = getAddress();
   // latText.innerHTML = position.coords.latitude;
   // lngText.innerHTML = position.coords.longitude;
   // sendData(address, lngText, latText);
+=======
+  var lngText = document.getElementById('lon');
+  var latText = document.getElementById('lat');
+  latText.innerHTML = position.coords.latitude;
+  lngText.innerHTML = position.coords.longitude;
+>>>>>>> 9216d306a88b28e4f15141636339b103bf40c01f
   AddMarker(position, "Current Position")
 }
 
-function getAddress(){
-    var address = prompt("What is the address of the water tap? ");
-    return address;
+// function getLocation taken from w3school - https://www.w3schools.com/html/html5_geolocation.asp
+function getLocation2() {
+  var x = document.getElementById('ERROR');
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(sendPosition);
+  } else {
+    x.innerHTML = "Geolocation is not supported by this browser.";
+  }
 }
 
-function sendData(address, long, lat){
-  var coordinates = lat.innerHTML +","+ long.innerHTML;
-  var params = "address="+address+"&coordinates="+coordinates;
+
+function sendPosition(position){
+  longitude = position.coords.longitude;
+  latitude = position.coords.latitude;
+  sendData(longitude, latitude);
+}
+
+function sendData(long, lat){
+  var coordinates = lat+","+ long;
+  var params = "coordinates="+coordinates;
   console.log(params);
   var IPPacket = new XMLHttpRequest();
-  IPPacket.open("POST", '/saveCoordinates', true); // true is asynchronous
+  IPPacket.open("POST", '/home/taps/new', true); // true is asynchronous
   IPPacket.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
   IPPacket.send(params);
   console.log(params)
