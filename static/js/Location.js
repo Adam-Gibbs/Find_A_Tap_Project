@@ -10,15 +10,13 @@ function getLocation() {
 }
 
 function showPosition(position) {
-  console.log("hello2")
-  // var lngText = document.getElementById('lon');
-  // var latText = document.getElementById('lat');
-  // latText.innerHTML = position.coords.latitude;
-  // lngText.innerHTML = position.coords.longitude;
-  var lngText = position.coords.longitude;
-  var latText = position.coords.latitude;
-  console.log(lngText, latText)
-  sendData(lngText, latText);
+  var lngText = document.getElementById('lon');
+  var latText = document.getElementById('lat');
+  var address = getAddress();
+  latText.innerHTML = position.coords.latitude;
+  lngText.innerHTML = position.coords.longitude;
+  sendData(address, lngText, latText);
+  AddMarker(position, "Current Position")
 }
 
 function sendData(long, lat){

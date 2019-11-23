@@ -121,6 +121,11 @@ def ContactPage():
     if request.method =='GET':
         return render_template('Contact.html')
 
+@app.route("/home/taps/comments", methods = ['GET'])
+def CommentsPage():
+	if request.method =='GET':
+		return render_template('CommentsTaps.html')
+
 @app.errorhandler(404)
 def page_not_found(e):
   return render_template('404.html'), 404
