@@ -8,6 +8,7 @@ L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=p
     id: 'mapbox.streets'
 }).addTo(mymap);
 
-L.marker([document.getElementById("lat"), document.getElementById("lon")]).addTo(mymap)
-    .bindPopup("<b>Hello world!</b><br />I am a popup.").openPopup();
-
+function AddMarker(position, popup) {
+L.marker([position.coords.latitude, position.coords.longitude]).addTo(mymap)
+    .bindPopup(popup).openPopup();
+}

@@ -15,6 +15,7 @@ function showPosition(position) {
   latText.innerHTML = position.coords.latitude;
   lngText.innerHTML = position.coords.longitude;
   sendData(address, lngText, latText);
+  AddMarker(position, "Current Position")
 }
 
 function getAddress(){
