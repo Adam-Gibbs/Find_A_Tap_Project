@@ -1,6 +1,5 @@
 // function getLocation taken from w3school - https://www.w3schools.com/html/html5_geolocation.asp
 function getLocation() {
-  console.log("hello")
   var x = document.getElementById('ERROR');
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(showPosition);
@@ -12,11 +11,26 @@ function getLocation() {
 function showPosition(position) {
   var lngText = document.getElementById('lon');
   var latText = document.getElementById('lat');
-  var address = getAddress();
   latText.innerHTML = position.coords.latitude;
   lngText.innerHTML = position.coords.longitude;
-  sendData(address, lngText, latText);
   AddMarker(position, "Current Position")
+}
+
+// function getLocation taken from w3school - https://www.w3schools.com/html/html5_geolocation.asp
+function getLocation2() {
+  var x = document.getElementById('ERROR');
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(sendPosition);
+  } else {
+    x.innerHTML = "Geolocation is not supported by this browser.";
+  }
+}
+
+
+function sendPosition(position){
+  longitude = position.coords.longitude;
+  latitude = position.coords.latitude;
+  sendData(longitude, latitude);
 }
 
 function sendData(long, lat){
