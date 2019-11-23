@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Water Web</title>
     <!-- https://pixabay.com/vectors/drop-water-prcious-blue-liquid-312396/ -->
-    <link rel="shortcut icon" href="/static/img/favicon.ico" type="image/x-icon" /> 
+    <link rel="shortcut icon" href="/static/img/favicon.ico" type="image/x-icon" />
     <!-- Bootstrap -->
     <link href="/static/css/bootstrap.min.css" rel="stylesheet">
     <link href="/static/css/Stylesheet.css" rel="stylesheet">
@@ -40,8 +40,11 @@
                 <li class="nav-item {% if request.path == '/home/taps/near'%} active{%endif%}">
                     <a class="nav-link" href="/home/taps/near">Nearby Taps</a>
                 </li>
-                <li class="nav-item {% if request.path == '/place'%} active{%endif%}">
-                    <a class="nav-link" href="#">New Tap</a>
+                <li class="nav-item {% if request.path == '/home/taps/new'%} active{%endif%}">
+                    <a class="nav-link" href="/home/taps/new">New Tap</a>
+                </li>
+                <li class="nav-item {% if request.path == '/home/faq'%} active{%endif%}">
+                    <a class="nav-link" href="/home/faq">FAQ</a>
                 </li>
                 <li class="nav-item dropdown {% if request.path == '/place'%} active{%endif%}">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownPortfolio" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -52,9 +55,6 @@
                     <a class="dropdown-item" href="#">Account Settings</a>
                     <a class="dropdown-item" href="#">Profile Settings</a>
                 </div>
-                </li>
-                <li class="nav-item {% if request.path == '/home/faq'%} active{%endif%}">
-                    <a class="nav-link" href="/home/faq">FAQ</a>
                 </li>
             </ul>
             </div>
