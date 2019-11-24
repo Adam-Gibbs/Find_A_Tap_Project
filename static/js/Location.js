@@ -13,7 +13,7 @@ function showPosition(position) {
   var latText = document.getElementById('lat');
   latText.innerHTML = position.coords.latitude;
   lngText.innerHTML = position.coords.longitude;
-  AddMarker(position, "Current Position")
+  AddMarker(position.coords.latitude, position.coords.longitude, "Current Position")
 }
 
 // function getLocation taken from w3school - https://www.w3schools.com/html/html5_geolocation.asp
