@@ -1,9 +1,44 @@
 {%extends 'generalPageStyling.html'%}
 
-
 {%block mainBlock%}
+<h1>New Tap</h1>
+<ol class="breadcrumb">
+    <li class="breadcrumb-item">
+        <a href="/home">Home</a>
+    </li>
+    {% if request.path == '/home/taps/new'%}
+      <li class="breadcrumb-item">
+              <a href="/home/taps">Taps</a>
+          </li>
+      <li class="breadcrumb-item active">New</li>
+    {%else%}
+      <li class="breadcrumb-item active">Taps</li>
+    {%endif%}
+</ol>
+<p>On this page you can add a tap to our storage which will allow you to later
+  on use our map services to find a route leading to this tap or to any other
+  people were kind enough to save. <br> If you want you can add a picture with
+  the coordinates and address of the tap. This will make it easier for other
+  people to find the tap.</p>
 
-<button type="submit" onclick="getLocation2()" name="button">Test</button>
+<!-- This is for adding a picture to the database: -->
+<!-- <form name="pictureForm" class="form-group" method="post" onsubmit="getLocation2()">
+  <input type="file" name="file"/> <br>
+  <br>
+  <input type="submit" value="Uplaod tap">
+</form> -->
+<!-- It is not working -->
+
+<button type="button" name="button" onclick="getLocation2()">Add Tap</button>
+
+<div class="box">
+  <table id="existing-taps">
+    
+  </table>
+</div>
 
 <script type="text/javascript" src="/static/js/Location.js"></script>
+<script type="text/javascript" src="/static/js/openTapData.js"></script>
+<!-- The openTapData.js file will be used to present a table that with all of
+the existing taps, meaning that people will not try to add taps that already exist to the database-->
 {%endblock%}

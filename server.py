@@ -61,10 +61,13 @@ def NewTapPage():
         params = params.to_dict() # This is from flask
         print("------------------------------------------------------------------------",params)
         coordinates = params['coordinates']
+        print(coordinates)
         latitude = coordinates.split(",")[0]
         longitude = coordinates.split(",")[1]
         address = geocoder.reverse_geocode(latitude, longitude, language='en', no_annotations='1')
         print(address[0]['formatted'])
+        # picture = params['picture']
+        # print(picture)
         try:
             conn = sqlite3.connect(DATABASE)
             cur = conn.cursor()
