@@ -9,19 +9,10 @@ function getLocation() {
 }
 
 function showPosition(position) {
-<<<<<<< HEAD
-  // var lngText = document.getElementById('lon');
-  // var latText = document.getElementById('lat');
-  // var address = getAddress();
-  // latText.innerHTML = position.coords.latitude;
-  // lngText.innerHTML = position.coords.longitude;
-  // sendData(address, lngText, latText);
-=======
   var lngText = document.getElementById('lon');
   var latText = document.getElementById('lat');
   latText.innerHTML = position.coords.latitude;
   lngText.innerHTML = position.coords.longitude;
->>>>>>> 9216d306a88b28e4f15141636339b103bf40c01f
   AddMarker(position, "Current Position")
 }
 
