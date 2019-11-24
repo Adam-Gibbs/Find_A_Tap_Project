@@ -113,5 +113,4 @@ def page_not_found(e):
   return render_template('404.html'), 404
 
 if __name__ == "__main__":
-    app.run(host='192.168.0.141', port=443, ssl_context=('../keys/cert.pem', '../keys/key.pem'))
     app.run(debug=True, ssl_context='adhoc')
