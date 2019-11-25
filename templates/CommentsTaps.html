@@ -35,20 +35,50 @@
     <h2>Comments form</h2>
     <div class="row">
         <div class="col-lg-8 mb-4">
-            <form>
+            <form id='myForm' action='/WeDontWantThis' method='get' onsubmit="return loadName()">
             <div class="control-group form-group">
             <div class="controls">
-                <label>Input your comment:</label>
-                <textarea rows="10" cols="100" class="form-control" id="message" required data-validation-required-message="Please enter your Comment" maxlength="999" style="resize:none"></textarea>
+                <label for="comments">Input your comment:</label>
+                <textarea rows="10" cols="100" class="form-control" id="comments" required data-validation-required-message="Please enter your Comment" maxlength="999" style="resize:none"></textarea>
+            </div>
+            </div>
+            <div class="control-group form-group">
+            <div class="controls">
+                <label>Date of review</label>
+                <input type="text" class="form-control" id="date" required data-validation-required-message="Please The Date.">
             </div>
             </div>
             <div id="success"></div>
             <!-- For success/fail messages -->
             <button type="submit" class="btn btn-primary" id="sendMessageButton">Send Comment</button>
             </form>
+            <span id='txt'></span>
         </div>
 
     </div>
+
+
+    <script>
+        function loadName() {
+          var comments = document.forms["myForm"]["comments"].value;
+          var date = document.forms["myForm"]["date"].value;
+          var params = 'comments='+comments+'&date='+date;
+          var xhttp = new XMLHttpRequest();
+          xhttp.open("POST", '/AddComment', true); // true is asynchronous
+          xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+          xhttp.onreadystatechange = function() {
+            if (xhttp.readyState === 4 && xhttp.status === 200) {
+              console.log(xhttp.responseText);
+              document.getElementById("txt").innerHTML = xhttp.responseText;
+            } else {
+              console.error(xhttp.statusText);
+            }
+          };
+          xhttp.send(params);
+          return false;
+        }
+      </script>
+
 
 </div>
 {%endblock%}
