@@ -1,3 +1,10 @@
-INSERT INTO 'taps'('coordinates') VALUES ("51.588969, -3.00137");
-INSERT INTO 'taps'('coordinates') VALUES ("51.5877, -2.99835");
-INSERT INTO 'taps'('coordinates') VALUES ("51.5877, -2.99735");
+INSERT INTO 'taps'('address','latitude','longitude') VALUES ("abc","51.588969", "-3.00137");
+INSERT INTO 'taps'('address','latitude','longitude') VALUES ("abc","51.5877", "-2.99835");
+INSERT INTO 'taps'('address','latitude','longitude') VALUES ("abc","51.5877", "-2.99735");
+INSERT INTO 'taps'('address','latitude','longitude') VALUES ("abc","51", "-3.00137");
+INSERT INTO 'taps'('address','latitude','longitude') VALUES ("abc","51.5877", "-2");
+INSERT INTO 'taps'('address','latitude','longitude') VALUES ("abc","51.5877", "-2.5");
+INSERT INTO 'taps'('address','latitude','longitude') VALUES ("abc","51.5", "-3.00137");
+INSERT INTO 'taps'('address','latitude','longitude') VALUES ("abc","5.5877", "-2.935");
+INSERT INTO 'taps'('address','latitude','longitude') VALUES ("abc","5.5", "-2.35");
+INSERT INTO 'taps'('address','latitude','longitude') VALUES ("abc","5", "-2.5");

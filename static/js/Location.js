@@ -33,10 +33,10 @@ function sendPosition(position){
 }
 
 function sendData(long, lat){
-  var coordinates = lat+","+ long;
-  // var picture = document.forms["pictureForm"]["file"].value;
-  // console.log(picture);
-  var params = "coordinates="+coordinates;
+  alert("Hello");
+  var picture = document.forms["pictureForm"]["image"].value;
+  console.log(picture);
+  var params = "latitude="+lat+"&longitude="+long+"&picture";
   console.log(params);
   var IPPacket = new XMLHttpRequest();
   IPPacket.open("POST", '/home/taps/new', true); // true is asynchronous

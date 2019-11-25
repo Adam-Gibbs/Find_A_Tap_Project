@@ -1,7 +1,8 @@
 CREATE TABLE IF NOT EXISTS "taps" (
 	"id"	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
 	"address" TEXT NOT NULL,
-	"coordinates"	TEXT NOT NULL UNIQUE,
+	"latitude"	TEXT NOT NULL,
+	"longitude" TEXT NOT NULL,
 	"picture"	BLOB
 );
 
