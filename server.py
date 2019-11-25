@@ -56,6 +56,11 @@ def AboutPage():
     if request.method =='GET':
         return render_template('About.html')
 
+# @app.route("/whyusetaps" , methods = ['GET'])
+# def WhyUseTapspage():
+#     if request.method =='GET':
+#         return render_template('WhyUseTaps.html')
+
 @app.route("/home/taps/near/page=<pagenum>/lat=<user_lat>/lng=<user_lng>", methods = ['GET'])
 def NearTapPage(pagenum, user_lat, user_lng):
     if request.method =='GET':
@@ -70,7 +75,7 @@ def NearTapPage(pagenum, user_lat, user_lng):
             conn.close()
         finally:
             conn.close()
-        
+
         all_tap_data = []
         for item in data:
             one_tap_data = {'TapID': item[0], 'Address': item[1], 'Longitude': item[2], 'Latitude': item[3], 'Image': item[4], 'Description': 'Temporary Description', 'PostDate': "26/11/2019", 'UserLink': 'https://www.linkedin.com/in/adam-gibbs-77411616b/', 'UserName': 'Adam'}
