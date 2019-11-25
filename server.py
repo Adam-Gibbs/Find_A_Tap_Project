@@ -9,7 +9,7 @@ from opencage.geocoder import InvalidInputError, RateLimitExceededError, Unknown
 key = 'd0d06fa6997b4770af8c48796657cbf0'
 geocoder = OpenCageGeocode(key)
 
-DATABASE = 'databases/main_db.db'
+DATABASE = 'databases/Test.db'
 app = Flask(__name__)
 ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
 directory = []
@@ -51,32 +51,23 @@ def AboutPage():
 @app.route("/home/taps/near/page=<pagenum>/lat=<user_lat>/lng=<user_lng>", methods = ['GET'])
 def NearTapPage(pagenum, user_lat, user_lng):
     if request.method =='GET':
+        # try:
+        conn = sqlite3.connect(DATABASE)
+        cur = conn.cursor()
+        cur.execute("SELECT * FROM taps ORDER BY ((latitude-?)*(latitude-?)) + ((longitude - ?)*(longitude - ?)) ASC LIMIT ?, 5;", (user_lat, user_lat, user_lng, user_lng, int(pagenum)*5))
+        print(f"SELECT * FROM taps ORDER BY ((latitude-{user_lat})*(latitude-{user_lat})) + ((longitude - {user_lng})*(longitude - {user_lng})) ASC LIMIT {int(pagenum)*5}, 5;")
+        data = cur.fetchall()
+        print(data)
+        # except:
+        #     print('there was an error')
+        #     conn.close()
+        # finally:
+        conn.close()
+
         return render_template('TapList.html')
+
     if request.method =='POST':
-        try:
-            conn = sqlite3.connect(DATABASE)
-            cur = conn.cursor()
-            cur.execute(f"SELECT \
-                            id, ( \
-                            6371 * acos ( \
-                            cos ( radians({user_lat}) ) \
-                            * cos( radians( lat ) ) \
-                            * cos( radians( lng ) - radians({user_lng}) ) \
-                            + sin ( radians({user_lat}) ) \
-                            * sin( radians( lat ) ) \
-                            ) \
-                        ) AS distance \
-                        FROM table \
-                        HAVING distance < 30 \
-                        ORDER BY distance \
-                        LIMIT {pagenum*5} , 5; ") 
-            data = cur.fetchall()
-            print(data)
-        except:
-            print('there was an error')
-            conn.close()
-        finally:
-            conn.close()
+        pass
 
 @app.route("/home/taps/new", methods = ['GET', 'POST'])
 def NewTapPage():
@@ -115,12 +106,10 @@ def NewTapPage():
 @app.route("/home/taps/page=<pagenum>", methods = ['GET', 'POST'])
 def AllTapsPage(pagenum):
     if request.method =='GET':
-        return render_template('TapList.html')
-    if request.method =='POST':
         try:
             conn = sqlite3.connect(DATABASE)
             cur = conn.cursor()
-            cur.execute(f"SELECT * FROM taps LIMIT {pagenum*5} , 5; ") 
+            cur.execute(f"SELECT * FROM taps LIMIT ?, 5; ", (int(pagenum)*5)) 
             data = cur.fetchall()
             print(data)
         except:
@@ -128,6 +117,9 @@ def AllTapsPage(pagenum):
             conn.close()
         finally:
             conn.close()
+        return render_template('TapList.html')
+    if request.method =='POST':
+        pass
 
 @app.route("/home/faq", methods = ['GET'])
 def FAQPage():
