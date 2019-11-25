@@ -10,7 +10,6 @@ from werkzeug.utils import secure_filename
 key = 'd0d06fa6997b4770af8c48796657cbf0'
 geocoder = OpenCageGeocode(key)
 
-<<<<<<< HEAD
 APP_ROOT = os.path.dirname(os.path.abspath(__file__))# this
 UPLOAD_FOLDER = os.path.join(APP_ROOT, 'static/uploads')
 DATABASE = 'databases/main_db.db'
@@ -18,12 +17,6 @@ app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
 directory = []
-=======
-DATABASE = 'databases/Test.db'
-DB = 'databases/main_db.db'
-app = Flask(__name__)
-ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
->>>>>>> 2a42b38c17e955642750e9afa8cefc90529ba65b
 
 @app.route("/AddComment", methods = ['POST','GET'])
 def studentAddDetails():
@@ -140,7 +133,7 @@ def AllTapsPage(pagenum):
         try:
             conn = sqlite3.connect(DATABASE)
             cur = conn.cursor()
-            cur.execute(f"SELECT * FROM taps LIMIT ?, 5; ", (int(pagenum)*5)) 
+            cur.execute(f"SELECT * FROM taps LIMIT ?, 5; ", (int(pagenum)*5))
             data = cur.fetchall()
             print(data)
         except:
