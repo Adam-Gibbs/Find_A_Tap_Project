@@ -14,11 +14,13 @@ app = Flask(__name__)
 ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
 directory = []
 
-@app.route("/Directory", methods=['GET'])
-def returnDir():
-    if request.method == 'GET':
-        print("getting directory.")
-        return json.dumps(directory)
+
+
+# @app.route("/Directory", methods=['GET'])
+# def returnDir():
+#     if request.method == 'GET':
+#         print("getting directory.")
+#         return json.dumps(directory)
 
 @app.route("/AddComment", methods=['POST'])
 def addComment():
@@ -31,6 +33,29 @@ def addComment():
             directory.append(comments)
         print(directory)
     return message
+
+# @app.route("/AddComment", methods = ['POST','GET'])
+# def studentAddDetails():
+#     if request.method =='GET':
+#         return flask.redirect('CommentsTaps.html')
+#     if request.method =='POST':
+#         add_comment_to_db = request.form.get('comments', default="Error")
+#         add_date_to_db = request.form.get('date', default="Error")
+#         print("inserting comment "+add_comment_to_db)
+#         try:
+#             conn = sqlite3.connect(DATABASE)
+#             cur = conn.cursor()
+#             sqlquery = 'INSERT INTO "main"."reviews" ("tap-id", "comment", "date") VALUES ("1", "' + add_comment_to_db + '", "'+ add_date_to_db +'");'
+#             print(sqlquery)
+#             cur.execute(sqlquery)
+#             conn.commit()
+#             msg = add_comment_to_db
+#         except:
+#             conn.rollback()
+#             msg = "error in insert operation"
+#         finally:
+#             conn.close()
+#             return msg
 
 @app.route("/", methods = ['GET'])
 def HomeRedirect():
