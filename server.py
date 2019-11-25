@@ -10,6 +10,7 @@ from werkzeug.utils import secure_filename
 key = 'd0d06fa6997b4770af8c48796657cbf0'
 geocoder = OpenCageGeocode(key)
 
+<<<<<<< HEAD
 APP_ROOT = os.path.dirname(os.path.abspath(__file__))# this
 UPLOAD_FOLDER = os.path.join(APP_ROOT, 'static/uploads')
 DATABASE = 'databases/main_db.db'
@@ -17,25 +18,35 @@ app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
 directory = []
+=======
+DATABASE = 'databases/Test.db'
+DB = 'databases/main_db.db'
+app = Flask(__name__)
+ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
+>>>>>>> 2a42b38c17e955642750e9afa8cefc90529ba65b
 
-
-@app.route("/Directory", methods=['GET'])
-def returnDir():
-    if request.method == 'GET':
-        print("getting directory.")
-        return json.dumps(directory)
-
-@app.route("/AddComment", methods=['POST'])
-def addComment():
-    print('processing Data')
-    message ='already there'
-    if request.method == 'POST':
-        comments = request.form['comments']
-        if not(comments in directory):
-            message = comments
-            directory.append(comments)
-        print(directory)
-    return message
+@app.route("/AddComment", methods = ['POST','GET'])
+def studentAddDetails():
+    if request.method =='GET':
+        return flask.redirect('CommentsTaps.html')
+    if request.method =='POST':
+        add_comment_to_db = request.form.get('comments', default="Error")
+        add_date_to_db = request.form.get('date', default="Error")
+        print("inserting comment "+add_comment_to_db)
+        try:
+            conn = sqlite3.connect(DB)
+            cur = conn.cursor()
+            sqlquery = 'INSERT INTO "main"."reviews" ("tap-id", "comment", "date") VALUES ("1", "' + add_comment_to_db + '", "'+ add_date_to_db +'");'
+            print(sqlquery)
+            cur.execute(sqlquery)
+            conn.commit()
+            msg = add_comment_to_db
+        except:
+            conn.rollback()
+            msg = "error in insert operation"
+        finally:
+            conn.close()
+            return msg
 
 @app.route("/", methods = ['GET'])
 def HomeRedirect():
@@ -52,10 +63,26 @@ def AboutPage():
     if request.method =='GET':
         return render_template('About.html')
 
-@app.route("/home/taps/near", methods = ['GET'])
-def NearTapPage():
+@app.route("/home/taps/near/page=<pagenum>/lat=<user_lat>/lng=<user_lng>", methods = ['GET'])
+def NearTapPage(pagenum, user_lat, user_lng):
     if request.method =='GET':
+        # try:
+        conn = sqlite3.connect(DATABASE)
+        cur = conn.cursor()
+        # https://gist.github.com/statickidz/8a2f0ce3bca9badbf34970b958ef8479
+        cur.execute("SELECT * FROM taps ORDER BY ((latitude-?)*(latitude-?)) + ((longitude - ?)*(longitude - ?)) ASC LIMIT ?, 5;", (user_lat, user_lat, user_lng, user_lng, int(pagenum)*5))
+        data = cur.fetchall()
+        print(data)
+        # except:
+        #     print('there was an error')
+        #     conn.close()
+        # finally:
+        conn.close()
+
         return render_template('TapList.html')
+
+    if request.method =='POST':
+        pass
 
 @app.route("/home/taps/new", methods = ['GET', 'POST'])
 def NewTapPage():
@@ -107,10 +134,23 @@ def NewTapPage():
             conn.close()
             return msg
 
-@app.route("/home/taps", methods = ['GET'])
-def AllTapsPage():
+@app.route("/home/taps/page=<pagenum>", methods = ['GET', 'POST'])
+def AllTapsPage(pagenum):
     if request.method =='GET':
+        try:
+            conn = sqlite3.connect(DATABASE)
+            cur = conn.cursor()
+            cur.execute(f"SELECT * FROM taps LIMIT ?, 5; ", (int(pagenum)*5)) 
+            data = cur.fetchall()
+            print(data)
+        except:
+            print('there was an error')
+            conn.close()
+        finally:
+            conn.close()
         return render_template('TapList.html')
+    if request.method =='POST':
+        pass
 
 @app.route("/home/faq", methods = ['GET'])
 def FAQPage():

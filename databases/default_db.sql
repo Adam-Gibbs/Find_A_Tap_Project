@@ -10,7 +10,6 @@ CREATE TABLE IF NOT EXISTS "reviews"(
 	"id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
 	"tap-id" INTEGER NOT NULL,
 	"comment" TEXT NOT NULL,
-	"star-review" INTEGER NOT NULL,
 	"date" TEXT NOT NULL,
 	FOREIGN KEY("tap-id") REFERENCES taps("id")
 	/* connects the tap-id in the taps table to the comments
