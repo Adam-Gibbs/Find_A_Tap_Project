@@ -54,8 +54,8 @@ def NearTapPage(pagenum, user_lat, user_lng):
         # try:
         conn = sqlite3.connect(DATABASE)
         cur = conn.cursor()
+        # https://gist.github.com/statickidz/8a2f0ce3bca9badbf34970b958ef8479
         cur.execute("SELECT * FROM taps ORDER BY ((latitude-?)*(latitude-?)) + ((longitude - ?)*(longitude - ?)) ASC LIMIT ?, 5;", (user_lat, user_lat, user_lng, user_lng, int(pagenum)*5))
-        print(f"SELECT * FROM taps ORDER BY ((latitude-{user_lat})*(latitude-{user_lat})) + ((longitude - {user_lng})*(longitude - {user_lng})) ASC LIMIT {int(pagenum)*5}, 5;")
         data = cur.fetchall()
         print(data)
         # except:
