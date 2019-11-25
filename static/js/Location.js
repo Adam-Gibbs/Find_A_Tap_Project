@@ -22,7 +22,7 @@ function getLocation2() {
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(sendPosition);
   } else {
-    x.innerHTML = "Geolocation is not supported by this browser.";
+    x.innerHTML = "Getting locatrion is not supported by this browser.";
   }
 }
 
@@ -33,10 +33,11 @@ function sendPosition(position){
 }
 
 function sendData(long, lat){
-  alert("Hello");
+  // var fd = new FormData;
   var picture = document.forms["pictureForm"]["image"].value;
+  // fd.append("picture", picture)
   console.log(picture);
-  var params = "latitude="+lat+"&longitude="+long+"&picture";
+  var params = "latitude="+lat+"&longitude="+long+"&picture="+picture;
   console.log(params);
   var IPPacket = new XMLHttpRequest();
   IPPacket.open("POST", '/home/taps/new', true); // true is asynchronous

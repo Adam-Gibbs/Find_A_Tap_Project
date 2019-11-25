@@ -30,23 +30,15 @@
 </div>
 
 <!-- This is for adding a picture to the database: -->
-<form name="pictureForm" class="form-group" method="post" action="">
+<form name="pictureForm" method="post" action="" enctype="multipart/form-data">
   <input type="file" name="image"/> <br>
 </form>
 
 <button type="button" name="button" onclick="getLocation2()">Add Tap</button>
 <p id="error-message"></p>
 
-
-<div class="box">
-  <table id="existing-taps">
-
-  </table>
-</div>
-
+<p id="ERROR"></p>
 <script type="text/javascript" src="/static/js/Location.js"></script>
-<script type="text/javascript" src="/static/js/openTapData.js"></script>
-<!-- The openTapData.js file will be used to present a table that with all of
-the existing taps, meaning that people will not try to add taps that already exist to the database-->
+
 </div>
 {%endblock%}
