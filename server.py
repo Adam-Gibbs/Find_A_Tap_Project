@@ -162,20 +162,18 @@ def CommentsPage():
 @app.route("/home/taps/<tapID>/location", methods = ['GET'])
 def MapPage(tapID):
     if request.method =='GET':
-        # try:
-        conn = sqlite3.connect(DATABASE)
-        cur = conn.cursor()
-        # https://gist.github.com/statickidz/8a2f0ce3bca9badbf34970b958ef8479
-        cur.execute("select latitude, longitude, address from taps where id is ?", [tapID])
-        data = cur.fetchall()
-        data = data[0]
-        print("-------------------------------")
-        print(data[0])
-        # except:
-        #     print('there was an error')
-        #     conn.close()
-        # finally:
-        conn.close()
+        try:
+            conn = sqlite3.connect(DATABASE)
+            cur = conn.cursor()
+            # https://gist.github.com/statickidz/8a2f0ce3bca9badbf34970b958ef8479
+            cur.execute("select latitude, longitude, address from taps where id is ?", [tapID])
+            data = cur.fetchall()
+            data = data[0]
+        except:
+            print('there was an error')
+            conn.close()
+        finally:
+            conn.close()
 
         return render_template('PlainMap.html', lat = data[0], lng = data[1], address = data[2])
 
