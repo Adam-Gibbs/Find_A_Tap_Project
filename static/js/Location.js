@@ -13,7 +13,7 @@ function showPosition(position) {
   var latText = document.getElementById('lat');
   latText.innerHTML = position.coords.latitude;
   lngText.innerHTML = position.coords.longitude;
-  AddMarker(position, "Current Position")
+  AddMarker(position.coords.latitude, position.coords.longitude, "Current Position")
 }
 
 // function getLocation taken from w3school - https://www.w3schools.com/html/html5_geolocation.asp
@@ -26,7 +26,6 @@ function getLocation2() {
   }
 }
 
-
 function sendPosition(position){
   longitude = position.coords.longitude;
   latitude = position.coords.latitude;
@@ -34,10 +33,10 @@ function sendPosition(position){
 }
 
 function sendData(long, lat){
-  var coordinates = lat+","+ long;
-  // var picture = document.forms["pictureForm"]["file"].value;
-  // console.log(picture);
-  var params = "coordinates="+coordinates;
+  alert("Hello");
+  var picture = document.forms["pictureForm"]["image"].value;
+  console.log(picture);
+  var params = "latitude="+lat+"&longitude="+long+"&picture";
   console.log(params);
   var IPPacket = new XMLHttpRequest();
   IPPacket.open("POST", '/home/taps/new', true); // true is asynchronous

@@ -14,6 +14,7 @@ app = Flask(__name__)
 ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
 directory = []
 
+
 @app.route("/Directory", methods=['GET'])
 def returnDir():
     if request.method == 'GET':
@@ -60,28 +61,31 @@ def NewTapPage():
         params = request.form
         params = params.to_dict() # This is from flask
         print("------------------------------------------------------------------------",params)
-        coordinates = params['coordinates']
-        print(coordinates)
-        latitude = coordinates.split(",")[0]
-        longitude = coordinates.split(",")[1]
+        latitude = params['latitude']
+        longitude = params['longitude']
         address = geocoder.reverse_geocode(latitude, longitude, language='en', no_annotations='1')
-        print(address[0]['formatted'])
-        # picture = params['picture']
-        # print(picture)
+        address = address[0]['formatted']
+        print(address)
+        picture = params['picture']
+        print(picture)
         try:
             conn = sqlite3.connect(DATABASE)
             cur = conn.cursor()
-            cur.execute("INSERT INTO taps (address, coordinates) VALUES (?,?)",
-            (address[0]['formatted'], coordinates))
+            cur.execute("INSERT INTO taps (address, latitude, longitude, picture) VALUES (?,?,?,?)",
+            (address, latitude, longitude, picture))
             conn.commit()
-            executed = True
+            msg = "Task was executed: True"
         except Exception as e:
             print(e)
             conn.rollback()
-            executed = False
+            msg = f"Task failed because: {e}"
+            if e == "UNIQUE constraint failed: taps.coordinates":
+                msg = ''' var error = document.getElementById('error-message');
+                    error.innerHTML = Tap already exists;
+                '''
         finally:
             conn.close()
-            return f"Task was executed: {executed}"
+            return msg
 
 @app.route("/home/taps", methods = ['GET'])
 def AllTapsPage():
