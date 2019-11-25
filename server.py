@@ -55,20 +55,24 @@ def AboutPage():
 @app.route("/home/taps/near/page=<pagenum>/lat=<user_lat>/lng=<user_lng>", methods = ['GET'])
 def NearTapPage(pagenum, user_lat, user_lng):
     if request.method =='GET':
-        # try:
-        conn = sqlite3.connect(DATABASE)
-        cur = conn.cursor()
-        # https://gist.github.com/statickidz/8a2f0ce3bca9badbf34970b958ef8479
-        cur.execute("SELECT * FROM taps ORDER BY ((latitude-?)*(latitude-?)) + ((longitude - ?)*(longitude - ?)) ASC LIMIT ?, 5;", (user_lat, user_lat, user_lng, user_lng, int(pagenum)*5))
-        data = cur.fetchall()
-        print(data)
-        # except:
-        #     print('there was an error')
-        #     conn.close()
-        # finally:
-        conn.close()
+        try:
+            conn = sqlite3.connect(DATABASE)
+            cur = conn.cursor()
+            # https://gist.github.com/statickidz/8a2f0ce3bca9badbf34970b958ef8479
+            cur.execute("SELECT * FROM taps ORDER BY ((latitude-?)*(latitude-?)) + ((longitude - ?)*(longitude - ?)) ASC LIMIT ?, 5;", (user_lat, user_lat, user_lng, user_lng, int(pagenum)*5))
+            data = cur.fetchall()
+        except:
+            print('there was an error')
+            conn.close()
+        finally:
+            conn.close()
+        
+        all_tap_data = []
+        for item in data:
+            one_tap_data = {'TapID': item[0], 'Address': item[1], 'Longitude': item[2], 'Latitude': item[3], 'Image': item[4], 'Description': 'Temporary Description', 'PostDate': "26/11/2019", 'UserLink': 'https://www.linkedin.com/in/adam-gibbs-77411616b/', 'UserName': 'Adam'}
+            all_tap_data.append(one_tap_data)
 
-        return render_template('TapList.html')
+        return render_template('TapList.html', alltapdata = all_tap_data)
 
     if request.method =='POST':
         pass
