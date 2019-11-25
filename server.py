@@ -9,18 +9,12 @@ from opencage.geocoder import InvalidInputError, RateLimitExceededError, Unknown
 key = 'd0d06fa6997b4770af8c48796657cbf0'
 geocoder = OpenCageGeocode(key)
 
-DATABASE = 'databases/main_db.db'
+DATABASE = 'databases/Test.db'
+DB = 'databases/main_db.db'
 app = Flask(__name__)
 ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
 directory = []
 
-
-
-# @app.route("/Directory", methods=['GET'])
-# def returnDir():
-#     if request.method == 'GET':
-#         print("getting directory.")
-#         return json.dumps(directory)
 
 @app.route("/AddComment", methods=['POST'])
 def addComment():
@@ -43,7 +37,7 @@ def addComment():
 #         add_date_to_db = request.form.get('date', default="Error")
 #         print("inserting comment "+add_comment_to_db)
 #         try:
-#             conn = sqlite3.connect(DATABASE)
+#             conn = sqlite3.connect(DB)
 #             cur = conn.cursor()
 #             sqlquery = 'INSERT INTO "main"."reviews" ("tap-id", "comment", "date") VALUES ("1", "' + add_comment_to_db + '", "'+ add_date_to_db +'");'
 #             print(sqlquery)
@@ -72,10 +66,26 @@ def AboutPage():
     if request.method =='GET':
         return render_template('About.html')
 
-@app.route("/home/taps/near", methods = ['GET'])
-def NearTapPage():
+@app.route("/home/taps/near/page=<pagenum>/lat=<user_lat>/lng=<user_lng>", methods = ['GET'])
+def NearTapPage(pagenum, user_lat, user_lng):
     if request.method =='GET':
+        # try:
+        conn = sqlite3.connect(DATABASE)
+        cur = conn.cursor()
+        cur.execute("SELECT * FROM taps ORDER BY ((latitude-?)*(latitude-?)) + ((longitude - ?)*(longitude - ?)) ASC LIMIT ?, 5;", (user_lat, user_lat, user_lng, user_lng, int(pagenum)*5))
+        print(f"SELECT * FROM taps ORDER BY ((latitude-{user_lat})*(latitude-{user_lat})) + ((longitude - {user_lng})*(longitude - {user_lng})) ASC LIMIT {int(pagenum)*5}, 5;")
+        data = cur.fetchall()
+        print(data)
+        # except:
+        #     print('there was an error')
+        #     conn.close()
+        # finally:
+        conn.close()
+
         return render_template('TapList.html')
+
+    if request.method =='POST':
+        pass
 
 @app.route("/home/taps/new", methods = ['GET', 'POST'])
 def NewTapPage():
@@ -85,33 +95,49 @@ def NewTapPage():
         params = request.form
         params = params.to_dict() # This is from flask
         print("------------------------------------------------------------------------",params)
-        coordinates = params['coordinates']
-        print(coordinates)
-        latitude = coordinates.split(",")[0]
-        longitude = coordinates.split(",")[1]
+        latitude = params['latitude']
+        longitude = params['longitude']
         address = geocoder.reverse_geocode(latitude, longitude, language='en', no_annotations='1')
-        print(address[0]['formatted'])
-        # picture = params['picture']
-        # print(picture)
+        address = address[0]['formatted']
+        print(address)
+        picture = params['picture']
+        print(picture)
         try:
             conn = sqlite3.connect(DATABASE)
             cur = conn.cursor()
-            cur.execute("INSERT INTO taps (address, coordinates) VALUES (?,?)",
-            (address[0]['formatted'], coordinates))
+            cur.execute("INSERT INTO taps (address, latitude, longitude, picture) VALUES (?,?,?,?)",
+            (address, latitude, longitude, picture))
             conn.commit()
-            executed = True
+            msg = "Task was executed: True"
         except Exception as e:
             print(e)
             conn.rollback()
-            executed = False
+            msg = f"Task failed because: {e}"
+            if e == "UNIQUE constraint failed: taps.coordinates":
+                msg = ''' var error = document.getElementById('error-message');
+                    error.innerHTML = Tap already exists;
+                '''
         finally:
             conn.close()
-            return f"Task was executed: {executed}"
+            return msg
 
-@app.route("/home/taps", methods = ['GET'])
-def AllTapsPage():
+@app.route("/home/taps/page=<pagenum>", methods = ['GET', 'POST'])
+def AllTapsPage(pagenum):
     if request.method =='GET':
+        try:
+            conn = sqlite3.connect(DATABASE)
+            cur = conn.cursor()
+            cur.execute(f"SELECT * FROM taps LIMIT ?, 5; ", (int(pagenum)*5)) 
+            data = cur.fetchall()
+            print(data)
+        except:
+            print('there was an error')
+            conn.close()
+        finally:
+            conn.close()
         return render_template('TapList.html')
+    if request.method =='POST':
+        pass
 
 @app.route("/home/faq", methods = ['GET'])
 def FAQPage():

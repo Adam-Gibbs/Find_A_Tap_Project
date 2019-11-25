@@ -30,21 +30,17 @@
 </div>
 
 <!-- This is for adding a picture to the database: -->
-<!-- <form name="pictureForm" class="form-group" method="post" onsubmit="getLocation2()">
-  <input type="file" name="file"/> <br>
-  <br>
-  <input type="submit" value="Uplaod tap">
-</form> -->
-<!-- It is not working -->
-<div class="row">
-  <div>
-  <button type="button" name="button" onclick="getLocation2()">Add Tap</button>
-  </div>
-</div>
+<form name="pictureForm" class="form-group" method="post" action="">
+  <input type="file" name="image"/> <br>
+</form>
+
+<button type="button" name="button" onclick="getLocation2()">Add Tap</button>
+<p id="error-message"></p>
+
 
 <div class="box">
   <table id="existing-taps">
-    
+
   </table>
 </div>
 
