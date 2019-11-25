@@ -48,15 +48,15 @@ def AboutPage():
     if request.method =='GET':
         return render_template('About.html')
 
-@app.route("/home/taps/near/page={pagenum}", methods = ['GET'])
-def NearTapPage(pagenum):
+@app.route("/home/taps/near/page=<pagenum>/lat=<user_lat>/lng=<user_lng>", methods = ['GET'])
+def NearTapPage(pagenum, user_lat, user_lng):
     if request.method =='GET':
         return render_template('TapList.html')
     if request.method =='POST':
-		try:
-			conn = sqlite3.connect(DATABASE)
-			cur = conn.cursor()
-			cur.execute(f"SELECT \
+        try:
+            conn = sqlite3.connect(DATABASE)
+            cur = conn.cursor()
+            cur.execute(f"SELECT \
                             id, ( \
                             6371 * acos ( \
                             cos ( radians({user_lat}) ) \
@@ -70,13 +70,13 @@ def NearTapPage(pagenum):
                         HAVING distance < 30 \
                         ORDER BY distance \
                         LIMIT {pagenum*5} , 5; ") 
-			data = cur.fetchall()
-			print(data)
-		except:
-			print('there was an error')
-			conn.close()
-		finally:
-			conn.close()
+            data = cur.fetchall()
+            print(data)
+        except:
+            print('there was an error')
+            conn.close()
+        finally:
+            conn.close()
 
 @app.route("/home/taps/new", methods = ['GET', 'POST'])
 def NewTapPage():
@@ -112,22 +112,22 @@ def NewTapPage():
             conn.close()
             return msg
 
-@app.route("/home/taps/page={pagenum}", methods = ['GET', 'POST'])
+@app.route("/home/taps/page=<pagenum>", methods = ['GET', 'POST'])
 def AllTapsPage(pagenum):
     if request.method =='GET':
         return render_template('TapList.html')
-	if request.method =='POST':
-		try:
-			conn = sqlite3.connect(DATABASE)
-			cur = conn.cursor()
-			cur.execute(f"SELECT * FROM taps LIMIT {pagenum*5} , 5; ") 
-			data = cur.fetchall()
-			print(data)
-		except:
-			print('there was an error')
-			conn.close()
-		finally:
-			conn.close()
+    if request.method =='POST':
+        try:
+            conn = sqlite3.connect(DATABASE)
+            cur = conn.cursor()
+            cur.execute(f"SELECT * FROM taps LIMIT {pagenum*5} , 5; ") 
+            data = cur.fetchall()
+            print(data)
+        except:
+            print('there was an error')
+            conn.close()
+        finally:
+            conn.close()
 
 @app.route("/home/faq", methods = ['GET'])
 def FAQPage():
