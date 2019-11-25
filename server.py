@@ -13,7 +13,6 @@ DATABASE = 'databases/Test.db'
 DB = 'databases/main_db.db'
 app = Flask(__name__)
 ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
-directory = []
 
 @app.route("/AddComment", methods = ['POST','GET'])
 def studentAddDetails():
