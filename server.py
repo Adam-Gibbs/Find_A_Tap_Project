@@ -12,7 +12,7 @@ geocoder = OpenCageGeocode(key)
 
 APP_ROOT = os.path.dirname(os.path.abspath(__file__))# this
 UPLOAD_FOLDER = os.path.join(APP_ROOT, 'static/uploads')
-DATABASE = 'databases/main_db.db'
+DATABASE = 'databases/Test.db'
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
@@ -27,7 +27,7 @@ def studentAddDetails():
         add_date_to_db = request.form.get('date', default="Error")
         print("inserting comment "+add_comment_to_db)
         try:
-            conn = sqlite3.connect(DB)
+            conn = sqlite3.connect(DATABASE)
             cur = conn.cursor()
             sqlquery = 'INSERT INTO "main"."reviews" ("tap-id", "comment", "date") VALUES ("1", "' + add_comment_to_db + '", "'+ add_date_to_db +'");'
             print(sqlquery)
@@ -77,9 +77,6 @@ def NearTapPage(pagenum, user_lat, user_lng):
             all_tap_data.append(one_tap_data)
 
         return render_template('TapList.html', alltapdata = all_tap_data)
-
-    if request.method =='POST':
-        pass
 
 @app.route("/home/taps/new", methods = ['GET', 'POST'])
 def NewTapPage():
@@ -131,7 +128,7 @@ def NewTapPage():
             conn.close()
             return msg
 
-@app.route("/home/taps/page=<pagenum>", methods = ['GET', 'POST'])
+@app.route("/home/taps/page=<pagenum>", methods = ['GET'])
 def AllTapsPage(pagenum):
     if request.method =='GET':
         try:
@@ -146,8 +143,6 @@ def AllTapsPage(pagenum):
         finally:
             conn.close()
         return render_template('TapList.html')
-    if request.method =='POST':
-        pass
 
 @app.route("/home/faq", methods = ['GET'])
 def FAQPage():
@@ -164,10 +159,25 @@ def CommentsPage():
 	if request.method =='GET':
 		return render_template('CommentsTaps.html')
 
-@app.route("/home/taps/tapID/location", methods = ['GET'])
-def MapPage():
-	if request.method =='GET':
-		return render_template('PlainMap.html')
+@app.route("/home/taps/<tapID>/location", methods = ['GET'])
+def MapPage(tapID):
+    if request.method =='GET':
+        # try:
+        conn = sqlite3.connect(DATABASE)
+        cur = conn.cursor()
+        # https://gist.github.com/statickidz/8a2f0ce3bca9badbf34970b958ef8479
+        cur.execute("select latitude, longitude, address from taps where id is ?", [tapID])
+        data = cur.fetchall()
+        data = data[0]
+        print("-------------------------------")
+        print(data[0])
+        # except:
+        #     print('there was an error')
+        #     conn.close()
+        # finally:
+        conn.close()
+
+        return render_template('PlainMap.html', lat = data[0], lng = data[1], address = data[2])
 
 @app.errorhandler(404)
 def page_not_found(e):

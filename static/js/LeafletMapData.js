@@ -9,6 +9,6 @@ L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=p
 }).addTo(mymap);
 
 function AddMarker(latitude, longitude, popup) {
-L.marker([latitude, longitude]).addTo(mymap)
-    .bindPopup(popup).openPopup();
+    L.marker([latitude, longitude]).addTo(mymap)
+        .bindPopup(popup).openPopup();
 }
