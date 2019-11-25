@@ -47,10 +47,35 @@ def AboutPage():
     if request.method =='GET':
         return render_template('About.html')
 
-@app.route("/home/taps/near", methods = ['GET'])
-def NearTapPage():
+@app.route("/home/taps/near/page={pagenum}", methods = ['GET'])
+def NearTapPage(pagenum):
     if request.method =='GET':
         return render_template('TapList.html')
+    if request.method =='POST':
+		try:
+			conn = sqlite3.connect(DATABASE)
+			cur = conn.cursor()
+			cur.execute(f"SELECT \
+                            id, ( \
+                            6371 * acos ( \
+                            cos ( radians({user_lat}) ) \
+                            * cos( radians( lat ) ) \
+                            * cos( radians( lng ) - radians({user_lng}) ) \
+                            + sin ( radians({user_lat}) ) \
+                            * sin( radians( lat ) ) \
+                            ) \
+                        ) AS distance \
+                        FROM table \
+                        HAVING distance < 30 \
+                        ORDER BY distance \
+                        LIMIT {pagenum*5} , 5; ") 
+			data = cur.fetchall()
+			print(data)
+		except:
+			print('there was an error')
+			conn.close()
+		finally:
+			conn.close()
 
 @app.route("/home/taps/new", methods = ['GET', 'POST'])
 def NewTapPage():
@@ -83,10 +108,22 @@ def NewTapPage():
             conn.close()
             return f"Task was executed: {executed}"
 
-@app.route("/home/taps", methods = ['GET'])
-def AllTapsPage():
+@app.route("/home/taps/page={pagenum}", methods = ['GET', 'POST'])
+def AllTapsPage(pagenum):
     if request.method =='GET':
         return render_template('TapList.html')
+	if request.method =='POST':
+		try:
+			conn = sqlite3.connect(DATABASE)
+			cur = conn.cursor()
+			cur.execute(f"SELECT * FROM taps LIMIT {pagenum*5} , 5; ") 
+			data = cur.fetchall()
+			print(data)
+		except:
+			print('there was an error')
+			conn.close()
+		finally:
+			conn.close()
 
 @app.route("/home/faq", methods = ['GET'])
 def FAQPage():
