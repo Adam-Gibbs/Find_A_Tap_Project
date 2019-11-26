@@ -56,10 +56,10 @@ def AboutPage():
     if request.method =='GET':
         return render_template('About.html')
 
-# @app.route("/whyusetaps" , methods = ['GET'])
-# def WhyUseTapspage():
-#     if request.method =='GET':
-#         return render_template('WhyUseTaps.html')
+@app.route("/home/about/why" , methods = ['GET'])
+def WhyUseTapspage():
+    if request.method =='GET':
+        return render_template('FAQ.html')
 
 @app.route("/home/taps/near/page=<pagenum>/lat=<user_lat>/lng=<user_lng>", methods = ['GET'])
 def NearTapPage(pagenum, user_lat, user_lng):
