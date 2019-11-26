@@ -1,9 +1,13 @@
 CREATE TABLE IF NOT EXISTS "taps" (
-	"id"	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
+	"id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
 	"address" TEXT NOT NULL,
 	"latitude"	TEXT NOT NULL,
 	"longitude" TEXT NOT NULL,
-	"picture"	BLOB
+	"picture"	TEXT,
+	"userID" INTEGER NOT NULL,
+	"date" DATE,
+	"description" TEXT,
+	FOREIGN KEY("userID") REFERENCES users("id")
 );
 
 CREATE TABLE IF NOT EXISTS "reviews"(
@@ -14,4 +18,12 @@ CREATE TABLE IF NOT EXISTS "reviews"(
 	FOREIGN KEY("tap-id") REFERENCES taps("id")
 	/* connects the tap-id in the taps table to the comments
 	table for when we start to store comments about the taps*/
+);
+
+CREATE TABLE IF NOT EXISTS "users"(
+	"id"  INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
+	"userName" TEXT NOT NULL UNIQUE,
+	"password" TEXT NOT NULL,
+	"role" BOOLEAN
+	-- 0 will be regular user and 1 will be admin
 );
