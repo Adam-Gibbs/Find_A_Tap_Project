@@ -12,7 +12,7 @@ geocoder = OpenCageGeocode(key)
 
 APP_ROOT = os.path.dirname(os.path.abspath(__file__))# this
 UPLOAD_FOLDER = os.path.join(APP_ROOT, 'static/uploads')
-DATABASE = 'databases/Test.db'
+DATABASE = 'databases/main_db.db'
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])

@@ -2,18 +2,20 @@
 function getLocation() {
   var x = document.getElementById('ERROR');
   if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(showPosition);
+    navigator.geolocation.getCurrentPosition(setLink);
   } else {
     x.innerHTML = "Geolocation is not supported by this browser.";
   }
 }
 
+function setLink(position) {
+  var link = document.getElementById("NewTapLink");
+  link.setAttribute("href", `/home/taps/near/page=0/lat=${position.coords.latitude}/lng=${position.coords.longitude}`);
+  showPosition(position);
+}
+
 function showPosition(position) {
-  var lngText = document.getElementById('lon');
-  var latText = document.getElementById('lat');
-  latText.innerHTML = position.coords.latitude;
-  lngText.innerHTML = position.coords.longitude;
-  AddMarker(position.coords.latitude, position.coords.longitude, "Current Position")
+  AddMarker(position.coords.latitude, position.coords.longitude, "Current Position");
 }
 
 // function getLocation taken from w3school - https://www.w3schools.com/html/html5_geolocation.asp
