@@ -30,15 +30,14 @@
 </div>
 
 <!-- This is for adding a picture to the database: -->
-<form name="pictureForm" method="post" action="" enctype="multipart/form-data">
-  <input type="file" name="image"/> <br>
+<form action="/home/taps/new" method="post" onsubmit="getLocation()" enctype="multipart/form-data">
+  <input type="file" name="picture"/> <br>
+  <input type="submit" name="" value="Submit Picture">
 </form>
-
-<button type="button" name="button" onclick="getLocation2()">Add Tap</button>
-<p id="error-message"></p>
+{{msg}}
 
 <p id="ERROR"></p>
-<script type="text/javascript" src="/static/js/Location.js"></script>
+<script type="text/javascript" src="/static/js/newTapLocation.js"></script>
 
 </div>
 {%endblock%}

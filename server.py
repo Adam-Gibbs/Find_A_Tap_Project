@@ -10,13 +10,17 @@ from werkzeug.utils import secure_filename
 key = 'd0d06fa6997b4770af8c48796657cbf0'
 geocoder = OpenCageGeocode(key)
 
-APP_ROOT = os.path.dirname(os.path.abspath(__file__))# this
+APP_ROOT = os.path.dirname(os.path.abspath(__file__))
 UPLOAD_FOLDER = os.path.join(APP_ROOT, 'static/uploads')
 DATABASE = 'databases/main_db.db'
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
 directory = []
+
+def allowed_file(filename):
+    ext = filename.rsplit('.', 1)[1].lower()
+    return '.' in filename and ext in ALLOWED_EXTENSIONS
 
 @app.route("/AddComment", methods = ['POST','GET'])
 def studentAddDetails():
@@ -83,55 +87,76 @@ def NearTapPage(pagenum, user_lat, user_lng):
 
         return render_template('TapList.html', alltapdata = all_tap_data)
 
+# @app.route("/home/taps/new", methods = ['GET', 'POST'])
+# def NewTapPage():
+#     if request.method == 'GET':
+#         return render_template('addTap.html')
+#     if request.method == 'POST':
+#         params = request.files
+#         params = params.to_dict() # This is from flask
+#         print("------------------------------------------------------------------------",params)
+#         latitude = request.form['latitude']
+#         longitude = request.form['longitude']
+#         address = geocoder.reverse_geocode(latitude, longitude, language='en', no_annotations='1')
+#         address = address[0]['formatted']
+#         # picture = params['picture']
+#         picture = request.form['picture']
+#         print(picture)
+#         if len(picture) > 0:
+#             picture_extension = picture.split(".")[1].lower()
+#             print(picture_extension)
+#             if picture_extension not in ALLOWED_EXTENSIONS:
+#                 picture = None
+#                 # this makes sure that only picture type files are uploaded to the website
+#         if picture != None and len(picture) != 0: # This means that the picture exists
+#             picture = picture.split("\\")[2]
+#             print("------------------------------------------------------------------------------------------------------------------------------",picture)
+#             filename = secure_filename(picture.filename)
+#             filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+#             picture.save(filepath)
+#             print("Done")
+#         try:
+#             conn = sqlite3.connect(DATABASE)
+#             cur = conn.cursor()
+#             cur.execute("SELECT latitude, longitude FROM taps WHERE latitude=? AND  longitude=?", (latitude, longitude))
+#             data = cur.fetchall()
+#             ## THIS IF STATEMENT MAKES SURE THAT TAPS THAT ALREADY EXIST IN THE DATABASE CANNOT BE INPUTTEED AGAIN
+#             if len(data) == 0:
+#                 cur.execute("INSERT INTO taps (address, latitude, longitude, picture) VALUES (?,?,?,?)",
+#                 (address, latitude, longitude, picture))
+#                 conn.commit()
+#                 msg = "Task was executed"
+#             else:
+#                 msg = "Tap already exists in the database"
+#                 #alert(msg)
+#         except Exception as e:
+#             print(e)
+#             conn.rollback()
+#             msg = f"Task failed because: {e}"
+#         finally:
+#             conn.close()
+#             return render_template("addTap.html", msg=msg)
 @app.route("/home/taps/new", methods = ['GET', 'POST'])
 def NewTapPage():
-    if request.method == 'GET':
-        return render_template('addTap.html')
+    msg = ''
     if request.method == 'POST':
-        params = request.form
-        params = params.to_dict() # This is from flask
-        print("------------------------------------------------------------------------",params)
-        latitude = params['latitude']
-        longitude = params['longitude']
-        address = geocoder.reverse_geocode(latitude, longitude, language='en', no_annotations='1')
-        address = address[0]['formatted']
-        picture = params['picture']
-        # picture = request.files['picture']
-        print(picture)
-        if len(picture) > 0:
-            picture_extension = picture.split(".")[1].lower()
-            print(picture_extension)
-            if picture_extension not in ALLOWED_EXTENSIONS:
-                picture = None
-                # this makes sure that only picture type files are uploaded to the website
-        if picture != None and len(picture) != 0: # This means that the picture exists
-            picture = picture.split("\\")[2]
-            print("------------------------------------------------------------------------------------------------------------------------------",picture)
-            # filename = secure_filename(picture.filename)
-            # filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-            # picture.save(filepath)
-            # print("Done")
-        try:
-            conn = sqlite3.connect(DATABASE)
-            cur = conn.cursor()
-            cur.execute("SELECT latitude, longitude FROM taps WHERE latitude=? AND  longitude=?", (latitude, longitude))
-            data = cur.fetchall()
-            ## THIS IF STATEMENT MAKES SURE THAT TAPS THAT ALREADY EXIST IN THE DATABASE CANNOT BE INPUTTEED AGAIN
-            if len(data) == 0:
-                cur.execute("INSERT INTO taps (address, latitude, longitude, picture) VALUES (?,?,?,?)",
-                (address, latitude, longitude, picture))
-                conn.commit()
-                msg = "Task was executed"
-            else:
-                msg = "Tap already exists in the database"
-                #alert(msg)
-        except Exception as e:
-            print(e)
-            conn.rollback()
-            msg = f"Task failed because: {e}"
-        finally:
-            conn.close()
-            return msg
+        msg = 'Something is probably wrong - check allowed file types'
+        print("---------------------------------------------------------------------------------------------",request.files)
+        # check if the post request has the file part
+        if 'picture' not in request.files:
+            msg = '   no picture given'
+        else:
+            picture = request.files['picture']
+            # if user does not select file, browser also
+            # submit a empty part without filename
+            if picture.filename == '':
+                msg = 'no file name'
+            elif picture and allowed_file(picture.filename):
+                filename = secure_filename(picture.filename)
+                filePath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                picture.save(filePath)
+                msg = f"picture was saved in: {filePath}"
+    return render_template('addTap.html', msg=msg)
 
 @app.route("/home/taps/page=<pagenum>", methods = ['GET'])
 def AllTapsPage(pagenum):
@@ -171,7 +196,7 @@ def MapPage(tapID):
             conn = sqlite3.connect(DATABASE)
             cur = conn.cursor()
             # https://gist.github.com/statickidz/8a2f0ce3bca9badbf34970b958ef8479
-            cur.execute("select latitude, longitude, address from taps where id is ?", [tapID])
+            cur.execute("SELECT latitude, longitude, address FROM taps WHERE id IS ?", [tapID])
             data = cur.fetchall()
             data = data[0]
         except:
