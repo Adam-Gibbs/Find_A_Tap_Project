@@ -1,5 +1,17 @@
-/* CSS styling below is for WebTemplate.html (Main webpage!!) */
+html {
+  position: relative;
+  min-height: 100%;
+}
 
-body{
+body {
   padding-top: 56px;
+  margin-bottom: 160px; /* Margin bottom by footer height */
+}
+
+footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 120px; /* Set the fixed height of the footer here */
+  line-height: 120px; /* Vertically center the text there */
 }
