@@ -136,11 +136,10 @@ def NearTapPage(pagenum, user_lat, user_lng):
 #         finally:
 #             conn.close()
 #             return render_template("addTap.html", msg=msg)
-@app.route("/home/taps/new", methods = ['GET', 'POST'])
+@app.route("/home/taps/new/auto", methods = ['GET', 'POST'])
 def NewTapPage():
     msg = ''
     if request.method == 'POST':
-        msg = 'Something is probably wrong - check allowed file types'
         print("---------------------------------------------------------------------------------------------",request.files)
         # check if the post request has the file part
         if 'picture' not in request.files:
@@ -156,7 +155,7 @@ def NewTapPage():
                 filePath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
                 picture.save(filePath)
                 msg = f"picture was saved in: {filePath}"
-    return render_template('addTap.html', msg=msg)
+    return render_template('addTapAuto.html', msg=msg)
 
 @app.route("/home/taps/page=<pagenum>", methods = ['GET'])
 def AllTapsPage(pagenum):
