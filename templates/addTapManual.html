@@ -24,13 +24,13 @@
     on use our map services to find a route leading to this tap or to any other
     people were kind enough to save. <br> If you want you can add a picture with
     the coordinates and address of the tap. This will make it easier for other
-    people to find the tap.</p>
+    people to find the tap. <br> The best thing about this page is that it is all automated! You don't have to do a thing :)</p>
   </div>
 
 </div>
 
 <!-- This is for adding a picture to the database: -->
-<form action="/home/taps/new" method="post" onsubmit="getLocation()" enctype="multipart/form-data">
+<form id="Form" action="/home/taps/new/manual" method="post" onsubmit="getLocation()" enctype="multipart/form-data">
   <input type="file" name="picture"/> <br>
   <input type="submit" name="" value="Submit Picture">
 </form>

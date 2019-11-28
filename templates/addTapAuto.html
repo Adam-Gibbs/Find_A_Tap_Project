@@ -1,0 +1,43 @@
+{%extends 'generalPageStyling.html'%}
+
+{%block mainBlock%}
+<div class="container">
+<h1>New Tap</h1>
+<ol class="breadcrumb">
+    <li class="breadcrumb-item">
+        <a href="/home">Home</a>
+    </li>
+    {% if request.path == '/home/taps/new'%}
+      <li class="breadcrumb-item">
+              <a href="/home/taps">Taps</a>
+          </li>
+      <li class="breadcrumb-item active">New</li>
+    {%else%}
+      <li class="breadcrumb-item active">Taps</li>
+    {%endif%}
+</ol>
+
+<div class="row">
+  <div>
+  <h2 class="text-center">How the taps are being added?</h2>
+  <p>On this page you can add a tap to our storage which will allow you to later
+    on use our map services to find a route leading to this tap or to any other
+    people were kind enough to save. <br> If you want you can add a picture with
+    the coordinates and address of the tap. This will make it easier for other
+    people to find the tap. <br> The best thing about this page is that it is all automated! You don't have to do a thing :)</p>
+  </div>
+
+</div>
+
+<!-- This is for adding a picture to the database: -->
+<form id="Form" action="/home/taps/new/auto" method="post" enctype="multipart/form-data">
+  <input type="file" name="picture"/> <br>
+  <input type="submit" name="" value="Submit Picture">
+</form>
+{{msg}}
+
+<p id="ERROR"></p>
+<script type="text/javascript" src="/static/js/newTapLocation.js"></script>
+
+</div>
+{%endblock%}
