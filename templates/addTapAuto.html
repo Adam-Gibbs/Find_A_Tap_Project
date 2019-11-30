@@ -26,11 +26,10 @@
     the coordinates and address of the tap. This will make it easier for other
     people to find the tap. <br> The best thing about this page is that it is all automated! You don't have to do a thing :)</p>
   </div>
-
 </div>
 
 <!-- This is for adding a picture to the database: -->
-<form id="Form" action="/home/taps/new/auto" method="post" enctype="multipart/form-data">
+<form id="form" action="/home/taps/new/auto" method="post" onsubmit="getLocation()" enctype="multipart/form-data">
   <input type="file" name="picture"/> <br>
   <input type="submit" name="" value="Submit Picture">
 </form>
@@ -38,6 +37,5 @@
 
 <p id="ERROR"></p>
 <script type="text/javascript" src="/static/js/newTapLocation.js"></script>
-
 </div>
 {%endblock%}
