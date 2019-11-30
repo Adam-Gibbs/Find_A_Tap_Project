@@ -1,0 +1,24 @@
+{%extends 'generalPageStyling.html'%}
+
+
+{%block mainBlock%}
+<div class="container">
+
+    <!-- Page Heading/Breadcrumbs -->
+    <h1 class="mt-4 mb-3">Admin
+    </h1>
+
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a href="/home">Home</a>
+        </li>
+        {% if request.path == '/home/login/admin'%} 
+        <li class="breadcrumb-item">
+                <a href="/home/login">Login</a>
+            </li>
+        <li class="breadcrumb-item active">Admin</li>
+        {%else%}
+        <li class="breadcrumb-item active">Login</li>
+        {%endif%}
+    </ol>
+{%endblock%}

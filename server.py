@@ -200,6 +200,12 @@ def LoginPage():
     if request.method =='GET':
         return render_template('login_page.html')
 
+@app.route("/home/login/admin", methods = ['GET','POST'])
+def AdminPage():
+    if request.method =='GET':
+        return render_template('adminPage.html')
+
+
 @app.errorhandler(404)
 def page_not_found(e):
   return render_template('404.html'), 404
