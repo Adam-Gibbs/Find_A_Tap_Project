@@ -1,5 +1,5 @@
 // function getLocation taken from w3school - https://www.w3schools.com/html/html5_geolocation.asp
-function getLocation() {
+function getCoordinates() {
   var x = document.getElementById('ERROR');
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(sendPosition);
