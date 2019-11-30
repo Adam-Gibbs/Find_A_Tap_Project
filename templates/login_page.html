@@ -1,0 +1,39 @@
+{%extends 'generalPageStyling.html'%}
+
+
+{%block mainBlock%}
+<div class="container">
+
+    <!-- Page Heading/Breadcrumbs -->
+    <h1 class="mt-4 mb-3">Login
+    </h1>
+
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a href="/home">Home</a>
+        </li>
+        {% if request.path == '/home/login'%} 
+        <li class="breadcrumb-item active">Login</li>
+        {%endif%}
+    </ol>
+
+    <!-- Login form -->
+    <h2>Login form</h2>
+    <div class="row">
+        <div class="col-lg-8 mb-4">
+            <form id='loginForm' action='/WeDontWantThis' method='get' onsubmit="return loadName()">
+            <div class="control-group form-group">
+            <div class="controls">
+                <label>Username</label>
+                <input type="text" class="form-control" id="date" required data-validation-required-message="Please Enter Username.">
+            </div>
+            </div>
+            <div class="control-group form-group">
+            <div class="controls">
+                <label class="text-center">Password</label>
+                <input type = "password" class="form-control" id="date" required data-validation-required-message="Please Enter Password.">
+            </div>
+            </div>
+
+</div>
+{%endblock%}
