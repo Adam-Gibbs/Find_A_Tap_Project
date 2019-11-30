@@ -195,6 +195,11 @@ def MapPage(tapID):
 
         return render_template('PlainMap.html', lat = data[0], lng = data[1], address = data[2])
 
+@app.route("/home/login", methods = ['GET'])
+def LoginPage():
+    if request.method =='GET':
+        return render_template('login_page.html')
+
 @app.errorhandler(404)
 def page_not_found(e):
   return render_template('404.html'), 404
