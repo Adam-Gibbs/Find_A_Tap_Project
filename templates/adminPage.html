@@ -21,4 +21,25 @@
         <li class="breadcrumb-item active">Login</li>
         {%endif%}
     </ol>
+
+    <h2> Databases</h2>
+<table border = 1>
+   <thead>
+      <td>ID</td>
+      <td>UserName</td>
+      <td>Password</td>
+      <td>Role</td>
+   </thead>
+
+   {% for row in data %}
+   <!-- A List of tuples so row is each item in the list
+        and then the index is the column number.-->
+      <tr>
+        <td>{{row[0]}}</td>
+        <td>{{row[1]}}</td>
+        <td>{{row[2]}}</td>
+        <td>{{row[3]}}</td>
+      </tr>
+   {% endfor %}
+</table>
 {%endblock%}

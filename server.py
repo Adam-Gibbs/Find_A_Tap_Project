@@ -200,15 +200,42 @@ def LoginPage():
     if request.method =='GET':
         return render_template('login_page.html')
 
-@app.route("/home/login/admin", methods = ['GET','POST'])
+@app.route("/home/login/admin", methods = ['GET', 'POST'])
 def AdminPage():
     if request.method =='GET':
-        return render_template('adminPage.html')
-
-
+        try:
+            conn = sqlite3.connect(DATABASE)
+            cur = conn.cursor()
+            #cur.execute("SELECT * FROM Students WHERE surname=? AND public = 'True';", [surname])
+            cur.execute("SELECT * FROM users")
+            data = cur.fetchall()
+            print(data)
+        except:
+            print('there was an error', data)
+            conn.close()
+        finally:
+            conn.close()
+            #return str(data)
+            return render_template('adminPage.html', data = data)
+    
+    #if request.method =='POST':
+    #     try:
+    #         conn = sqlite3.connect(DATABASE)
+    #         cur = conn.cursor()
+    #         #cur.execute("SELECT * FROM Students WHERE surname=? AND public = 'True';", [surname])
+    #         cur.execute("SELECT * FROM reviews")
+	# 		data = cur.fetchall()
+	# 		print(data)
+	# 	except:
+	# 		print('there was an error', data)
+	# 		conn.close()
+	# 	finally:
+	# 		conn.close()
+	# 		# return str(data)
+	# 		return render_template('adminPage.html', data = data)
 @app.errorhandler(404)
 def page_not_found(e):
-  return render_template('404.html'), 404
+    return render_template('404.html'), 404
 
 if __name__ == "__main__":
     app.run(debug=True, ssl_context='adhoc')
