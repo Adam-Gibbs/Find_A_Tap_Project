@@ -18,10 +18,10 @@ function sendData(long, lat){
   var params = "latitude="+lat+"&longitude="+long;
   console.log(params);
   var IPPacket = new XMLHttpRequest();
-  IPPacket.open("POST", "/home/taps/new/auto", true); // true is asynchronous
+  IPPacket.open("POST", document.getElementById('form').action.slice(22), true); // true is asynchronous
   IPPacket.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
   IPPacket.send(params);
   console.log(params)
-  localStorage.clear();
+  document.localStorage.clear();
   return false;
 }
