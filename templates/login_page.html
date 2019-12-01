@@ -21,17 +21,17 @@
     <h2>Login form</h2>
     <div class="row">
         <div class="col-lg-8 mb-4">
-            <form id='loginForm' name="loginMessage">
+            <form id='loginForm' name="loginMessage" method="post" action="/login_page.html">
             <div class="control-group form-group">
             <div class="controls">
                 <label>Username</label>
-                <input type="text" class="form-control" id="date" required data-validation-required-message="Please Enter Username.">
+                <input type="text" class="form-control" name="username" required data-validation-required-message="Please Enter Username.">
             </div>
             </div>
             <div class="control-group form-group">
             <div class="controls">
                 <label class="text-center">Password</label>
-                <input type = "password" class="form-control" id="date" required data-validation-required-message="Please Enter Password.">
+                <input type = "password" class="form-control" name="password" required data-validation-required-message="Please Enter Password.">
             </div>
             </div>
             <div id="success"></div>
@@ -41,6 +41,8 @@
             <span id='txt'></span>
         </div>
     </div>
+
+    <p> result of operation : {{ msg }} </p>
 
 </div>
 {%endblock%}
