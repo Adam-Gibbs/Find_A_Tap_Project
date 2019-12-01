@@ -17,7 +17,7 @@
 
   </head>
   {% if request.path == '/home/about/contact'%}
-    <body onload="AddMarker(51.589588, -2.998604, 'Our Home')">
+    <body onload="getLocation(), AddMarker(51.589588, -2.998604, 'Our Home')">
   {%else%}
     <body onload="getLocation()">
   {%endif%}

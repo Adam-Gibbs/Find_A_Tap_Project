@@ -11,7 +11,10 @@ function getLocation() {
 function setLink(position) {
   var link = document.getElementById("NewTapLink");
   link.setAttribute("href", `/home/taps/near/page=0/lat=${position.coords.latitude}/lng=${position.coords.longitude}`);
-  showPosition(position);
+  var myMap = document.getElementById("mapid");
+  if(myMap){
+    showPosition(position);
+  }
 }
 
 function showPosition(position) {
