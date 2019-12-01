@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Water Web</title>
+    <title>The Use of Water</title>
     <!-- https://pixabay.com/vectors/drop-water-prcious-blue-liquid-312396/ -->
     <link rel="shortcut icon" href="/static/img/favicon.ico" type="image/x-icon" />
     <!-- Bootstrap -->
@@ -17,7 +17,7 @@
 
   </head>
   {% if request.path == '/home/about/contact'%}
-    <body onload="AddMarker(51.589588, -2.998604, 'Our Home')">
+    <body onload="getLocation(), AddMarker(51.589588, -2.998604, 'Our Home')">
   {%else%}
     <body onload="getLocation()">
   {%endif%}
@@ -27,7 +27,7 @@
         <div class="container">
             <a class="navbar-brand" href="/home">
                 <img src="/static/img/favicon.ico" width="30" height="30" class="d-inline-block align-top" alt="">
-                Water Web
+                The Use of Water
             </a>
             <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -77,7 +77,7 @@
     <footer class="py-5 bg-dark">
         <div class="container">
             <p class="text-center text-white" style="line-height: 20px"><strong>Disclaimer: </strong>We do not take any responsilbily for the quality of water</p>
-            <p class="text-center text-white" style="line-height: 22px">Copyright &copy; Water Web 2019</p>
+            <p class="text-center text-white" style="line-height: 22px">Copyright &copy; The Use of Water 2019</p>
         </div>
     </footer>
 

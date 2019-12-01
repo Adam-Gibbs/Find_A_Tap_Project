@@ -1,6 +1,6 @@
 import os
 import json
-from flask import Flask, redirect, request,render_template, jsonify
+from flask import Flask, redirect, request,render_template, jsonify, session, make_response, escape
 import sqlite3
 from PIL import Image
 
@@ -23,6 +23,9 @@ directory = []
 def allowed_file(filename):
     ext = filename.rsplit('.', 1)[1].lower()
     return '.' in filename and ext in ALLOWED_EXTENSIONS
+
+def checkCredentials(uName, pw):
+    return pw == 'funky'
 
 @app.route("/AddComment", methods = ['POST','GET'])
 def studentAddDetails():
@@ -219,14 +222,80 @@ def MapPage(tapID):
 
         return render_template('PlainMap.html', lat = data[0], lng = data[1], address = data[2])
 
-@app.route("/home/login", methods = ['GET'])
+@app.route("/home/login/admin", methods = ['GET', 'POST'])
+def admin():
+    username = request.cookies.get('username')
+    usertype = "null"
+    if 'usertype' in session:
+        usertype = escape(session['usertype'])
+    if usertype == "Admin":
+        return render_template('adminPage.html', msg = '', username = username)
+    else:
+        return render_template('login_page.html', msg = 'no access to admin pages', username = username)
+
+def AdminPage():
+    if request.method =='GET':
+        try:
+            conn = sqlite3.connect(DATABASE)
+            cur = conn.cursor()
+            #cur.execute("SELECT * FROM Students WHERE surname=? AND public = 'True';", [surname])
+            cur.execute("SELECT * FROM users")
+            data = cur.fetchall()
+            print(data)
+        except:
+            print('there was an error', data)
+            conn.close()
+        finally:
+            conn.close()
+            #return str(data)
+            return render_template('adminPage.html', data = data)
+
+@app.route("/home/login", methods = ['GET','POST'])
 def LoginPage():
     if request.method =='GET':
         return render_template('login_page.html')
+    if request.method=='POST':
+        reminder =". ***** REM other pages WILL NOT be able to access the username as they are not set up to use Cookie Sessions. "
+        uName = request.form.get('uName', default="Error")
+        pw = request.form.get('pw', default="Error")
+        if checkCredentials(uName, pw):
+            resp = make_response(render_template('adminPage.html', msg='hello '+uName+reminder, username = uName))
+            session['uName'] = request.form['uName']
+            session['pw'] = 'pa55wrd'
+            if (uName == 'Osama'):
+                 session['usertype'] = 'Admin'
+            else:
+                 session['usertype'] = 'Customer'
+
+            # session['data'] = 'The mayor of London has claimed Volkswagen should pay £2.5m for missed congestion charge payments following the emissions-rigging scandal. Sadiq Khan said 80,000 VW engines fitted with "defeat devices" were registered in London.The devices, which detect when an engine is being tested, changed performance to improve results.VW, the biggest carmaker in the world, admitted about 11 million cars worldwide were fitted with the device.Transport for London calculated the £2.5m figure from the number of owners of affected VW vehicles claiming a discount for which they were not entitled."If you dont ask you dont get. Im a champion for clean air, Im a champion for London," said Mr Khan.'
+        else:
+            resp = make_response(render_template('adminPage.html', msg='Incorrect  login',username='Guest'))
+        return resp
+    else:
+        username = 'none'
+        if 'username' in session:
+            username = escape(session['username'])
+        return render_template('login_page.html', msg='', username = username)
+    
+    #if request.method =='POST':
+    #     try:
+    #         conn = sqlite3.connect(DATABASE)
+    #         cur = conn.cursor()
+    #         #cur.execute("SELECT * FROM Students WHERE surname=? AND public = 'True';", [surname])
+    #         cur.execute("SELECT * FROM reviews")
+	# 		data = cur.fetchall()
+	# 		print(data)
+	# 	except:
+	# 		print('there was an error', data)
+	# 		conn.close()
+	# 	finally:
+	# 		conn.close()
+	# 		# return str(data)
+	# 		return render_template('adminPage.html', data = data)
 
 @app.errorhandler(404)
 def page_not_found(e):
-  return render_template('404.html'), 404
+    return render_template('404.html'), 404
 
 if __name__ == "__main__":
     app.run(debug=True, ssl_context='adhoc')
