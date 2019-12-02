@@ -32,8 +32,6 @@
    </thead>
 
    {% for row in data %}
-   <!-- A List of tuples so row is each item in the list
-        and then the index is the column number.-->
       <tr>
         <td>{{row[0]}}</td>
         <td>{{row[1]}}</td>
@@ -42,4 +40,22 @@
       </tr>
    {% endfor %}
 </table>
+<br></br>
+<table border = 1>
+    <thead>
+       <td>ID</td>
+       <td>Tap-Id</td>
+       <td>Comment</td>
+       <td>Date</td>
+    </thead>
+ 
+    {% for row in data2 %}
+        <tr>
+         <td>{{row[0]}}</td>
+         <td>{{row[1]}}</td>
+         <td>{{row[2]}}</td>
+         <td>{{row[3]}}</td>
+       </tr>
+    {% endfor %}
+ </table>
 {%endblock%}
