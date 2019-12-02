@@ -13,7 +13,7 @@ key = 'd0d06fa6997b4770af8c48796657cbf0'
 geocoder = OpenCageGeocode(key)
 
 APP_ROOT = os.path.dirname(os.path.abspath(__file__)) # This says where the server is stored on the device
-UPLOAD_FOLDER = os.path.join(APP_ROOT, 'static\\uploads') # This adds the folder where the tap pictures are going to be stored
+UPLOAD_FOLDER = os.path.join(APP_ROOT, 'static/uploads') # This adds the folder where the tap pictures are going to be stored
 DATABASE = 'databases/main_db.db'
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -71,7 +71,7 @@ def WhyUseTapspage():
     if request.method =='GET':
         return render_template('FAQ.html')
 
-@app.route("/home/taps/near/page=<pagenum>/lat=<user_lat>/lng=<user_lng>", methods = ['GET'])
+@app.route("/home/taps/near/page=<pagenum>/!lat=<user_lat>&lng=<user_lng>", methods = ['GET'])
 def NearTapPage(pagenum, user_lat, user_lng):
     if request.method =='GET':
         try:
@@ -89,7 +89,8 @@ def NearTapPage(pagenum, user_lat, user_lng):
         all_tap_data = []
         for item in data:
             try:
-                tapImage = Image.open(f"{APP_ROOT}\\{item[4]}")
+                tapImage = Image.open(f"{APP_ROOT}{item[4]}")
+                print(tapImage)
             except Exception as e:
                 print(e)
                 tapImage = "http://placehold.it/750x300"
