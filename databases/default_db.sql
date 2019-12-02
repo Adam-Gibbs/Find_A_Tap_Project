@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS "taps" (
 	"longitude" TEXT NOT NULL,
 	"picture"	TEXT,
 	"userID" INTEGER NOT NULL,
-	"date" DATE,
+	"postDate" DATE,
 	"description" TEXT,
 	FOREIGN KEY("userID") REFERENCES users("id")
 );
