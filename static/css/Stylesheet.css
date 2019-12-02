@@ -15,3 +15,7 @@ footer {
   height: 120px; /* Set the fixed height of the footer here */
   line-height: 120px; /* Vertically center the text there */
 }
+
+.RightLoc {
+  float: right;
+}

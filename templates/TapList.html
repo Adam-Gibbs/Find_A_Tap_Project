@@ -4,6 +4,10 @@
 {%block mainBlock%}
 <div class="container">
 
+    <input hidden id='pos_lat' value='' /> 
+    <input hidden id='pos_lng' value='' /> 
+    <script type="text/javascript" src="/static/js/Distance.js"></script>
+
     <!-- Page Heading/Breadcrumbs -->
     <h1 class="mt-4 mb-3">Taps
     </h1>
@@ -35,8 +39,12 @@
                     <a href="/home/taps/{{tapdata.TapID}}/location" class="btn btn-primary">Go To &rarr;</a>
                     </div>
                     <div class="card-footer text-muted">
-                    Posted on {{tapdata.PostDate}} by
-                    <a href={{tapdata.UserLink}}>{{tapdata.UserName}}</a>
+                        Posted on {{tapdata.PostDate}} by
+                        <a href={{tapdata.UserLink}}>{{tapdata.UserName}}</a>
+                        <!-- Add dynamic ID to be set for each function -->
+                        <p class="RightLoc" id={{tapdata.TapID}}></p> 
+                        <script>getDistanceFromLatLonInKm({{tapdata.Longitude}}, {{tapdata.Latitude}}, {{tapdata.TapID}})</script>
+                        <img class="RightLoc" src="/static/img/distanceMarker.png" alt="" height="26" width="14">
                     </div>
                 </div>
             {%endfor%}
