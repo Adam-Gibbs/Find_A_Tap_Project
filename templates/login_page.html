@@ -18,10 +18,9 @@
     </ol>
     <!-- action='/WeDontWantThis' method='get' onsubmit="return loadName()" -->
     <!-- Login form -->
-    <h2>Login form</h2>
     <div class="row">
         <div class="col-lg-8 mb-4">
-            <form id='loginForm' name="loginMessage" method="post" action="/login_page.html">
+            <form id='loginForm' name="loginMessage" method="post" action="/home/login">
             <div class="control-group form-group">
             <div class="controls">
                 <label>Username</label>
@@ -42,7 +41,27 @@
         </div>
     </div>
 
-    <p> result of operation : {{ msg }} </p>
+    <!-- <p> result of operation : {{ msg }} </p> -->
+    <script>
+        // function loadName() {
+        //   var name = document.forms["loginForm"]["username"].value;
+        //   var pass = document.forms["loginForm"]["password"].value;
+        //   var params = 'username='+username+'&password='+password;
+        //   var xhttp = new XMLHttpRequest();
+        //   xhttp.open("POST", '/AddComment', true); // true is asynchronous
+        //   xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        //   xhttp.onreadystatechange = function() {
+        //     if (xhttp.readyState === 4 && xhttp.status === 200) {
+        //       console.log(xhttp.responseText);
+        //       document.getElementById("txt").innerHTML = xhttp.responseText;
+        //     } else {
+        //       console.error(xhttp.statusText);
+        //     }
+        //   };
+        //   xhttp.send(params);
+        //   return false;
+        // }
+      </script>
 
 </div>
 {%endblock%}
