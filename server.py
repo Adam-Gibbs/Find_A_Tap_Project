@@ -12,7 +12,7 @@ key = 'd0d06fa6997b4770af8c48796657cbf0'
 geocoder = OpenCageGeocode(key)
 
 APP_ROOT = os.path.dirname(os.path.abspath(__file__)) # This says where the server is stored on the device
-UPLOAD_FOLDER = os.path.join(APP_ROOT, 'static/uploads') # This adds the folder where the tap pictures are going to be stored
+UPLOAD_FOLDER = os.path.join(APP_ROOT, 'static\\uploads') # This adds the folder where the tap pictures are going to be stored
 DATABASE = 'databases/main_db.db'
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -102,13 +102,11 @@ def NearTapPage(pagenum, user_lat, user_lng):
 
         return render_template('TapList.html', alltapdata = all_tap_data)
 
-post_info = {}
 @app.route("/home/taps/new/auto", methods = ['GET', 'POST'])
 def NewTapPageAuto():
     msg = ''
     global post_info
     if request.method == 'GET':
-        post_info = {}
         return render_template('addTapAuto.html')
 
     if request.method == 'POST':
@@ -118,15 +116,7 @@ def NewTapPageAuto():
         address = address[0]['formatted']
         picture = request.files['picture']
         # if user does not select file, browser also submit a empty part without filename
-        if picture.filename == '':
-            msg = 'picture was not given'
-        elif picture and allowed_file(picture.filename):
-            filename = secure_filename(picture.filename)
-            filePath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-            picture.save(filePath)
-            msg += "picture was saved"
         try:
-            print("connecting to database")
             conn = sqlite3.connect(DATABASE)
             cur = conn.cursor()
             cur.execute("SELECT latitude, longitude FROM taps WHERE latitude=? AND  longitude=?", (latitude, longitude))
@@ -134,11 +124,20 @@ def NewTapPageAuto():
             ## THIS IF STATEMENT MAKES SURE THAT TAPS THAT ALREADY EXIST IN THE DATABASE CANNOT BE INPUTTEED AGAIN
             if len(coor_exist) == 0:
                 if picture.filename == '': # This means that no picture was given
-                    cur.execute("INSERT INTO taps (address, latitude, longitude, picture) VALUES (?,?,?,?)",
-                    (address, latitude, longitude, None))
+                    cur.execute("INSERT INTO taps (address, latitude, longitude, picture, userID) VALUES (?,?,?,?,?)",
+                    (address, latitude, longitude, None, 1))
                 else:
-                    cur.execute("INSERT INTO taps (address, latitude, longitude, picture) VALUES (?,?,?,?)",
-                    (address, latitude, longitude, f"static/uploads/{picture.filename}"))
+                    cur.execute("INSERT INTO taps (address, latitude, longitude, picture, userID) VALUES (?,?,?,?,?)",
+                    (address, latitude, longitude, f"static/uploads/{picture.filename}", 1))
+                    if picture.filename == '':
+                        msg = 'picture was not given'
+                    elif picture and allowed_file(picture.filename):
+                        filename = secure_filename(picture.filename)
+                        filePath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                        if not os.path.exists(os.path.join(app.config['UPLOAD_FOLDER'])):
+                            os.makedirs(os.path.join(app.config['UPLOAD_FOLDER']))
+                        picture.save(filePath)
+                        msg += "picture was saved"
                 conn.commit()
                 msg = "Task was executed"
             else:
