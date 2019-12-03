@@ -1,6 +1,13 @@
 {%extends 'generalPageStyling.html'%}
 
 {%block mainBlock%}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
+integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
+crossorigin=""/>
+<script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"
+integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew=="
+crossorigin=""></script>
+
 <div class="container">
 <h1>New Tap</h1>
 <ol class="breadcrumb">
@@ -20,17 +27,24 @@
 <div class="row">
   <div>
   <h2 class="text-center">How the taps are being added?</h2>
-  <p>On this page you can add a tap to our storage which will allow you to later
+  <p>The automatic upload of the new tap failed. Therefore, if you still wish to
+    continue, you can do so manualy. <br> On this page you can add a tap to our storage which will allow you to later
     on use our map services to find a route leading to this tap or to any other
     people were kind enough to save. <br> If you want you can add a picture with
     the coordinates and address of the tap. This will make it easier for other
-    people to find the tap. <br> The best thing about this page is that it is all automated! You don't have to do a thing :)</p>
+    people to find the tap. <br></p>
   </div>
 
 </div>
 
 <!-- This is for adding a picture to the database: -->
-<form id="Form" action="/home/taps/new/manual" method="post" onsubmit="getCoordinates()" enctype="multipart/form-data">
+<form id="form" action="/home/taps/new/manual" method="post" onsubmit="getCoordinates()" enctype="multipart/form-data">
+  Latitude: <input type="number" name="latitude" value="">
+  Longitude: <input type="number" name="" value=""> <br>
+
+  <div id="mapid" style="width: 100%; height: 82vh;"></div>
+
+
   <input type="file" name="picture"/> <br>
   <input type="submit" name="" value="Submit Picture">
 </form>
