@@ -89,14 +89,15 @@ def NearTapPage(pagenum, user_lat, user_lng):
         all_tap_data = []
         for item in data:
             try:
+                print(item[4])
                 tapImage = Image.open(f"{APP_ROOT}{item[4]}")
-                print(tapImage)
+                print(tapImage.filename)
             except Exception as e:
                 print(e)
                 tapImage = "http://placehold.it/750x300"
                 print("failed to load")
             print(f"-----------------------------------------{tapImage}")
-            print(f"--------------------------------------------------{APP_ROOT}\\{item[4]}")
+            print(f"--------------------------------------------------{APP_ROOT}{item[4]}")
             one_tap_data = {'TapID': item[0], 'Address': item[1], 'Longitude': item[2], 'Latitude': item[3], 'Image': tapImage, 'Description': 'Temporary Description', 'PostDate': "26/11/2019", 'UserLink': 'https://www.linkedin.com/in/adam-gibbs-77411616b/', 'UserName': 'Adam'}
             all_tap_data.append(one_tap_data)
 
@@ -112,68 +113,55 @@ def NewTapPageAuto():
         return render_template('addTapAuto.html')
 
     if request.method == 'POST':
-        if len(request.files) > 0:
-            print(f"------------------{request.files}")
-            post_info['picture'] = request.files
-        if len(request.form) > 0:
-            print(f"---------{request.form}")
-            post_info['coordinates'] = request.form
-        print(post_info)
-        if len(post_info) == 2:
-            latitude = post_info["coordinates"]["latitude"]
-            longitude = post_info["coordinates"]["longitude"]
-            address = geocoder.reverse_geocode(latitude, longitude, language='en', no_annotations='1')
-            address = address[0]['formatted']
-            picture = post_info['picture']
-            picture = picture.to_dict()
-            picture = picture['picture']
-            # if user does not select file, browser also submit a empty part without filename
-            if picture.filename == '':
-                msg = 'picture was not given'
-            elif picture and allowed_file(picture.filename):
-                filename = secure_filename(picture.filename)
-                filePath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-                picture.save(filePath)
-                msg += "picture was saved"
-            try:
-                conn = sqlite3.connect(DATABASE)
-                cur = conn.cursor()
-                cur.execute("SELECT latitude, longitude FROM taps WHERE latitude=? AND  longitude=?", (latitude, longitude))
-                coor_exist = cur.fetchall()
-                ## THIS IF STATEMENT MAKES SURE THAT TAPS THAT ALREADY EXIST IN THE DATABASE CANNOT BE INPUTTEED AGAIN
-                if len(coor_exist) == 0:
-                    if picture.filename == '': # This means that no picture was given
-                        cur.execute("INSERT INTO taps (address, latitude, longitude, picture) VALUES (?,?,?,?)",
-                        (address, latitude, longitude, None))
-                    else:
-                        cur.execute("INSERT INTO taps (address, latitude, longitude, picture) VALUES (?,?,?,?)",
-                        (address, latitude, longitude, f"static/uploads/{picture.filename}"))
-                    conn.commit()
-                    msg = "Task was executed"
+        latitude = request.form["latitude"]
+        longitude = request.form["longitude"]
+        address = geocoder.reverse_geocode(latitude, longitude, language='en', no_annotations='1')
+        address = address[0]['formatted']
+        picture = request.files['picture']
+        # if user does not select file, browser also submit a empty part without filename
+        if picture.filename == '':
+            msg = 'picture was not given'
+        elif picture and allowed_file(picture.filename):
+            filename = secure_filename(picture.filename)
+            filePath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            picture.save(filePath)
+            msg += "picture was saved"
+        try:
+            print("connecting to database")
+            conn = sqlite3.connect(DATABASE)
+            cur = conn.cursor()
+            cur.execute("SELECT latitude, longitude FROM taps WHERE latitude=? AND  longitude=?", (latitude, longitude))
+            coor_exist = cur.fetchall()
+            ## THIS IF STATEMENT MAKES SURE THAT TAPS THAT ALREADY EXIST IN THE DATABASE CANNOT BE INPUTTEED AGAIN
+            if len(coor_exist) == 0:
+                if picture.filename == '': # This means that no picture was given
+                    cur.execute("INSERT INTO taps (address, latitude, longitude, picture) VALUES (?,?,?,?)",
+                    (address, latitude, longitude, None))
                 else:
-                    msg = "Tap already exists in the database"
-                page = 'addTapAuto.html'
-            except Exception as e:
-                print(e)
-                conn.rollback()
-                msg = f"Task failed because: {e}"
-                page = 'addTapManual.html'
-            finally:
-                conn.close()
-                return render_template(page, msg=msg)
-        elif len(post_info) == 1:
-            if Exception and len(post_info) == 2:
-                print(Exception)
-                page = 'addTapManual.html'
+                    cur.execute("INSERT INTO taps (address, latitude, longitude, picture) VALUES (?,?,?,?)",
+                    (address, latitude, longitude, f"static/uploads/{picture.filename}"))
+                conn.commit()
+                msg = "Task was executed"
             else:
-                page = 'addTapAuto.html'
-            return render_template(page, msg=msg)
+                msg = "Tap already exists in the database"
+            location = '/home/taps/new/auto'
+            print(msg, location)
+            return redirect('auto')
+        except Exception as e:
+            print(e)
+            conn.rollback()
+            print("rolled back")
+            return redirect('manual')
+        finally:
+            conn.close()
 
 @app.route("/home/taps/new/manual", methods = ['GET'])
 def NewTapPageManual():
     msg = ''
     if request.method == 'GET':
+        print("hello2")
         return render_template('addTapManual.html')
+
 
 @app.route("/home/taps/page=<pagenum>", methods = ['GET'])
 def AllTapsPage(pagenum):
