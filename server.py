@@ -2,7 +2,6 @@ import os
 import json
 from flask import Flask, redirect, request,render_template, jsonify, session, make_response, escape
 import sqlite3
-from PIL import Image
 
 # Below 4 lines are for Geocode coordinate and error handling for all geocoder files
 # FOR THIS TO WORK YOU NEED TO ON YOUR CMD TO DO THIS: pip install opencage
@@ -216,6 +215,9 @@ def MapPage(tapID):
             cur.execute("SELECT latitude, longitude, address FROM taps WHERE id IS ?", [tapID])
             data = cur.fetchall()
             data = data[0]
+            print(data[0])
+            print(data[1])
+            print(data[2])
         except:
             print('there was an error')
             conn.close()
