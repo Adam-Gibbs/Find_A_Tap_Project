@@ -12,7 +12,7 @@ key = 'd0d06fa6997b4770af8c48796657cbf0'
 geocoder = OpenCageGeocode(key)
 
 APP_ROOT = os.path.dirname(os.path.abspath(__file__)) # This says where the server is stored on the device
-UPLOAD_FOLDER = os.path.join(APP_ROOT, 'static\\uploads') # This adds the folder where the tap pictures are going to be stored
+UPLOAD_FOLDER = os.path.join(APP_ROOT, 'static/uploads') # This adds the folder where the tap pictures are going to be stored
 DATABASE = 'databases/main_db.db'
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
