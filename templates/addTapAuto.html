@@ -29,9 +29,11 @@
 </div>
 
 <!-- This is for adding a picture to the database: -->
-<form id="form" action="/home/taps/new/auto" method="post" onsubmit="getCoordinates()" enctype="multipart/form-data">
+<form id="form" action="/home/taps/new/auto" method="post" enctype="multipart/form-data">
+  <input type="number" name="latitude" id="latitude" step="any"> <br>
+  <input type="number" name="longitude" id="longitude" step="any"> <br>
   <input type="file" name="picture"/> <br>
-  <input type="submit" name="" value="Submit Picture">
+  <button type="button" name="button" onclick="return getCoordinates()">Get coordinates</button> <br>
 </form>
 {{msg}}
 
