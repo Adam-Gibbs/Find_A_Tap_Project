@@ -39,7 +39,7 @@ def studentAddDetails():
         try:
             conn = sqlite3.connect(DATABASE)
             cur = conn.cursor()
-            sqlquery = 'INSERT INTO "main"."reviews" ("tap-id", "comment", "date") VALUES ("1", "' + add_comment_to_db + '", "'+ add_date_to_db +'");'
+            sqlquery = 'INSERT INTO "main"."reviews" ("comment", "date") VALUES ("' + add_comment_to_db + '", "'+ add_date_to_db +'");'
             print(sqlquery)
             cur.execute(sqlquery)
             conn.commit()
@@ -225,47 +225,49 @@ def MapPage(tapID):
         return render_template('PlainMap.html', lat = data[0], lng = data[1], address = data[2])
 
 @app.route("/home/login/admin", methods = ['GET', 'POST'])
-def admin():
+#code for deleting a row in a database: DELETE FROM "main"."users" WHERE _rowid_ IN ('1');
+def AdminPage():
     username = request.cookies.get('username')
     usertype = "null"
     if 'usertype' in session:
         usertype = escape(session['usertype'])
+    print(usertype)
     if usertype == "Admin":
-        return render_template('adminPage.html', msg = '', username = username)
+        print(usertype)
+        if request.method =='GET':
+            try:
+                conn = sqlite3.connect(DATABASE)
+                print(DATABASE)
+                cur = conn.cursor()
+                cur.execute("SELECT * FROM users")
+                # cur.execute("SELECT * FROM Modules WHERE name=? AND  credits='20' ;", [name])
+                data = cur.fetchall()
+                print(data)
+            except:
+                print('there was an error', data)
+                conn.close()
+            finally:
+                conn.close()
+                #return str(data)
+                return render_template('adminPage.html', data = data, username = username)
+        # return render_template('adminPage.html', msg = '', username = username)
     else:
-        return render_template('login_page.html', msg = 'no access to admin pages', username = username)
-
-#code for deleting a row in a database: DELETE FROM "main"."users" WHERE _rowid_ IN ('1');
-
-def AdminPage():
-    # username = request.cookies.get('username')
-    # usertype = "null"
-    # if 'usertype' in session:
-    #     usertype = escape(session['usertype'])
-    # if usertype == "Admin":
-    #     return render_template('adminPage.html', msg = '', username = username)
-    # else:
-    #     return render_template('HomePage.html', msg = 'no access to admin pages', username = username)
-    if request.method =='GET':
-        try:
-            conn = sqlite3.connect(DATABASE)
-            cur = conn.cursor()
-            #cur.execute("SELECT * FROM Students WHERE surname=? AND public = 'True';", [surname])
-            cur.execute("SELECT * FROM users")
-            # cur.execute("SELECT * FROM taps")
-            # cur.execute("SELECT * FROM reviews")
-            data = cur.fetchall()
-            data2 = cur.fetchall()
-            print(data)
-            print(data2)
-        except:
-            print('there was an error', data)
-            # print('there was an error', data2)
-            conn.close()
-        finally:
-            conn.close()
-            #return str(data)
-            return render_template('adminPage.html', data = data)
+        return render_template('HomePage.html', msg = 'no access to admin pages', username = username)
+    # if request.method =='GET':
+    #     try:
+    #         conn = sqlite3.connect(DATABASE)
+    #         cur = conn.cursor()
+    #         cur.execute("SELECT * FROM users")
+    #         # cur.execute("SELECT * FROM Modules WHERE name=? AND  credits='20' ;", [name])
+    #         data = cur.fetchall()
+    #         print(data)
+    #     except:
+    #         print('there was an error', data)
+    #         conn.close()
+    #     finally:
+    #         conn.close()
+    #         #return str(data)
+    #         return render_template('adminPage.html', data = data)
 
 @app.route("/home/login", methods = ['GET','POST'])
 def LoginPage():
@@ -278,13 +280,15 @@ def LoginPage():
         if checkCredentials(uName, pw):
             resp = make_response(render_template('adminPage.html', msg='hello '+uName+reminder, username = uName))
             session['username'] = request.form['username']
+            print('username')
             session['password'] = 'pa55wrd'
             if (uName == 'Osama'):
-                 session['userType'] = 'Admin'
+                 session['usertype'] = 'Admin'
+                 return redirect("/home/login/admin", code=302)
             else:
-                 session['userType'] = 'Customer'
+                 session['usertype'] = 'Customer'
+                 return redirect("/home", code=302)
 
-            # session['data'] = 'The mayor of London has claimed Volkswagen should pay £2.5m for missed congestion charge payments following the emissions-rigging scandal. Sadiq Khan said 80,000 VW engines fitted with "defeat devices" were registered in London.The devices, which detect when an engine is being tested, changed performance to improve results.VW, the biggest carmaker in the world, admitted about 11 million cars worldwide were fitted with the device.Transport for London calculated the £2.5m figure from the number of owners of affected VW vehicles claiming a discount for which they were not entitled."If you dont ask you dont get. Im a champion for clean air, Im a champion for London," said Mr Khan.'
         else:
             resp = make_response(render_template('login_page.html', msg='Incorrect  login',username='Guest'))
         return resp
@@ -293,22 +297,6 @@ def LoginPage():
         if 'username' in session:
             username = escape(session['username'])
         return render_template('login_page.html', msg='', username = username)
-
-    #if request.method =='POST':
-    #     try:
-    #         conn = sqlite3.connect(DATABASE)
-    #         cur = conn.cursor()
-    #         #cur.execute("SELECT * FROM Students WHERE surname=? AND public = 'True';", [surname])
-    #         cur.execute("SELECT * FROM reviews")
-	# 		data = cur.fetchall()
-	# 		print(data)
-	# 	except:
-	# 		print('there was an error', data)
-	# 		conn.close()
-	# 	finally:
-	# 		conn.close()
-	# 		# return str(data)
-	# 		return render_template('adminPage.html', data = data)
 
 @app.errorhandler(404)
 def page_not_found(e):
