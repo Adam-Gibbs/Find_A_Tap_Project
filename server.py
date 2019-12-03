@@ -134,8 +134,8 @@ def NewTapPageAuto():
                     elif picture and allowed_file(picture.filename):
                         filename = secure_filename(picture.filename)
                         filePath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-                        if not os.path.exists(os.path.join(app.config['UPLOAD_FOLDER'])):
-                            os.makedirs(os.path.join(app.config['UPLOAD_FOLDER']))
+                        if not os.path.exists(app.config['UPLOAD_FOLDER']):
+                            os.makedirs(app.config['UPLOAD_FOLDER'])
                         picture.save(filePath)
                         msg += "picture was saved"
                 conn.commit()
