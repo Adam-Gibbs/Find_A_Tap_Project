@@ -10,3 +10,4 @@ function addTapRow(data){
     document.getElementById('existing-taps').appendChild(tr);
   }
 }
+

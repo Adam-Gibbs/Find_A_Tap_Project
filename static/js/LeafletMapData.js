@@ -12,3 +12,12 @@ function AddMarker(latitude, longitude, popup) {
     L.marker([latitude, longitude]).addTo(mymap)
         .bindPopup(popup).openPopup();
 }
+
+function Route(latitudeFrom, longitudeFrom, latitudeTo, longitudeTo) {
+    L.Routing.control({
+        waypoints: [
+            L.latLng(latitudeFrom, longitudeFrom),
+            L.latLng(latitudeTo, longitudeTo)
+        ]
+        }).addTo(map);
+}
