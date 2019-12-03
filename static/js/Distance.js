@@ -12,7 +12,7 @@ function getDistanceFromLatLonInKm(lat1, lng1, posID) {
           (1 - c((lng2 - lng1) * p))/2;
 
   var d = 12742 * Math.asin(Math.sqrt(a)); // 2 * R; R = 6371 km
-  d = Math.round(d)
+  d = d.toFixed(2);
   document.getElementById(posID).innerHTML = d + " km"
 }
 
