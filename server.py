@@ -221,6 +221,8 @@ def AdminPage():
     if 'usertype' in session:
         usertype = escape(session['usertype'])
     print(usertype)
+    if session.get('Admin') is not True:
+        return redirect("/home", code=302) 
     if usertype == "Admin":
         print(usertype)
         if request.method =='GET':
@@ -235,6 +237,7 @@ def AdminPage():
             except:
                 print('there was an error', data)
                 conn.close()
+                # return redirect("/home/login/admin", code=302)
             finally:
                 conn.close()
                 #return str(data)
