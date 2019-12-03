@@ -1,3 +1,5 @@
+// https://stackoverflow.com/questions/27928/calculate-distance-between-two-latitude-longitude-points-haversine-formula
+// Author Chuck
 function getDistanceFromLatLonInKm(lat1, lng1, posID) {
   stuff_obj = readUrl()
   var lat2 = stuff_obj['lat']
