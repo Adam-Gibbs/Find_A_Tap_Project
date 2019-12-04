@@ -30,14 +30,15 @@
 
 <!-- This is for adding a picture to the database: -->
 <form id="form" action="/home/taps/new/auto" method="post" enctype="multipart/form-data">
-  <input type="number" name="latitude" id="latitude" step="any"> <br>
-  <input type="number" name="longitude" id="longitude" step="any"> <br>
-  <input type="file" name="picture"/> <br>
-  <button type="button" name="button" onclick="return getCoordinates()">Get coordinates</button> <br>
+  <input type="hidden" name="latitude" id="latitude" step="any">
+  <input type="hidden" name="longitude" id="longitude" step="any">
+  <input type="file" name="picture"/> <br> <br>
+  <button type="button" name="button" onclick="return getCoordinates()">Submit Tap</button> <br>
 </form>
 {{msg}}
 
 <p id="ERROR"></p>
 <script type="text/javascript" src="/static/js/newTapLocation.js"></script>
 </div>
+
 {%endblock%}
