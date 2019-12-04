@@ -2,7 +2,7 @@ import os
 import json
 from flask import Flask, redirect, request,render_template, jsonify, session, make_response, escape
 import sqlite3
-
+from PIL import Image
 # Below 4 lines are for Geocode coordinate and error handling for all geocoder files
 # FOR THIS TO WORK YOU NEED TO ON YOUR CMD TO DO THIS: pip install opencage
 from opencage.geocoder import OpenCageGeocode
@@ -84,28 +84,22 @@ def NearTapPage(pagenum, user_lat, user_lng):
             conn.close()
         finally:
             conn.close()
-
         all_tap_data = []
         for item in data:
             try:
-                print(item[4])
-                tapImage = Image.open(f"{APP_ROOT}{item[4]}")
-                print(tapImage.filename)
+                tapImage = Image.open(f"{APP_ROOT}{item[4]}",mode='r')
+                print(tapImage)
             except Exception as e:
                 print(e)
                 tapImage = "http://placehold.it/750x300"
                 print("failed to load")
-            print(f"-----------------------------------------{tapImage}")
-            print(f"--------------------------------------------------{APP_ROOT}{item[4]}")
             one_tap_data = {'TapID': item[0], 'Address': item[1], 'Longitude': item[2], 'Latitude': item[3], 'Image': tapImage, 'Description': 'Temporary Description', 'PostDate': "26/11/2019", 'UserLink': 'https://www.linkedin.com/in/adam-gibbs-77411616b/', 'UserName': 'Adam'}
             all_tap_data.append(one_tap_data)
-
         return render_template('TapList.html', alltapdata = all_tap_data)
 
 @app.route("/home/taps/new/auto", methods = ['GET', 'POST'])
 def NewTapPageAuto():
     msg = ''
-    global post_info
     if request.method == 'GET':
         return render_template('addTapAuto.html')
 
@@ -128,7 +122,7 @@ def NewTapPageAuto():
                     (address, latitude, longitude, None, 1))
                 else:
                     cur.execute("INSERT INTO taps (address, latitude, longitude, picture, userID) VALUES (?,?,?,?,?)",
-                    (address, latitude, longitude, f"static/uploads/{picture.filename}", 1))
+                    (address, latitude, longitude, f"/static/uploads/{picture.filename}", 1))
                     if picture.filename == '':
                         msg = 'picture was not given'
                     elif picture and allowed_file(picture.filename):
@@ -142,13 +136,13 @@ def NewTapPageAuto():
                 msg = "Task was executed"
             else:
                 msg = "Tap already exists in the database"
-            location = '/home/taps/new/auto'
-            print(msg, location)
+            # response = make_response(render_template('addTapAuto.html',msg=msg))
             return redirect('auto')
         except Exception as e:
             print(e)
             conn.rollback()
             print("rolled back")
+            print(msg)
             return redirect('manual')
         finally:
             conn.close()
@@ -222,7 +216,7 @@ def AdminPage():
         usertype = escape(session['usertype'])
     print(usertype)
     if session.get('Admin') is not True:
-        return redirect("/home", code=302) 
+        return redirect("/home", code=302)
     if usertype == "Admin":
         print(usertype)
         if request.method =='GET':
