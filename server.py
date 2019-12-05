@@ -94,7 +94,6 @@ def NearTapPage(pagenum, user_lat, user_lng):
                 print(e)
                 tapImageRoute = "http://placehold.it/750x300"
                 print("failed to load")
-            print(tapImage)
             one_tap_data = {'TapID': item[0], 'Address': item[1], 'Longitude': item[2], 'Latitude': item[3], 'Image': tapImageRoute, 'Description': 'Temporary Description', 'PostDate': "26/11/2019", 'UserLink': 'https://www.linkedin.com/in/adam-gibbs-77411616b/', 'UserName': 'Adam'}
             all_tap_data.append(one_tap_data)
         return render_template('TapList.html', alltapdata = all_tap_data)
