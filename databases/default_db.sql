@@ -1,3 +1,4 @@
+DROP TABLE IF EXISTS "reviews";
 DROP TABLE IF EXISTS "taps";
 
 CREATE TABLE IF NOT EXISTS "taps" (
@@ -26,6 +27,6 @@ CREATE TABLE IF NOT EXISTS "users"(
 	"id"  INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
 	"userName" TEXT NOT NULL UNIQUE,
 	"password" TEXT NOT NULL,
-	"role" BOOLEAN
+	"role" BOOLEAN NOT NULL
 	-- 0 will be regular user and 1 will be admin
 );
