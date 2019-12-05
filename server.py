@@ -221,8 +221,8 @@ def AdminPage():
     if 'usertype' in session:
         usertype = escape(session['usertype'])
     print(usertype)
-    if session.get('Admin') is not True:
-        return redirect("/home", code=302) 
+    # if session.get('Admin') is not True:
+    #     return redirect("/home", code=302) 
     if usertype == "Admin":
         print(usertype)
         if request.method =='GET':
