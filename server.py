@@ -88,12 +88,14 @@ def NearTapPage(pagenum, user_lat, user_lng):
         for item in data:
             try:
                 tapImage = Image.open(f"{APP_ROOT}{item[4]}",mode='r')
-                print(tapImage)
+                tapImageRoute = f"{APP_ROOT}{item[4]}"
+                print(tapImageRoute)
             except Exception as e:
                 print(e)
-                tapImage = "http://placehold.it/750x300"
+                tapImageRoute = "http://placehold.it/750x300"
                 print("failed to load")
-            one_tap_data = {'TapID': item[0], 'Address': item[1], 'Longitude': item[2], 'Latitude': item[3], 'Image': tapImage, 'Description': 'Temporary Description', 'PostDate': "26/11/2019", 'UserLink': 'https://www.linkedin.com/in/adam-gibbs-77411616b/', 'UserName': 'Adam'}
+            print(tapImage)
+            one_tap_data = {'TapID': item[0], 'Address': item[1], 'Longitude': item[2], 'Latitude': item[3], 'Image': tapImageRoute, 'Description': 'Temporary Description', 'PostDate': "26/11/2019", 'UserLink': 'https://www.linkedin.com/in/adam-gibbs-77411616b/', 'UserName': 'Adam'}
             all_tap_data.append(one_tap_data)
         return render_template('TapList.html', alltapdata = all_tap_data)
 
