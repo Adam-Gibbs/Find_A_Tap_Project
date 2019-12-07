@@ -14,6 +14,19 @@ function setLink(position) {
   var myMap = document.getElementById("mapid");
   if(myMap){
     showPosition(position);
+
+    if(myMap.classList.contains('giveTaps')){
+      $.ajax({
+        type : "POST",
+        url : "/givetaps",
+        data: JSON.stringify({'lat':position.coords.latitude, 'lng': position.coords.longitude}),
+        contentType: 'application/json;charset=UTF-8',
+        success: function(result) {
+            result.forEach(item => AddMarker(item[2], item[3], item[1]));
+            GoTo(position)
+        }
+    });
+    }
   }
 }
 

@@ -155,22 +155,23 @@ def NewTapPageManual():
         print("hello2")
         return render_template('addTapManual.html')
 
+@app.route("/givetaps", methods = ['POST'])
+def GiveTaps():
+    user_lat = request.json['lat']
+    user_lng = request.json['lng']
+    try:
+        conn = sqlite3.connect(DATABASE)
+        cur = conn.cursor()
+        # https://gist.github.com/statickidz/8a2f0ce3bca9badbf34970b958ef8479
+        cur.execute("SELECT * FROM taps ORDER BY ((latitude-?)*(latitude-?)) + ((longitude - ?)*(longitude - ?)) ASC;", (user_lat, user_lat, user_lng, user_lng))
+        data = cur.fetchall()
+    except:
+        print('there was an error')
+        conn.close()
+    finally:
+        conn.close()
 
-@app.route("/home/taps/page=<pagenum>", methods = ['GET'])
-def AllTapsPage(pagenum):
-    if request.method =='GET':
-        try:
-            conn = sqlite3.connect(DATABASE)
-            cur = conn.cursor()
-            cur.execute(f"SELECT * FROM taps LIMIT ?, 5; ", (int(pagenum)*5))
-            data = cur.fetchall()
-            print(data)
-        except:
-            print('there was an error')
-            conn.close()
-        finally:
-            conn.close()
-        return render_template('TapList.html')
+    return jsonify(data)
 
 @app.route("/home/faq", methods = ['GET'])
 def FAQPage():

@@ -13,6 +13,10 @@ function AddMarker(latitude, longitude, popup) {
         .bindPopup(popup).openPopup();
 }
 
+function GoTo(position) {
+    mymap.setView(new L.LatLng(position.coords.latitude, position.coords.longitude), 15);
+}
+
 function RouteFromMe(latitudeTo, longitudeTo) {
     var x = document.getElementById('ERROR');
     if (navigator.geolocation) {
