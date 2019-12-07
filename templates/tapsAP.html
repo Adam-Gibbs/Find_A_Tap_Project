@@ -5,31 +5,28 @@
 <div class="container">
 
     <!-- Page Heading/Breadcrumbs -->
-    <h1 class="mt-4 mb-3">Admin
+    <h1 class="mt-4 mb-3">Tap Database
     </h1>
 
     <ol class="breadcrumb">
         <li class="breadcrumb-item">
             <a href="/home">Home</a>
         </li>
-        {% if request.path == '/home/login/admin'%} 
+        {% if request.path == '/home/login/admin/tapsDB'%} 
         <li class="breadcrumb-item">
                 <a href="/home/login">Login</a>
             </li>
-        <li class="breadcrumb-item active">Admin</li>
+        <li class="breadcrumb-item active">
+                <a href="/home/login/admin">Admin</a>
+        </li>
+        <li class="breadcrumb-item active">Tap Database</li>
         {%else%}
         <li class="breadcrumb-item active">Login</li>
         {%endif%}
     </ol>
 
-    <h2> Databases</h2>
-    <form action="/home/login/admin/tapsDB" method = "get">
-         <button type="submit" class="btn btn-primary">Taps Database</button>
-    </form>
-    <!-- <button onclick="tapsAP.html" class="btn btn-primary">Taps Database</button> -->
-    <button onclick="reviewsAP.html" class="btn btn-primary">Comments Database</button>
-    <button onclick="usersAP.html" class="btn btn-primary">Users Database</button>
-<!-- <table border = 1>
+    <h2> Tap Database</h2>
+<table border = 1>
    <thead>
       <td>ID</td>
       <td>Address</td>
@@ -42,9 +39,7 @@
    </thead>
 
    {% for row in data %}
-   A List of tuples so row is each item in the list
-        and then the index is the column number.-->
-      <!-- <tr>
+      <tr>
         <td>{{row[0]}}</td>
         <td>{{row[1]}}</td>
         <td>{{row[2]}}</td>
@@ -55,6 +50,6 @@
         <td>{{row[7]}}</td>
       </tr>
    {% endfor %}
-</table> -->
+</table>
 
 {%endblock%}

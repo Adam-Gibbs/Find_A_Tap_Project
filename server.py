@@ -211,21 +211,13 @@ def MapPage(tapID):
 @app.route("/home/login/admin", methods = ['GET', 'POST'])
 #code for deleting a row in a database: DELETE FROM "main"."users" WHERE _rowid_ IN ('1');
 def AdminPage():
+    # if session.get('admin') is not True:
+    #     return redirect("/", code=302)
     username = request.cookies.get('username')
     usertype = "null"
     if 'usertype' in session:
         usertype = escape(session['usertype'])
-<<<<<<< HEAD
         print(usertype)
-        #if session.get('Admin') is not True:
-            # return redirect("/home", code=302)
-=======
-    print(usertype)
-    # if session.get('Admin') is not True:
-    #     return redirect("/home", code=302)
-    if session.get('Admin') is not True:
-        return redirect("/home", code=302)
->>>>>>> ec2265bbaea056f8c3236f8a9e65a7c85426a2ef
     if usertype == "Admin":
         print(usertype)
         if request.method =='GET':
@@ -233,9 +225,9 @@ def AdminPage():
             #     conn = sqlite3.connect(DATABASE)
             #     print(DATABASE)
             #     cur = conn.cursor()
-            #     cur.execute("SELECT * FROM users")
+            #     # cur.execute("SELECT * FROM users")
             #     # cur.execute("SELECT * FROM reviews")
-            #     # cur.execute("SELECT * FROM taps")
+            #     cur.execute("SELECT * FROM taps")
             #     # cur.execute("SELECT * FROM Modules WHERE name=? AND  credits='20' ;", [name])
             #     data = cur.fetchall()
             #     # data2 = cur.fetchall()
@@ -251,9 +243,9 @@ def AdminPage():
             #     # return redirect("/home/login/admin", code=302)
             # finally:
             #     conn.close()
-                #return str(data)
-            return render_template('adminPage.html')
-        # return render_template('adminPage.html', msg = '', username = username)
+            #     #return str(data)
+            # return render_template('adminPage.html')
+            return render_template('adminPage.html', msg = '', username = username)
     else:
         return render_template('HomePage.html', username = username)
     # if request.method =='GET':
@@ -300,6 +292,25 @@ def LoginPage():
         if 'username' in session:
             username = escape(session['username'])
         return render_template('login_page.html', msg='', username = username)
+
+@app.route("/home/login/admin/tapsDB", methods = ['GET', 'POST'])
+def tapsDBPage():
+	if request.method =='GET':
+            try:
+                conn = sqlite3.connect(DATABASE)
+                print(DATABASE)
+                cur = conn.cursor()
+                cur.execute("SELECT * FROM taps")
+                data = cur.fetchall()
+                print(data)
+            except:
+                print('there was an error', data)
+                conn.close()
+                return redirect("/home/login/admin", code=302)
+            finally:
+                conn.close()
+                return render_template('tapsAP.html', data = data)
+		#return render_template('tapsAP.html')
 
 @app.errorhandler(404)
 def page_not_found(e):
