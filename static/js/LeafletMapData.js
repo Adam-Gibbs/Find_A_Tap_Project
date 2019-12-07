@@ -35,7 +35,7 @@ function RouteFromMe(latitudeTo, longitudeTo) {
         latitudeFrom = position.coords.latitude;
         L.Routing.control({
             lineOptions: {
-                styles: [{color: 'blue', weight: 7}],
+                styles: [{color: 'lightblue', weight: 4}],
             },
             router: L.Routing.mapbox('pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
                 profile : 'mapbox/walking'

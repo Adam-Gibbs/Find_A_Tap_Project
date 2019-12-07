@@ -89,12 +89,11 @@ def NearTapPage(pagenum, user_lat, user_lng):
             try:
                 tapImage = Image.open(f"{APP_ROOT}{item[4]}",mode='r')
                 tapImageRoute = f"{APP_ROOT}{item[4]}"
-                print(tapImageRoute)
+                print("-----------",tapImageRoute)
             except Exception as e:
                 print(e)
                 tapImageRoute = "http://placehold.it/750x300"
                 print("failed to load")
-            print(tapImage)
             one_tap_data = {'TapID': item[0], 'Address': item[1], 'Longitude': item[2], 'Latitude': item[3], 'Image': tapImageRoute, 'Description': 'Temporary Description', 'PostDate': "26/11/2019", 'UserLink': 'https://www.linkedin.com/in/adam-gibbs-77411616b/', 'UserName': 'Adam'}
             all_tap_data.append(one_tap_data)
         return render_template('TapList.html', alltapdata = all_tap_data)
@@ -216,9 +215,17 @@ def AdminPage():
     usertype = "null"
     if 'usertype' in session:
         usertype = escape(session['usertype'])
+<<<<<<< HEAD
         print(usertype)
         #if session.get('Admin') is not True:
             # return redirect("/home", code=302)
+=======
+    print(usertype)
+    # if session.get('Admin') is not True:
+    #     return redirect("/home", code=302)
+    if session.get('Admin') is not True:
+        return redirect("/home", code=302)
+>>>>>>> ec2265bbaea056f8c3236f8a9e65a7c85426a2ef
     if usertype == "Admin":
         print(usertype)
         if request.method =='GET':
