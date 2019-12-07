@@ -84,6 +84,7 @@ def NearTapPage(pagenum, user_lat, user_lng):
             conn.close()
         finally:
             conn.close()
+
         all_tap_data = []
         for item in data:
             try:
@@ -94,9 +95,64 @@ def NearTapPage(pagenum, user_lat, user_lng):
                 print(e)
                 tapImageRoute = "http://placehold.it/750x300"
                 print("failed to load")
-            one_tap_data = {'TapID': item[0], 'Address': item[1], 'Longitude': item[2], 'Latitude': item[3], 'Image': tapImageRoute, 'Description': 'Temporary Description', 'PostDate': "26/11/2019", 'UserLink': 'https://www.linkedin.com/in/adam-gibbs-77411616b/', 'UserName': 'Adam'}
+                
+            try:
+                conn = sqlite3.connect(DATABASE)
+                cur = conn.cursor()
+                # https://gist.github.com/statickidz/8a2f0ce3bca9badbf34970b958ef8479
+                print(item[5])
+                cur.execute("SELECT id, username FROM users WHERE id IS ?;", (str(item[5])))
+                userdata = cur.fetchall()
+                userdata = userdata[0]
+            except:
+                print('there was an error')
+                conn.close()
+            finally:
+                conn.close()
+
+            one_tap_data = {'TapID': item[0], 'Address': item[1], 'Longitude': item[2], 'Latitude': item[3], 'Image': tapImageRoute, 'Description': item[7], 'PostDate': item[6], 'UserLink': '/home/users/' + str(userdata[0]) + '/info', 'UserName': userdata[1]}
             all_tap_data.append(one_tap_data)
+
         return render_template('TapList.html', alltapdata = all_tap_data)
+
+@app.route("/home/taps/<tapID>/info", methods = ['GET'])
+def TapInfo(tapID):
+    if request.method =='GET':
+        try:
+            conn = sqlite3.connect(DATABASE)
+            cur = conn.cursor()
+            # https://gist.github.com/statickidz/8a2f0ce3bca9badbf34970b958ef8479
+            cur.execute("SELECT * FROM taps WHERE id IS ?", [tapID])
+            data = cur.fetchall()
+            data = data[0]
+        except:
+            print('there was an error')
+            conn.close()
+        finally:
+            conn.close()
+
+        return render_template('TapInfo.html', data=data)
+
+@app.route("/home/taps/<tapID>/location", methods = ['GET'])
+def MapPage(tapID):
+    if request.method =='GET':
+        try:
+            conn = sqlite3.connect(DATABASE)
+            cur = conn.cursor()
+            # https://gist.github.com/statickidz/8a2f0ce3bca9badbf34970b958ef8479
+            cur.execute("SELECT latitude, longitude, address FROM taps WHERE id IS ?", [tapID])
+            data = cur.fetchall()
+            data = data[0]
+            print(data[0])
+            print(data[1])
+            print(data[2])
+        except:
+            print('there was an error')
+            conn.close()
+        finally:
+            conn.close()
+
+        return render_template('PlainMap.html', lat = data[0], lng = data[1], address = data[2])
 
 @app.route("/home/taps/new/auto", methods = ['GET', 'POST'])
 def NewTapPageAuto():
@@ -187,27 +243,6 @@ def ContactPage():
 def CommentsPage():
 	if request.method =='GET':
 		return render_template('CommentsTaps.html')
-
-@app.route("/home/taps/<tapID>/location", methods = ['GET'])
-def MapPage(tapID):
-    if request.method =='GET':
-        try:
-            conn = sqlite3.connect(DATABASE)
-            cur = conn.cursor()
-            # https://gist.github.com/statickidz/8a2f0ce3bca9badbf34970b958ef8479
-            cur.execute("SELECT latitude, longitude, address FROM taps WHERE id IS ?", [tapID])
-            data = cur.fetchall()
-            data = data[0]
-            print(data[0])
-            print(data[1])
-            print(data[2])
-        except:
-            print('there was an error')
-            conn.close()
-        finally:
-            conn.close()
-
-        return render_template('PlainMap.html', lat = data[0], lng = data[1], address = data[2])
 
 @app.route("/home/login/admin", methods = ['GET', 'POST'])
 #code for deleting a row in a database: DELETE FROM "main"."users" WHERE _rowid_ IN ('1');
