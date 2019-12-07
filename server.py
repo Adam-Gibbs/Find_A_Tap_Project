@@ -221,48 +221,9 @@ def AdminPage():
     if usertype == "Admin":
         print(usertype)
         if request.method =='GET':
-            # try:
-            #     conn = sqlite3.connect(DATABASE)
-            #     print(DATABASE)
-            #     cur = conn.cursor()
-            #     # cur.execute("SELECT * FROM users")
-            #     # cur.execute("SELECT * FROM reviews")
-            #     cur.execute("SELECT * FROM taps")
-            #     # cur.execute("SELECT * FROM Modules WHERE name=? AND  credits='20' ;", [name])
-            #     data = cur.fetchall()
-            #     # data2 = cur.fetchall()
-            #     # data3 = cur.fetchall()
-            #     print(data)
-            #     # print(data2)
-            #     # print(data3)
-            # except:
-            #     print('there was an error', data)
-            #     # print('there was an error', data2)
-            #     # print('there was an error', data3)
-            #     conn.close()
-            #     # return redirect("/home/login/admin", code=302)
-            # finally:
-            #     conn.close()
-            #     #return str(data)
-            # return render_template('adminPage.html')
             return render_template('adminPage.html', msg = '', username = username)
     else:
         return render_template('HomePage.html', username = username)
-    # if request.method =='GET':
-    #     try:
-    #         conn = sqlite3.connect(DATABASE)
-    #         cur = conn.cursor()
-    #         cur.execute("SELECT * FROM users")
-    #         # cur.execute("SELECT * FROM Modules WHERE name=? AND  credits='20' ;", [name])
-    #         data = cur.fetchall()
-    #         print(data)
-    #     except:
-    #         print('there was an error', data)
-    #         conn.close()
-    #     finally:
-    #         conn.close()
-    #         #return str(data)
-    #         return render_template('adminPage.html', data = data)
 
 @app.route("/home/login", methods = ['GET','POST'])
 def LoginPage():
