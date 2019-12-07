@@ -169,3 +169,4 @@ $RECYCLE.BIN/
 
 # ignores all databases
 *.db*
+.vscode/settings.json
