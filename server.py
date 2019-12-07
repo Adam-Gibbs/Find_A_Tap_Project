@@ -89,7 +89,7 @@ def NearTapPage(pagenum, user_lat, user_lng):
             try:
                 tapImage = Image.open(f"{APP_ROOT}{item[4]}",mode='r')
                 tapImageRoute = f"{APP_ROOT}{item[4]}"
-                print(tapImageRoute)
+                print("-----------",tapImageRoute)
             except Exception as e:
                 print(e)
                 tapImageRoute = "http://placehold.it/750x300"
