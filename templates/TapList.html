@@ -36,12 +36,12 @@
                     <div class="card-body">
                     <h2 class="card-title">{{tapdata.Address}}</h2>
                     <p class="card-text">{{tapdata.Description}}</p>
-                    <a href="/home/taps/{{tapdata.TapID}}/location" class="btn btn-primary">Go To &rarr;</a>
+                    <a href="/home/taps/{{tapdata.TapID}}/location" class="btn btn-primary RightLoc">Go To &rarr;</a>
+                    <a href="/home/taps/{{tapdata.TapID}}/info" class="btn btn-info">More Info</a>
                     </div>
                     <div class="card-footer text-muted">
                         Posted on {{tapdata.PostDate}} by
                         <a href={{tapdata.UserLink}}>{{tapdata.UserName}}</a>
-                        <!-- Add dynamic ID to be set for each function -->
                         <p class="RightLoc" id={{tapdata.TapID}}></p>
                         <script>getDistanceFromLatLonInKm({{tapdata.Longitude}}, {{tapdata.Latitude}}, {{tapdata.TapID}})</script>
                         <img class="RightLoc" src="/static/img/distanceMarker.png" alt="" height="25" width="14">
