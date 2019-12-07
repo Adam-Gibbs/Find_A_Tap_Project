@@ -213,21 +213,22 @@ def NewTapPageManual():
 
 @app.route("/givetaps", methods = ['POST'])
 def GiveTaps():
-    user_lat = request.json['lat']
-    user_lng = request.json['lng']
-    try:
-        conn = sqlite3.connect(DATABASE)
-        cur = conn.cursor()
-        # https://gist.github.com/statickidz/8a2f0ce3bca9badbf34970b958ef8479
-        cur.execute("SELECT * FROM taps ORDER BY ((latitude-?)*(latitude-?)) + ((longitude - ?)*(longitude - ?)) ASC;", (user_lat, user_lat, user_lng, user_lng))
-        data = cur.fetchall()
-    except:
-        print('there was an error')
-        conn.close()
-    finally:
-        conn.close()
+    if request.method =='POST':
+        user_lat = request.json['lat']
+        user_lng = request.json['lng']
+        try:
+            conn = sqlite3.connect(DATABASE)
+            cur = conn.cursor()
+            # https://gist.github.com/statickidz/8a2f0ce3bca9badbf34970b958ef8479
+            cur.execute("SELECT * FROM taps ORDER BY ((latitude-?)*(latitude-?)) + ((longitude - ?)*(longitude - ?)) ASC;", (user_lat, user_lat, user_lng, user_lng))
+            data = cur.fetchall()
+        except:
+            print('there was an error')
+            conn.close()
+        finally:
+            conn.close()
 
-    return jsonify(data)
+        return jsonify(data)
 
 @app.route("/home/faq", methods = ['GET'])
 def FAQPage():
