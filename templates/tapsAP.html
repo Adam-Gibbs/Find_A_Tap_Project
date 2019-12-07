@@ -1,0 +1,54 @@
+{%extends 'generalPageStyling.html'%}
+
+
+{%block mainBlock%}
+<div class="container">
+
+    <!-- Page Heading/Breadcrumbs -->
+    <h1 class="mt-4 mb-3">Tap Database
+    </h1>
+
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a href="/home">Home</a>
+        </li>
+        {% if request.path == '/home/login/admin/tapsDB'%} 
+        <li class="breadcrumb-item">
+                <a href="/home/login">Login</a>
+            </li>
+        <li class="breadcrumb-item active">
+                <a href="/home/login/admin">Admin</a>
+        </li>
+        <li class="breadcrumb-item active">Tap Database</li>
+        {%else%}
+        <li class="breadcrumb-item active">Login</li>
+        {%endif%}
+    </ol>
+
+<table border = 1>
+   <thead>
+      <td>ID</td>
+      <td>Address</td>
+      <td>Latitude</td>
+      <td>Longitude</td>
+      <td>Picture</td>
+      <td>User-ID</td>
+      <td>Post Date</td>
+      <td>Description</td>
+   </thead>
+
+   {% for row in data %}
+      <tr>
+        <td>{{row[0]}}</td>
+        <td>{{row[1]}}</td>
+        <td>{{row[2]}}</td>
+        <td>{{row[3]}}</td>
+        <td>{{row[4]}}</td>
+        <td>{{row[5]}}</td>
+        <td>{{row[6]}}</td>
+        <td>{{row[7]}}</td>
+      </tr>
+   {% endfor %}
+</table>
+
+{%endblock%}

@@ -89,7 +89,7 @@ def NearTapPage(pagenum, user_lat, user_lng):
             try:
                 tapImage = Image.open(f"{APP_ROOT}{item[4]}",mode='r')
                 tapImageRoute = f"{APP_ROOT}{item[4]}"
-                print(tapImageRoute)
+                print("-----------",tapImageRoute)
             except Exception as e:
                 print(e)
                 tapImageRoute = "http://placehold.it/750x300"
@@ -212,66 +212,33 @@ def MapPage(tapID):
 @app.route("/home/login/admin", methods = ['GET', 'POST'])
 #code for deleting a row in a database: DELETE FROM "main"."users" WHERE _rowid_ IN ('1');
 def AdminPage():
+    # if session.get('admin') is not True:
+    #     return redirect("/", code=302)
     username = request.cookies.get('username')
     usertype = "null"
     if 'usertype' in session:
         usertype = escape(session['usertype'])
-    print(usertype)
-    # if session.get('Admin') is not True:
-    #     return redirect("/home", code=302)
-    if session.get('Admin') is not True:
-        return redirect("/home", code=302)
+        print(usertype)
     if usertype == "Admin":
         print(usertype)
         if request.method =='GET':
-            try:
-                conn = sqlite3.connect(DATABASE)
-                print(DATABASE)
-                cur = conn.cursor()
-                cur.execute("SELECT * FROM users")
-                # cur.execute("SELECT * FROM Modules WHERE name=? AND  credits='20' ;", [name])
-                data = cur.fetchall()
-                print(data)
-            except:
-                print('there was an error', data)
-                conn.close()
-                # return redirect("/home/login/admin", code=302)
-            finally:
-                conn.close()
-                #return str(data)
-                return render_template('adminPage.html', data = data, username = username)
-        # return render_template('adminPage.html', msg = '', username = username)
+            return render_template('adminPage.html', msg = '', username = username)
     else:
-        return render_template('HomePage.html', msg = 'no access to admin pages', username = username)
-    # if request.method =='GET':
-    #     try:
-    #         conn = sqlite3.connect(DATABASE)
-    #         cur = conn.cursor()
-    #         cur.execute("SELECT * FROM users")
-    #         # cur.execute("SELECT * FROM Modules WHERE name=? AND  credits='20' ;", [name])
-    #         data = cur.fetchall()
-    #         print(data)
-    #     except:
-    #         print('there was an error', data)
-    #         conn.close()
-    #     finally:
-    #         conn.close()
-    #         #return str(data)
-    #         return render_template('adminPage.html', data = data)
+        return render_template('HomePage.html', username = username)
 
 @app.route("/home/login", methods = ['GET','POST'])
 def LoginPage():
     if request.method =='GET':
         return render_template('login_page.html')
     if request.method=='POST':
-        reminder =". ***** REM other pages WILL NOT be able to access the username as they are not set up to use Cookie Sessions. "
         uName = request.form.get('username', default="Error")
         pw = request.form.get('password', default="Error")
         if checkCredentials(uName, pw):
-            resp = make_response(render_template('adminPage.html', msg='hello '+uName+reminder, username = uName))
+            resp = make_response(render_template('adminPage.html', msg='hello '+uName, username = uName))
             session['username'] = request.form['username']
             print('username')
-            session['password'] = 'pa55wrd'
+            session['password'] = request.form['password']
+            print('password')
             if (uName == 'Osama'):
                  session['usertype'] = 'Admin'
                  return redirect("/home/login/admin", code=302)
@@ -287,6 +254,60 @@ def LoginPage():
         if 'username' in session:
             username = escape(session['username'])
         return render_template('login_page.html', msg='', username = username)
+
+@app.route("/home/login/admin/tapsDB", methods = ['GET', 'POST'])
+def tapsDBPage():
+	if request.method =='GET':
+            try:
+                conn = sqlite3.connect(DATABASE)
+                print(DATABASE)
+                cur = conn.cursor()
+                cur.execute("SELECT * FROM taps")
+                data = cur.fetchall()
+                print(data)
+            except:
+                print('there was an error', data)
+                conn.close()
+                return redirect("/home/login/admin", code=302)
+            finally:
+                conn.close()
+                return render_template('tapsAP.html', data = data)
+
+@app.route("/home/login/admin/reviewsDB", methods = ['GET', 'POST'])
+def reviewsDBPage():
+	if request.method =='GET':
+            try:
+                conn = sqlite3.connect(DATABASE)
+                print(DATABASE)
+                cur = conn.cursor()
+                cur.execute("SELECT * FROM reviews")
+                data = cur.fetchall()
+                print(data)
+            except:
+                print('there was an error', data)
+                conn.close()
+                return redirect("/home/login/admin", code=302)
+            finally:
+                conn.close()
+                return render_template('reviewAP.html', data = data)
+
+@app.route("/home/login/admin/usersDB", methods = ['GET', 'POST'])
+def usersDBPage():
+	if request.method =='GET':
+            try:
+                conn = sqlite3.connect(DATABASE)
+                print(DATABASE)
+                cur = conn.cursor()
+                cur.execute("SELECT * FROM users")
+                data = cur.fetchall()
+                print(data)
+            except:
+                print('there was an error', data)
+                conn.close()
+                return redirect("/home/login/admin", code=302)
+            finally:
+                conn.close()
+                return render_template('usersAP.html', data = data)
 
 @app.errorhandler(404)
 def page_not_found(e):
