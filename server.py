@@ -312,6 +312,25 @@ def tapsDBPage():
                 return render_template('tapsAP.html', data = data)
 		#return render_template('tapsAP.html')
 
+@app.route("/home/login/admin/reviewsDB", methods = ['GET', 'POST'])
+def reviewsDBPage():
+	if request.method =='GET':
+            try:
+                conn = sqlite3.connect(DATABASE)
+                print(DATABASE)
+                cur = conn.cursor()
+                cur.execute("SELECT * FROM reviews")
+                data = cur.fetchall()
+                print(data)
+            except:
+                print('there was an error', data)
+                conn.close()
+                return redirect("/home/login/admin", code=302)
+            finally:
+                conn.close()
+                return render_template('reviewAP.html', data = data)
+		#return render_template('tapsAP.html')
+
 @app.errorhandler(404)
 def page_not_found(e):
     return render_template('404.html'), 404
