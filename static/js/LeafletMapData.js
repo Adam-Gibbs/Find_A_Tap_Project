@@ -8,15 +8,6 @@ L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=p
     id: 'mapbox.streets'
 }).addTo(mymap);
 
-L.Routing.control({
-    lineOptions: {
-        styles: [{color: 'blue', weight: 7}],
-        router: L.Routing.mapbox('pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
-            profile : 'mapbox/walking'
-        })
-    }
-})
-
 function AddMarker(latitude, longitude, popup) {
     L.marker([latitude, longitude]).addTo(mymap)
         .bindPopup(popup).openPopup();
