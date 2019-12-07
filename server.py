@@ -99,8 +99,6 @@ def NearTapPage(pagenum, user_lat, user_lng):
             try:
                 conn = sqlite3.connect(DATABASE)
                 cur = conn.cursor()
-                # https://gist.github.com/statickidz/8a2f0ce3bca9badbf34970b958ef8479
-                print(item[5])
                 cur.execute("SELECT id, username FROM users WHERE id IS ?;", (str(item[5])))
                 userdata = cur.fetchall()
                 userdata = userdata[0]
@@ -139,13 +137,9 @@ def MapPage(tapID):
         try:
             conn = sqlite3.connect(DATABASE)
             cur = conn.cursor()
-            # https://gist.github.com/statickidz/8a2f0ce3bca9badbf34970b958ef8479
             cur.execute("SELECT latitude, longitude, address FROM taps WHERE id IS ?", [tapID])
             data = cur.fetchall()
             data = data[0]
-            print(data[0])
-            print(data[1])
-            print(data[2])
         except:
             print('there was an error')
             conn.close()
@@ -153,6 +147,23 @@ def MapPage(tapID):
             conn.close()
 
         return render_template('PlainMap.html', lat = data[0], lng = data[1], address = data[2])
+
+@app.route("/home/users/<userID>/info", methods = ['GET'])
+def UserInfo(userID):
+    if request.method =='GET':
+        try:
+            conn = sqlite3.connect(DATABASE)
+            cur = conn.cursor()
+            cur.execute("SELECT username FROM users WHERE id IS ?;", [userID])
+            data = cur.fetchall()
+            data = data[0]
+        except:
+            print('there was an error')
+            conn.close()
+        finally:
+            conn.close()
+
+        return render_template('UserInfo.html', data=data)
 
 @app.route("/home/taps/new/auto", methods = ['GET', 'POST'])
 def NewTapPageAuto():
