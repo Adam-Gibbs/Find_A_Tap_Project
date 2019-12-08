@@ -7,6 +7,7 @@
     <input hidden id='pos_lat' value='' />
     <input hidden id='pos_lng' value='' />
     <script type="text/javascript" src="/static/js/Distance.js"></script>
+    <script type="text/javascript" src="/static/js/ChangePage.js"></script>
 
     <!-- Page Heading/Breadcrumbs -->
     <h1 class="mt-4 mb-3">Taps
@@ -51,10 +52,10 @@
 
             <ul class="pagination justify-content-center mb-4">
                 <li class="page-item">
-                <a class="page-link" href="#">&larr; Previous</a>
+                <a class="page-link" onclick="ChangePage(-1)" style="color:#007bff">&larr; Previous</a>
                 </li>
-                <li class="page-item disabled">
-                <a class="page-link" href="#">Next &rarr;</a>
+                <li class="page-item">
+                <a class="page-link" onclick="ChangePage(1)" style="color:#007bff">Next &rarr;</a>
                 </li>
             </ul>
 
