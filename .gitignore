@@ -172,3 +172,6 @@ $RECYCLE.BIN/
 
 # ignore images uploaded
 static/uploads/*
+
+# Ignore vs code again
+.vscode/*
