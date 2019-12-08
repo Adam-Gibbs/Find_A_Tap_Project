@@ -25,12 +25,14 @@ def allowed_file(filename):
     return '.' in filename and ext in ALLOWED_EXTENSIONS
 
 def checkCredentials(uName, pw):
-    return pw == 'funky'
+    uName == 'Osama'
+    pw == 'funky' 
+    return pw, uName
 
 @app.route("/AddComment", methods = ['POST','GET'])
 def studentAddDetails():
     if request.method =='GET':
-        return flask.redirect('CommentsTaps.html')
+        return redirect('CommentsTaps.html')
     if request.method =='POST':
         add_comment_to_db = request.form.get('comments', default="Error")
         add_date_to_db = request.form.get('date', default="Error")
@@ -304,27 +306,24 @@ def LoginPage():
     if request.method=='POST':
         uName = request.form.get('username', default="Error")
         pw = request.form.get('password', default="Error")
-        if checkCredentials(uName, pw):
-            resp = make_response(render_template('adminPage.html', msg='hello '+uName, username = uName))
-            session['username'] = request.form['username']
-            print('username')
-            session['password'] = request.form['password']
-            print('password')
-            if (uName == 'Osama'):
-                 session['usertype'] = 'Admin'
-                 return redirect("/home/login/admin", code=302)
-            else:
-                 session['usertype'] = 'Customer'
-                 return redirect("/home", code=302)
-
+        #resp = make_response(render_template('adminPage.html', username = uName))
+        conn = sqlite3.connect(DATABASE)
+        cur = conn.cursor()
+        cur.execute("SELECT id, role FROM users WHERE userName IS ? AND password IS ?", (uName, pw))
+        data = cur.fetchall()
+        data = data[0]
+        conn.commit()
+        if data[1] == 1:
+            session['usertype'] = 'Admin'
+            print("YOU ARE ADMIN")
+            return redirect("/home/login/admin", code=302)
         else:
-            resp = make_response(render_template('login_page.html', msg='Incorrect  login',username='Guest'))
-        return resp
+            session['usertype'] = 'Customer'
+            print("YOU ARE NOT ADMIN")
+            return redirect("/home", code=302)
+
     else:
-        username = 'none'
-        if 'username' in session:
-            username = escape(session['username'])
-        return render_template('login_page.html', msg='', username = username)
+        return render_template('login_page.html')
 
 @app.route("/home/login/admin/tapsDB", methods = ['GET', 'POST'])
 def tapsDBPage():
