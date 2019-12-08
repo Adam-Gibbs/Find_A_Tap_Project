@@ -131,11 +131,10 @@ def TapInfo(tapID):
                 
         try:
             tapImage = Image.open(f"{APP_ROOT}{item[4]}",mode='r')
-            tapImageRoute = f"{APP_ROOT}{item[4]}"
-            print("-----------",tapImageRoute)
+            tapImageRoute = item[4]
         except Exception as e:
             print(e)
-            tapImageRoute = "http://placehold.it/750x300"
+            tapImageRoute = "http://placehold.it/900x300"
             print("failed to load")
 
         try:
