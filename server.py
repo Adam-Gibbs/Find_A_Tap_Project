@@ -194,9 +194,44 @@ def TapInfo(tapID):
         finally:
             conn.close()
 
+        try:
+            conn = sqlite3.connect(DATABASE)
+            cur = conn.cursor()
+            print(item[0])
+            cur.execute("SELECT * from reviews WHERE tapID IS ?", (str(item[0])))
+            commentdata = cur.fetchall()
+            print(commentdata)
+        except:
+            print('there was an error')
+            conn.close()
+        finally:
+            conn.close()
+
+        all_comment_data = []
+
+        for comment in commentdata:
+                
+            try:
+                conn = sqlite3.connect(DATABASE)
+                cur = conn.cursor()
+                cur.execute("SELECT id, userName from users WHERE id IS ?", (str(comment[4])))
+                commentuserdata = cur.fetchall()
+                print(commentuserdata)
+                commentuserdata = commentuserdata[0]
+            except:
+                print('there was an error')
+                conn.close()
+            finally:
+                conn.close()
+            
+            print(commentuserdata)
+            one_comment_data= {'data': comment[1], 'date': comment[2], 'user-id': commentuserdata[0], 'username': commentuserdata[1]}
+            all_comment_data.append(one_comment_data)
+
+
         one_tap_data = {'TapID': item[0], 'Address': item[1], 'Longitude': item[3], 'Latitude': item[2], 'Image': tapImageRoute, 'Description': item[7], 'PostDate': item[6], 'UserLink': '/home/users/' + str(userdata[0]) + '/info', 'UserName': userdata[1]}
 
-        return render_template('TapInfo.html', alltapdata = one_tap_data)
+        return render_template('TapInfo.html', alltapdata = one_tap_data, allcommentdata = all_comment_data)
 
 @app.route("/home/taps/<tapID>/location", methods = ['GET'])
 def MapPage(tapID):
