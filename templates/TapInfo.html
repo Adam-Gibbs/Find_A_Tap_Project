@@ -14,6 +14,10 @@ crossorigin=""></script>
         Tap Info
     </h1>
 
+    <div id="lat" style="display: none;">{{data[2]}}</div>
+    <div id="lng" style="display: none;">{{data[3]}}</div>
+    <div id="pop" style="display: none;">{{data[1]}}</div>
+
     <ol class="breadcrumb">
       <li class="breadcrumb-item">
         <a href="/home">Home</a>
@@ -80,7 +84,7 @@ crossorigin=""></script>
         <div class="card my-4">
           <h5 class="card-header">Map</h5>
           <div class="card-body">
-            <div id="mapid" style="width: 100%; height: 25vh;"></div>
+            <div id="mapid" class="TapWaypoint" style="width: 100%; height: 25vh;"></div>
           </div>
         </div>
 

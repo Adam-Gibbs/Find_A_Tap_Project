@@ -13,7 +13,13 @@ function setLink(position) {
   link.setAttribute("href", `/home/taps/near/page=0/!lat=${position.coords.latitude}&lng=${position.coords.longitude}`);
   var myMap = document.getElementById("mapid");
   if(myMap){
-    showPosition(position);
+    if(myMap.classList.contains('giveCurrentLoc')){
+      showPosition(position);
+    }
+
+    if(myMap.classList.contains('TapWaypoint')){
+      AddMarker(document.getElementById('lat').innerHTML, document.getElementById('lng').innerHTML, document.getElementById('pop').innerHTML)
+    }
 
     if(myMap.classList.contains('giveTaps')){
       $.ajax({
