@@ -35,7 +35,15 @@
   <input type="file" name="picture"/> <br> <br>
   <button type="button" name="button" onclick="return getCoordinates()">Submit Tap</button> <br>
 </form>
-{{msg}}
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <div class=flashes>
+    {% for message in messages %}
+      <p>{{ message }}</p>
+    {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
 
 <p id="ERROR"></p>
 <script type="text/javascript" src="/static/js/newTapLocation.js"></script>

@@ -1,6 +1,6 @@
 import os
 import json
-from flask import Flask, redirect, request,render_template, jsonify, session, make_response, escape
+from flask import Flask, redirect, request,render_template, jsonify, session, make_response, escape, flash
 import sqlite3
 from PIL import Image
 # Below 4 lines are for Geocode coordinate and error handling for all geocoder files
@@ -94,7 +94,7 @@ def NearTapPage(pagenum, user_lat, user_lng):
                 print(e)
                 tapImageRoute = "http://placehold.it/750x300"
                 print("failed to load")
-                
+
             try:
                 conn = sqlite3.connect(DATABASE)
                 cur = conn.cursor()
@@ -128,7 +128,7 @@ def TapInfo(tapID):
             conn.close()
         finally:
             conn.close()
-                
+
         try:
             tapImage = Image.open(f"{APP_ROOT}{item[4]}",mode='r')
             tapImageRoute = f"{APP_ROOT}{item[4]}"
@@ -227,7 +227,8 @@ def NewTapPageAuto():
                 msg = "Task was executed"
             else:
                 msg = "Tap already exists in the database"
-            # response = make_response(render_template('addTapAuto.html',msg=msg))
+            # response = make_response(render_template('addTapAuto.html',msg=msg)
+            flash(msg)
             return redirect('auto')
         except Exception as e:
             print(e)
