@@ -169,3 +169,6 @@ $RECYCLE.BIN/
 
 # ignores all databases
 *.db*
+
+# ignore images uploaded
+static/uploads/*
