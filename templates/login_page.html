@@ -43,24 +43,24 @@
 
     <!-- <p> result of operation : {{ msg }} </p> -->
     <script>
-        // function loadName() {
-        //   var name = document.forms["loginForm"]["username"].value;
-        //   var pass = document.forms["loginForm"]["password"].value;
-        //   var params = 'username='+username+'&password='+password;
-        //   var xhttp = new XMLHttpRequest();
-        //   xhttp.open("POST", '/AddComment', true); // true is asynchronous
-        //   xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-        //   xhttp.onreadystatechange = function() {
-        //     if (xhttp.readyState === 4 && xhttp.status === 200) {
-        //       console.log(xhttp.responseText);
-        //       document.getElementById("txt").innerHTML = xhttp.responseText;
-        //     } else {
-        //       console.error(xhttp.statusText);
-        //     }
-        //   };
-        //   xhttp.send(params);
-        //   return false;
-        // }
+        function loaduserName() {
+          var username = document.forms["loginForm"]["username"].value;
+          var password = document.forms["loginForm"]["password"].value;
+          var params = 'username='+username+'&password='+password;
+          var xhttp = new XMLHttpRequest();
+          xhttp.open("POST", '/LoginPage', true); // true is asynchronous
+          xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+          xhttp.onreadystatechange = function() {
+            if (xhttp.readyState === 4 && xhttp.status === 200) {
+              console.log(xhttp.responseText);
+              document.getElementById("txt").innerHTML = xhttp.responseText;
+            } else {
+              console.error(xhttp.statusText);
+            }
+          };
+          xhttp.send(params);
+          return false;
+        }
       </script>
 
 </div>
