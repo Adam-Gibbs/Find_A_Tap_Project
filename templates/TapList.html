@@ -8,6 +8,7 @@
     <input hidden id='pos_lng' value='' />
     <script type="text/javascript" src="/static/js/Distance.js"></script>
     <script type="text/javascript" src="/static/js/ChangePage.js"></script>
+    <script type="text/javascript" src="/static/js/Search.js"></script>
 
     <!-- Page Heading/Breadcrumbs -->
     <h1 class="mt-4 mb-3">Taps
@@ -67,9 +68,9 @@
                 <h5 class="card-header">Search</h5>
                 <div class="card-body">
                 <div class="input-group">
-                    <input type="text" class="form-control" placeholder="Search for...">
+                    <input type="text" class="form-control" id="SearchInput" placeholder="Search for...">
                     <span class="input-group-btn">
-                    <button class="btn btn-secondary" type="button">Go!</button>
+                        <button class="btn btn-secondary" onclick="LoadSearch()" type="button">Go!</button>
                     </span>
                 </div>
                 </div>
