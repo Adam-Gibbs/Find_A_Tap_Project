@@ -20,3 +20,8 @@ footer {
   float: right;
   margin: 3px;
 }
+
+.LeftLoc {
+  float: left;
+  margin: 3px;
+}

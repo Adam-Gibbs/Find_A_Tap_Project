@@ -108,7 +108,8 @@ def NearTapPage(pagenum, user_lat, user_lng):
             finally:
                 conn.close()
 
-            one_tap_data = {'TapID': item[0], 'Address': item[1], 'Longitude': item[2], 'Latitude': item[3], 'Image': tapImageRoute, 'Description': item[7], 'PostDate': item[6], 'UserLink': '/home/users/' + str(userdata[0]) + '/info', 'UserName': userdata[1]}
+            one_tap_data = {'TapID': item[0], 'Address': item[1], 'Longitude': item[3], 'Latitude': item[2], 'Image': tapImageRoute, 'Description': item[7], 'PostDate': item[6], 'UserLink': '/home/users/' + str(userdata[0]) + '/info', 'UserName': userdata[1]}
+            print(f"{one_tap_data['Longitude']} is Long for {one_tap_data['Address']}")
             all_tap_data.append(one_tap_data)
 
         return render_template('TapList.html', alltapdata = all_tap_data)
@@ -122,14 +123,37 @@ def TapInfo(tapID):
             # https://gist.github.com/statickidz/8a2f0ce3bca9badbf34970b958ef8479
             cur.execute("SELECT * FROM taps WHERE id IS ?", [tapID])
             data = cur.fetchall()
-            data = data[0]
+            item = data[0]
+        except:
+            print('there was an error')
+            conn.close()
+        finally:
+            conn.close()
+                
+        try:
+            tapImage = Image.open(f"{APP_ROOT}{item[4]}",mode='r')
+            tapImageRoute = f"{APP_ROOT}{item[4]}"
+            print("-----------",tapImageRoute)
+        except Exception as e:
+            print(e)
+            tapImageRoute = "http://placehold.it/750x300"
+            print("failed to load")
+
+        try:
+            conn = sqlite3.connect(DATABASE)
+            cur = conn.cursor()
+            cur.execute("SELECT id, username FROM users WHERE id IS ?;", (str(item[5])))
+            userdata = cur.fetchall()
+            userdata = userdata[0]
         except:
             print('there was an error')
             conn.close()
         finally:
             conn.close()
 
-        return render_template('TapInfo.html', data=data)
+        one_tap_data = {'TapID': item[0], 'Address': item[1], 'Longitude': item[3], 'Latitude': item[2], 'Image': tapImageRoute, 'Description': item[7], 'PostDate': item[6], 'UserLink': '/home/users/' + str(userdata[0]) + '/info', 'UserName': userdata[1]}
+
+        return render_template('TapInfo.html', alltapdata = one_tap_data)
 
 @app.route("/home/taps/<tapID>/location", methods = ['GET'])
 def MapPage(tapID):
