@@ -14,14 +14,10 @@ crossorigin=""></script>
     <li class="breadcrumb-item">
         <a href="/home">Home</a>
     </li>
-    {% if request.path == '/home/taps/new'%}
-      <li class="breadcrumb-item">
-              <a href="/home/taps">Taps</a>
-          </li>
-      <li class="breadcrumb-item active">New</li>
-    {%else%}
-      <li class="breadcrumb-item active">Taps</li>
-    {%endif%}
+    <li class="breadcrumb-item">
+            <a href="/home/taps">Taps</a>
+        </li>
+    <li class="breadcrumb-item active">New</li>
 </ol>
 
 <div class="row">
