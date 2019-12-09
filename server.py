@@ -2,7 +2,9 @@ import os
 import json
 from flask import Flask, redirect, request,render_template, jsonify, session, make_response, escape, flash
 import sqlite3
+import math
 from PIL import Image
+from PIL.ExifTags import TAGS, GPSTAGS
 # Below 4 lines are for Geocode coordinate and error handling for all geocoder files
 # FOR THIS TO WORK YOU NEED TO ON YOUR CMD TO DO THIS: pip install opencage
 from opencage.geocoder import OpenCageGeocode
@@ -23,6 +25,60 @@ app.secret_key = 'fj590Rt?h40gg'
 def allowed_file(filename):
     ext = filename.rsplit('.', 1)[1].lower()
     return '.' in filename and ext in ALLOWED_EXTENSIONS
+# DeLancey, J. (2019). Getting Started with Geocoding Exif Image Metadata in Python 3 - HERE Developer. [online] HERE Developer Blog. Available at: https://developer.here.com/blog/getting-started-with-geocoding-exif-image-metadata-in-python3 [Accessed 8 Dec. 2019].
+def get_exif(filename):
+    image = Image.open(filename)
+    image.verify()
+    return image._getexif()
+
+def get_geotagging(exif):
+    if not exif:
+        raise ValueError("No EXIF metadata found")
+    geotagging = {}
+    for (idx, tag) in TAGS.items():
+        if tag == 'GPSInfo':
+            if idx not in exif:
+                raise ValueError("No EXIF geotagging found")
+
+            for (key, val) in GPSTAGS.items():
+                if key in exif[idx]:
+                    geotagging[val] = exif[idx][key]
+    return geotagging
+
+def get_decimal_from_dms(dms, ref):
+    degrees = dms[0][0] / dms[0][1]
+    minutes = dms[1][0] / dms[1][1] / 60.0
+    seconds = dms[2][0] / dms[2][1] / 3600.0
+    if ref in ['S', 'W']:
+        degrees = -degrees
+        minutes = -minutes
+        seconds = -seconds
+    return round(degrees + minutes + seconds, 5)
+def get_coordinates(geotags):
+    lat = get_decimal_from_dms(geotags['GPSLatitude'], geotags['GPSLatitudeRef'])
+    lon = get_decimal_from_dms(geotags['GPSLongitude'], geotags['GPSLongitudeRef'])
+    return (lat,lon)
+# finish reference
+
+# lines 65 - 77 Janakiev, N. (2019). Calculate Distance Between GPS Points in Python. [online] Parametric Thoughts. Available at: https://janakiev.com/blog/gps-points-distance-python/ [Accessed 8 Dec. 2019].
+def getDistance(latitude1, longitude1, latitude2, longitude2):
+    R = 6372800  # Earth radius in meters
+    lat1, lon1 = (latitude1, longitude1)
+    lat2, lon2 = (latitude2, longitude2)
+
+    phi1, phi2 = math.radians(lat1), math.radians(lat2)
+    dphi       = math.radians(lat2 - lat1)
+    dlambda    = math.radians(lon2 - lon1)
+
+    a = math.sin(dphi/2)**2 + \
+        math.cos(phi1)*math.cos(phi2)*math.sin(dlambda/2)**2
+
+    d = 2*R*math.atan2(math.sqrt(a), math.sqrt(1 - a))
+    # finish reference
+    if d <= 0.01: # This is 10 m
+        return True
+    else:
+        return False
 
 def checkCredentials(uName, pw):
     return pw == 'funky'
@@ -194,8 +250,8 @@ def NewTapPageAuto():
         return render_template('addTapAuto.html')
 
     if request.method == 'POST':
-        latitude = request.form["latitude"]
-        longitude = request.form["longitude"]
+        latitude = float(request.form["latitude"])
+        longitude = float(request.form["longitude"])
         address = geocoder.reverse_geocode(latitude, longitude, language='en', no_annotations='1')
         address = address[0]['formatted']
         picture = request.files['picture']
@@ -205,34 +261,38 @@ def NewTapPageAuto():
             cur = conn.cursor()
             cur.execute("SELECT latitude, longitude FROM taps WHERE latitude=? AND  longitude=?", (latitude, longitude))
             coor_exist = cur.fetchall()
-            ## THIS IF STATEMENT MAKES SURE THAT TAPS THAT ALREADY EXIST IN THE DATABASE CANNOT BE INPUTTEED AGAIN
-            if len(coor_exist) == 0:
+            if len(coor_exist) == 0: # THIS IF STATEMENT MAKES SURE THAT TAPS THAT ALREADY EXIST IN THE DATABASE CANNOT BE INPUTTEED AGAIN
                 if picture.filename == '': # This means that no picture was given
                     cur.execute("INSERT INTO taps (address, latitude, longitude, picture, userID) VALUES (?,?,?,?,?)",
                     (address, latitude, longitude, None, 1))
                 else:
-                    cur.execute("INSERT INTO taps (address, latitude, longitude, picture, userID) VALUES (?,?,?,?,?)",
-                    (address, latitude, longitude, f"/static/uploads/{picture.filename}", 1))
-                    if picture.filename == '':
-                        msg = 'picture was not given'
-                    elif picture and allowed_file(picture.filename):
-                        filename = secure_filename(picture.filename)
-                        filePath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-                        if not os.path.exists(app.config['UPLOAD_FOLDER']):
-                            os.makedirs(app.config['UPLOAD_FOLDER'])
-                        picture.save(filePath)
-                        msg += "picture was saved"
+                    img_data = get_exif(picture)
+                    geotags = get_coordinates(get_geotagging(img_data)) # for some reason it needs to be run twice to work
+                    print((latitude, longitude))
+                    print(geotags)
+                    dist = getDistance(float(geotags[0]), float(geotags[1]), latitude, longitude)
+                    if  dist == True:
+                        cur.execute("INSERT INTO taps (address, latitude, longitude, picture, userID) VALUES (?,?,?,?,?)",
+                        (address, latitude, longitude, f"/static/uploads/{picture.filename}", 1))
+                        if picture and allowed_file(picture.filename): # we already know that a picture was given
+                            filename = secure_filename(picture.filename)
+                            filePath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                            if not os.path.exists(app.config['UPLOAD_FOLDER']):
+                                os.makedirs(app.config['UPLOAD_FOLDER'])
+                            picture.save(filePath)
+                            msg += "picture was saved"
+                    elif dist == False:
+                        msg = "You and the picture are not close enough"
+                    else:
+                        msg = "Image didn't have location data"
                 conn.commit()
-                msg = "Task was executed"
             else:
                 msg = "Tap already exists in the database"
-            # response = make_response(render_template('addTapAuto.html',msg=msg)
             flash(msg)
             return redirect('auto')
         except Exception as e:
             print(e)
             conn.rollback()
-            print("rolled back")
             print(msg)
             return redirect('manual')
         finally:
