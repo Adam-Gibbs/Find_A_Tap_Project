@@ -268,7 +268,7 @@ def TapInfo(tapID):
             finally:
                 conn.close()
 
-            one_comment_data= {'data': comment[1], 'date': comment[2], 'user-id': commentuserdata[0], 'username': commentuserdata[1]}
+            one_comment_data= {'data': comment[1], 'date': comment[2], 'userLink': '/home/users/' + str(commentuserdata[0]) + '/info', 'username': commentuserdata[1]}
             all_comment_data.append(one_comment_data)
 
 

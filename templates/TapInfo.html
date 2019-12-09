@@ -71,7 +71,7 @@ crossorigin=""></script>
         <div class="media mb-4">
           <img class="d-flex mr-3 rounded-circle" src="https://placehold.it/50x50?text=Profile+Image" alt="">
           <div class="media-body">
-            <h5 class="mt-0">{{comment.username}}</h5>
+            <a href={{comment.userLink}}><h5 class="mt-0">{{comment.username}}</h5></a>
             {{comment.data}}
             <p>Posted on: {{comment.date}}</p>
           </div>
