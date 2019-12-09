@@ -33,17 +33,20 @@ def get_exif(filename):
     return image._getexif()
 
 def get_geotagging(exif):
-    if not exif:
-        raise ValueError("No EXIF metadata found")
+    print(exif)
     geotagging = {}
-    for (idx, tag) in TAGS.items():
-        if tag == 'GPSInfo':
-            if idx not in exif:
-                raise ValueError("No EXIF geotagging found")
+    if exif == None:
+        pass
+    else:
+        for (idx, tag) in TAGS.items():
+            if tag == 'GPSInfo':
+                if idx not in exif:
+                    raise ValueError("No EXIF geotagging found")
 
-            for (key, val) in GPSTAGS.items():
-                if key in exif[idx]:
-                    geotagging[val] = exif[idx][key]
+                for (key, val) in GPSTAGS.items():
+                    if key in exif[idx]:
+                        geotagging[val] = exif[idx][key]
+    print(geotagging)
     return geotagging
 
 def get_decimal_from_dms(dms, ref):
@@ -56,8 +59,12 @@ def get_decimal_from_dms(dms, ref):
         seconds = -seconds
     return round(degrees + minutes + seconds, 5)
 def get_coordinates(geotags):
-    lat = get_decimal_from_dms(geotags['GPSLatitude'], geotags['GPSLatitudeRef'])
-    lon = get_decimal_from_dms(geotags['GPSLongitude'], geotags['GPSLongitudeRef'])
+    if len(geotags) == 0:
+        lat = None
+        lon = None
+    else:
+        lat = get_decimal_from_dms(geotags['GPSLatitude'], geotags['GPSLatitudeRef'])
+        lon = get_decimal_from_dms(geotags['GPSLongitude'], geotags['GPSLongitudeRef'])
     return (lat,lon)
 # finish reference
 
@@ -363,8 +370,14 @@ def NewTapPageAuto():
                     return render_template('addTapAuto.html', msg=msg)
                 else:
                     img_data = get_exif(picture)
-                    geotags = get_coordinates(get_geotagging(img_data)) # for some reason it needs to be run twice to work
-                    dist = getDistance(float(geotags[0]), float(geotags[1]), latitude, longitude)
+                    geotags = get_coordinates(get_geotagging(img_data))
+                    print(type(geotags[0]), type(geotags[1]))
+                    print(geotags[0], geotags[1])
+                    if geotags[0] and geotags[1] != None:
+                        print("hello")
+                        dist = getDistance(float(geotags[0]), float(geotags[1]), latitude, longitude)
+                    else:
+                        dist = True # This means that if picture doesn't have any geotags and the auto still works then it will allow it
                     if dist == True:
                         cur.execute("INSERT INTO taps (address, latitude, longitude, picture, userID, postDate) VALUES (?,?,?,?,?,date(julianday('now')))",
                         (address, latitude, longitude, f"/static/uploads/{picture.filename}", 1))
@@ -380,19 +393,12 @@ def NewTapPageAuto():
                     elif dist == False:
                         msg = "You and the picture are not close enough"
                         return render_template('addTapManual.html', msg=msg)
-                    else:
-                        msg = "Image didn't have location data"
-                        return render_template('addTapManual.html', msg=msg)
             else:
                 msg = "Tap already exists in the database"
                 return render_template('addTapAuto.html', msg=msg)
         except Exception as e:
-            if str(e) == "No EXIF metadata found":
-                msg = "Picture doesn't have loaction data"
-            else:
-                msg = e
+            msg = e
             conn.rollback()
-            print(e)
             print(msg)
             return render_template('addTapManual.html', msg=msg)
         finally:
