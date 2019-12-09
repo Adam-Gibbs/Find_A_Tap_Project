@@ -76,49 +76,29 @@ def getDistance(latitude1, longitude1, latitude2, longitude2):
 
     d = 2*R*math.atan2(math.sqrt(a), math.sqrt(1 - a))
     # finish reference
-    print(d)
     if d <= 10: # This is 10 m (I think)
         return True
     else:
         return False
 
-def checkCredentials(uName, pw):
-    uName == 'Osama'
-    pw == 'funky'
-    return pw, uName
-
 @app.route("/AddComment", methods = ['POST'])
 def AddComment():
     if request.method =='POST':
-        # try:
+        user_comment = request.json['commentData']
+        tap_id = request.json['tapID']
         userId = session['userID']
-        print("=====================")
-        print(userId)
-        conn = sqlite3.connect(DATABASE)
-        cur = conn.cursor()
-        # https://gist.github.com/statickidz/8a2f0ce3bca9badbf34970b958ef8479
-        cur.execute("SELECT * FROM taps WHERE id IS ?", [tapID])
-        data = cur.fetchall()
-        item = data[0]
-    # except:
-    #     print('there was an error')
-    #     conn.close()
-    # finally:
-        conn.close()
 
-        commentoftap = request.form.get('inputComment', default="Error")
-        #try:
-        conn = sqlite3.connect(DATABASE)
-        cur = conn.cursor()
-        dateofcomment = "date(julianday('now'))"
-        #INSERT INTO "main"."reviews" ("comment", "date", "tapID", "userID") VALUES ('Ok tap', '09/12/2019', 5, 1);
-        cur.execute("INSERT INTO reviews ('comment', 'date', 'tapID', 'userID')\
-                        VALUES (?,?,?,?)",(commentoftap, dateofcomment, tapID, userId) )
-        conn.commit()
-    # except:
-    #     conn.rollback()
-    # finally:
-        conn.close()
+        try:
+            conn = sqlite3.connect(DATABASE)
+            cur = conn.cursor()
+            cur.execute("INSERT INTO reviews ('comment', 'date', 'tapID', 'userID')\
+                            VALUES (?,date(julianday('now')),?,?)",(user_comment, tap_id, userId) )
+            conn.commit()
+        except:
+            print('there was an error 0')
+            conn.rollback()
+        finally:
+            conn.close()
     return "sucess"
 
 @app.route("/", methods = ['GET'])
@@ -151,7 +131,7 @@ def NearTapPage(pagenum, user_lat, user_lng):
             cur.execute("SELECT * FROM taps ORDER BY ((latitude-?)*(latitude-?)) + ((longitude - ?)*(longitude - ?)) ASC LIMIT ?, 5;", (user_lat, user_lat, user_lng, user_lng, int(pagenum)*5))
             data = cur.fetchall()
         except:
-            print('there was an error')
+            print('there was an error 1')
             conn.close()
         finally:
             conn.close()
@@ -173,13 +153,12 @@ def NearTapPage(pagenum, user_lat, user_lng):
                 userdata = cur.fetchall()
                 userdata = userdata[0]
             except:
-                print('there was an error')
+                print('there was an error 2')
                 conn.close()
             finally:
                 conn.close()
 
             one_tap_data = {'TapID': item[0], 'Address': item[1], 'Longitude': item[3], 'Latitude': item[2], 'Image': tapImageRoute, 'Description': item[7], 'PostDate': item[6], 'UserLink': '/home/users/' + str(userdata[0]) + '/info', 'UserName': userdata[1]}
-            # print(f"{one_tap_data['Longitude']} is Long for {one_tap_data['Address']}")
             all_tap_data.append(one_tap_data)
 
         return render_template('TapList.html', alltapdata = all_tap_data)
@@ -187,17 +166,17 @@ def NearTapPage(pagenum, user_lat, user_lng):
 @app.route("/home/taps/search=£<search>£/page=$<pagenum>$/!lat=<user_lat>&lng=<user_lng>", methods = ['GET'])
 def SearchTapPage(search, pagenum, user_lat, user_lng):
     if request.method =='GET':
-        # try:
-        conn = sqlite3.connect(DATABASE)
-        cur = conn.cursor()
-        # https://gist.github.com/statickidz/8a2f0ce3bca9badbf34970b958ef8479
-        cur.execute("SELECT * FROM taps WHERE address LIKE ? ORDER BY ((latitude-?)*(latitude-?)) + ((longitude - ?)*(longitude - ?)) ASC LIMIT ?, 5;", ("%"+search+"%", user_lat, user_lat, user_lng, user_lng, int(pagenum)*5))
-        data = cur.fetchall()
-    # except:
-    #     print('there was an error')
-    #     conn.close()
-    # finally:
-        conn.close()
+        try:
+            conn = sqlite3.connect(DATABASE)
+            cur = conn.cursor()
+            # https://gist.github.com/statickidz/8a2f0ce3bca9badbf34970b958ef8479
+            cur.execute("SELECT * FROM taps WHERE address LIKE ? ORDER BY ((latitude-?)*(latitude-?)) + ((longitude - ?)*(longitude - ?)) ASC LIMIT ?, 5;", ("%"+search+"%", user_lat, user_lat, user_lng, user_lng, int(pagenum)*5))
+            data = cur.fetchall()
+        except:
+            print('there was an error 3')
+            conn.close()
+        finally:
+            conn.close()
 
         all_tap_data = []
         for item in data:
@@ -216,7 +195,7 @@ def SearchTapPage(search, pagenum, user_lat, user_lng):
                 userdata = cur.fetchall()
                 userdata = userdata[0]
             except:
-                print('there was an error')
+                print('there was an error 4')
             finally:
                 conn.close()
 
@@ -232,12 +211,11 @@ def TapInfo(tapID):
         try:
             conn = sqlite3.connect(DATABASE)
             cur = conn.cursor()
-            # https://gist.github.com/statickidz/8a2f0ce3bca9badbf34970b958ef8479
             cur.execute("SELECT * FROM taps WHERE id IS ?", [tapID])
             data = cur.fetchall()
             item = data[0]
         except:
-            print('there was an error')
+            print('there was an error 5')
             conn.close()
         finally:
             conn.close()
@@ -253,11 +231,11 @@ def TapInfo(tapID):
         try:
             conn = sqlite3.connect(DATABASE)
             cur = conn.cursor()
-            cur.execute("SELECT id, username FROM users WHERE id IS ?;", (str(item[5])))
+            cur.execute("SELECT username FROM users WHERE id IS ?;", (str(item[5])))
             userdata = cur.fetchall()
-            userdata = userdata[0]
+            username = userdata[0][0]
         except:
-            print('there was an error')
+            print('there was an error 6')
             conn.close()
         finally:
             conn.close()
@@ -265,12 +243,10 @@ def TapInfo(tapID):
         try:
             conn = sqlite3.connect(DATABASE)
             cur = conn.cursor()
-            # print(item[0])
-            cur.execute("SELECT * from reviews WHERE tapID IS ?", (str(item[0])))
+            cur.execute("SELECT * from reviews WHERE tapID IS ?", ([str(item[0])]))
             commentdata = cur.fetchall()
-            # print(commentdata)
         except:
-            print('there was an error')
+            print('there was an error 7')
             commentdata = []
             conn.close()
         finally:
@@ -285,20 +261,18 @@ def TapInfo(tapID):
                 cur = conn.cursor()
                 cur.execute("SELECT id, userName from users WHERE id IS ?", (str(comment[4])))
                 commentuserdata = cur.fetchall()
-                # print(commentuserdata)
                 commentuserdata = commentuserdata[0]
             except:
-                print('there was an error')
+                print('there was an error 8')
                 conn.close()
             finally:
                 conn.close()
 
-            # print(commentuserdata)
             one_comment_data= {'data': comment[1], 'date': comment[2], 'user-id': commentuserdata[0], 'username': commentuserdata[1]}
             all_comment_data.append(one_comment_data)
 
 
-        one_tap_data = {'TapID': item[0], 'Address': item[1], 'Longitude': item[3], 'Latitude': item[2], 'Image': tapImageRoute, 'Description': item[7], 'PostDate': item[6], 'UserLink': '/home/users/' + str(userdata[0]) + '/info', 'UserName': userdata[1]}
+        one_tap_data = {'TapID': item[0], 'Address': item[1], 'Longitude': item[3], 'Latitude': item[2], 'Image': tapImageRoute, 'Description': item[7], 'PostDate': item[6], 'UserLink': '/home/users/' + str(item[5]) + '/info', 'UserName': username}
 
         return render_template('TapInfo.html', alltapdata = one_tap_data, allcommentdata = all_comment_data)
 
@@ -312,7 +286,7 @@ def MapPage(tapID):
             data = cur.fetchall()
             data = data[0]
         except:
-            print('there was an error')
+            print('there was an error 9')
             conn.close()
         finally:
             conn.close()
@@ -329,7 +303,7 @@ def UserInfo(userID):
             data = cur.fetchall()
             data = data[0]
         except:
-            print('there was an error')
+            print('there was an error 10')
             conn.close()
         finally:
             conn.close()
@@ -364,8 +338,6 @@ def NewTapPageAuto():
                 else:
                     img_data = get_exif(picture)
                     geotags = get_coordinates(get_geotagging(img_data)) # for some reason it needs to be run twice to work
-                    # print((latitude, longitude))
-                    # print(geotags)
                     dist = getDistance(float(geotags[0]), float(geotags[1]), latitude, longitude)
                     if dist == True:
                         cur.execute("INSERT INTO taps (address, latitude, longitude, picture, userID, postDate) VALUES (?,?,?,?,?,?)",
@@ -412,7 +384,7 @@ def GiveTaps():
             cur.execute("SELECT id, address, latitude, longitude, picture FROM taps ORDER BY ((latitude-?)*(latitude-?)) + ((longitude - ?)*(longitude - ?)) ASC;", (user_lat, user_lat, user_lng, user_lng))
             data = cur.fetchall()
         except:
-            print('there was an error')
+            print('there was an error 11')
             conn.close()
         finally:
             conn.close()
@@ -456,9 +428,7 @@ def AdminPage():
     usertype = "null"
     if 'usertype' in session:
         usertype = escape(session['usertype'])
-        # print(usertype)
     if usertype == "Admin":
-        # print(usertype)
         if request.method =='GET':
             return render_template('adminPage.html', msg = '', username = username)
     else:
@@ -477,14 +447,11 @@ def SignupPage():
             cur.execute("INSERT INTO users ('userName', 'password', 'role')\
                         VALUES (?,?,?)",(usern, passw, '0') )
             conn.commit()
-            # print("Hello")
-            #msg = "added successfully"
         except:
             conn.rollback()
             return redirect("/", code=302)
         finally:
             conn.close()
-                #return msg
             return render_template('Signup.html')
 
 @app.route("/home/login", methods = ['GET','POST'])
@@ -521,7 +488,7 @@ def tapsDBPage():
                 cur.execute("SELECT * FROM taps")
                 data = cur.fetchall()
             except:
-                print('there was an error')
+                print('there was an error 12')
                 conn.close()
                 return redirect("/home/login/admin", code=302)
             finally:
@@ -537,7 +504,7 @@ def reviewsDBPage():
                 cur.execute("SELECT * FROM reviews")
                 data = cur.fetchall()
             except:
-                print('there was an error')
+                print('there was an error 13')
                 conn.close()
                 return redirect("/home/login/admin", code=302)
             finally:
@@ -553,7 +520,7 @@ def usersDBPage():
                 cur.execute("SELECT * FROM users")
                 data = cur.fetchall()
             except:
-                print('there was an error')
+                print('there was an error 14')
                 conn.close()
                 return redirect("/home/login/admin", code=302)
             finally:
@@ -570,7 +537,7 @@ def deleteTapPage():
                 cur.execute("DELETE FROM taps WHERE id IS ?;", (tapDelete))
                 conn.commit()
             except:
-                print('there was an error')
+                print('there was an error 15')
                 conn.rollback()
             finally:
                 conn.close()
@@ -586,7 +553,7 @@ def deleteUserPage():
                 cur.execute("DELETE FROM users WHERE id IS ?;", (userDelete))
                 conn.commit()
             except:
-                print('there was an error')
+                print('there was an error 16')
                 conn.rollback()
             finally:
                 conn.close()
@@ -602,7 +569,7 @@ def deleteReviewPage():
                 cur.execute("DELETE FROM reviews WHERE id IS ?;", (reviewDelete))
                 conn.commit()
             except:
-                print('there was an error')
+                print('there was an error 17')
                 conn.rollback()
             finally:
                 conn.close()

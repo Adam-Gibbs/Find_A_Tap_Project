@@ -21,6 +21,7 @@ crossorigin=""></script>
     <div id="lat" style="display: none;">{{alltapdata.Latitude}}</div>
     <div id="lng" style="display: none;">{{alltapdata.Longitude}}</div>
     <div id="pop" style="display: none;">{{alltapdata.Address}}</div>
+    <div id="id" style="display: none;">{{alltapdata.TapID}}</div>
 
     <ol class="breadcrumb">
       <li class="breadcrumb-item">
@@ -57,11 +58,11 @@ crossorigin=""></script>
         <div class="card my-4">
           <h5 class="card-header">Leave a Comment:</h5>
           <div class="card-body">
-            <form id='commentForm' onsubmit="Addcomment()">
+            <form id='commentForm'>
               <div class="form-group">
                 <textarea class="form-control" rows="3" name="inputComment"></textarea>
               </div>
-              <button type="submit" class="btn btn-primary">Submit</button>
+              <button type="button" onclick="Addcomment()" class="btn btn-primary">Submit</button>
             </form>
           </div>
         </div>
