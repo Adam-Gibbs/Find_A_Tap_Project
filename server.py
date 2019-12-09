@@ -75,14 +75,15 @@ def getDistance(latitude1, longitude1, latitude2, longitude2):
 
     d = 2*R*math.atan2(math.sqrt(a), math.sqrt(1 - a))
     # finish reference
-    if d <= 0.01: # This is 10 m
+    print(d)
+    if d <= 10: # This is 10 m (I think)
         return True
     else:
         return False
 
 def checkCredentials(uName, pw):
     uName == 'Osama'
-    pw == 'funky' 
+    pw == 'funky'
     return pw, uName
 
 @app.route("/AddComment", methods = ['POST','GET'])
@@ -266,7 +267,7 @@ def TapInfo(tapID):
         all_comment_data = []
 
         for comment in commentdata:
-                
+
             try:
                 conn = sqlite3.connect(DATABASE)
                 cur = conn.cursor()
@@ -279,7 +280,7 @@ def TapInfo(tapID):
                 conn.close()
             finally:
                 conn.close()
-            
+
             print(commentuserdata)
             one_comment_data= {'data': comment[1], 'date': comment[2], 'user-id': commentuserdata[0], 'username': commentuserdata[1]}
             all_comment_data.append(one_comment_data)
@@ -345,15 +346,18 @@ def NewTapPageAuto():
                 if picture.filename == '': # This means that no picture was given
                     cur.execute("INSERT INTO taps (address, latitude, longitude, picture, userID) VALUES (?,?,?,?,?)",
                     (address, latitude, longitude, None, 1))
+                    conn.commit()
                 else:
                     img_data = get_exif(picture)
                     geotags = get_coordinates(get_geotagging(img_data)) # for some reason it needs to be run twice to work
                     print((latitude, longitude))
                     print(geotags)
                     dist = getDistance(float(geotags[0]), float(geotags[1]), latitude, longitude)
-                    if  dist == True:
+                    if dist == True:
+                        print(dist)
                         cur.execute("INSERT INTO taps (address, latitude, longitude, picture, userID) VALUES (?,?,?,?,?)",
                         (address, latitude, longitude, f"/static/uploads/{picture.filename}", 1))
+                        conn.commit()
                         if picture and allowed_file(picture.filename): # we already know that a picture was given
                             filename = secure_filename(picture.filename)
                             filePath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
@@ -361,28 +365,38 @@ def NewTapPageAuto():
                                 os.makedirs(app.config['UPLOAD_FOLDER'])
                             picture.save(filePath)
                             msg += "picture was saved"
+                            # return render_template("addTapAuto.html", msg=msg)
+                            flash(msg)
+                            return redirect('auto')
                     elif dist == False:
                         msg = "You and the picture are not close enough"
+                        # return render_template("addTapManual.html", msg=msg)
+                        flash(msg)
+                        return redirect('manual')
                     else:
                         msg = "Image didn't have location data"
-                conn.commit()
+                        # return render_template("addTapManual.html", msg=msg)
+                        flash(msg)
+                        return redirect('manual')
             else:
                 msg = "Tap already exists in the database"
-            flash(msg)
-            return redirect('auto')
+                flash(msg)
+                return redirect('auto')
+            # return render_template("addTapAuto.html", msg=msg)
         except Exception as e:
             print(e)
             conn.rollback()
             print(msg)
+            # return render_template("addTapManual.html", msg=msg)
+            flash(msg)
             return redirect('manual')
         finally:
             conn.close()
 
-@app.route("/home/taps/new/manual", methods = ['GET'])
+@app.route("/home/taps/new/manual", methods = ['GET','POST'])
 def NewTapPageManual():
     msg = ''
     if request.method == 'GET':
-        print("hello2")
         return render_template('addTapManual.html')
 
 @app.route("/givetaps", methods = ['POST'])
