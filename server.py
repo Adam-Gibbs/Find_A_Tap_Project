@@ -291,7 +291,7 @@ def TapInfo(tapID):
                 conn.close()
             finally:
                 conn.close()
-            
+
             # print(commentuserdata)
             one_comment_data= {'data': comment[1], 'date': comment[2], 'user-id': commentuserdata[0], 'username': commentuserdata[1]}
             all_comment_data.append(one_comment_data)
@@ -397,13 +397,6 @@ def NewTapPageAuto():
             return redirect('manual')
         finally:
             conn.close()
-
-@app.route("/home/taps/new/manual", methods = ['GET'])
-def NewTapPageManual():
-    msg = ''
-    if request.method == 'GET':
-        # print("hello2")
-        return render_template('addTapManual.html')
 
 @app.route("/givetaps", methods = ['POST'])
 def GiveTaps():
