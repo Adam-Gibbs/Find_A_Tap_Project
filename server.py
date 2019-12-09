@@ -324,7 +324,7 @@ def UserInfo(userID):
 
         return render_template('UserInfo.html', data=data)
 
-@app.route("/home/taps/new/auto", methods = ['GET', 'POST'])
+@app.route("/home/taps/new", methods = ['GET', 'POST'])
 def NewTapPageAuto():
     msg = ''
     if request.method == 'GET':
@@ -347,6 +347,8 @@ def NewTapPageAuto():
                     cur.execute("INSERT INTO taps (address, latitude, longitude, picture, userID) VALUES (?,?,?,?,?)",
                     (address, latitude, longitude, None, 1))
                     conn.commit()
+                    msg = "Tap saved"
+                    return render_template('addTapAuto.html', msg=msg)
                 else:
                     img_data = get_exif(picture)
                     geotags = get_coordinates(get_geotagging(img_data)) # for some reason it needs to be run twice to work
@@ -354,7 +356,6 @@ def NewTapPageAuto():
                     print(geotags)
                     dist = getDistance(float(geotags[0]), float(geotags[1]), latitude, longitude)
                     if dist == True:
-                        print(dist)
                         cur.execute("INSERT INTO taps (address, latitude, longitude, picture, userID) VALUES (?,?,?,?,?)",
                         (address, latitude, longitude, f"/static/uploads/{picture.filename}", 1))
                         conn.commit()
@@ -365,39 +366,25 @@ def NewTapPageAuto():
                                 os.makedirs(app.config['UPLOAD_FOLDER'])
                             picture.save(filePath)
                             msg += "picture was saved"
-                            # return render_template("addTapAuto.html", msg=msg)
-                            flash(msg)
-                            return redirect('auto')
+                            return render_template('addTapAuto.html', msg=msg)
                     elif dist == False:
                         msg = "You and the picture are not close enough"
-                        # return render_template("addTapManual.html", msg=msg)
-                        flash(msg)
-                        return redirect('manual')
+                        return render_template('addTapManual.html', msg=msg)
                     else:
                         msg = "Image didn't have location data"
-                        # return render_template("addTapManual.html", msg=msg)
-                        flash(msg)
-                        return redirect('manual')
+                        return render_template('addTapManual.html', msg=msg)
             else:
                 msg = "Tap already exists in the database"
-                flash(msg)
-                return redirect('auto')
-            # return render_template("addTapAuto.html", msg=msg)
+                return render_template('addTapAuto.html', msg=msg)
         except Exception as e:
-            print(e)
+            if str(e) == "No EXIF metadata found":
+                msg = "Picture doesn't have loaction data"
+            else:
+                msg = e
             conn.rollback()
-            print(msg)
-            # return render_template("addTapManual.html", msg=msg)
-            flash(msg)
-            return redirect('manual')
+            return render_template('addTapManual.html', msg=msg)
         finally:
             conn.close()
-
-@app.route("/home/taps/new/manual", methods = ['GET','POST'])
-def NewTapPageManual():
-    msg = ''
-    if request.method == 'GET':
-        return render_template('addTapManual.html')
 
 @app.route("/givetaps", methods = ['POST'])
 def GiveTaps():
