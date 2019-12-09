@@ -23,8 +23,17 @@ crossorigin=""></script>
 <div class="row">
   <div>
   <h2 class="text-center">How the taps are being added?</h2>
-  <p>The automatic upload of the new tap failed. Therefore, if you still wish to
-    continue, you can do so manualy. <br> On this page you can add a tap to our storage which will allow you to later
+  {% with messages = get_flashed_messages() %}
+    {% if messages %}
+      <div class=flashes>
+      {% for message in messages %}
+        <p>{{ message }}</p>
+      {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+  <p>Therefore, if you still wish to continue, you can do so manualy.
+    <br> On this page you can add a tap to our storage which will allow you to later
     on use our map services to find a route leading to this tap or to any other
     people were kind enough to save. <br> If you want you can add a picture with
     the coordinates and address of the tap. This will make it easier for other
