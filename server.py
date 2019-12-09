@@ -81,12 +81,14 @@ def getDistance(latitude1, longitude1, latitude2, longitude2):
         return False
 
 def checkCredentials(uName, pw):
-    return pw == 'funky'
+    uName == 'Osama'
+    pw == 'funky' 
+    return pw, uName
 
 @app.route("/AddComment", methods = ['POST','GET'])
 def studentAddDetails():
     if request.method =='GET':
-        return flask.redirect('CommentsTaps.html')
+        return redirect('CommentsTaps.html')
     if request.method =='POST':
         add_comment_to_db = request.form.get('comments', default="Error")
         add_date_to_db = request.form.get('date', default="Error")
@@ -126,7 +128,7 @@ def WhyUseTapspage():
     if request.method =='GET':
         return render_template('FAQ.html')
 
-@app.route("/home/taps/near/page=<pagenum>/!lat=<user_lat>&lng=<user_lng>", methods = ['GET'])
+@app.route("/home/taps/near/page=$<pagenum>$/!lat=<user_lat>&lng=<user_lng>", methods = ['GET'])
 def NearTapPage(pagenum, user_lat, user_lng):
     if request.method =='GET':
         try:
@@ -140,6 +142,49 @@ def NearTapPage(pagenum, user_lat, user_lng):
             conn.close()
         finally:
             conn.close()
+
+        all_tap_data = []
+        for item in data:
+            try:
+                tapImage = Image.open(f"{APP_ROOT}{item[4]}",mode='r')
+                tapImageRoute = item[4]
+            except Exception as e:
+                print(e)
+                tapImageRoute = "http://placehold.it/750x300"
+                print("failed to load")
+
+            try:
+                conn = sqlite3.connect(DATABASE)
+                cur = conn.cursor()
+                cur.execute("SELECT id, username FROM users WHERE id IS ?;", (str(item[5])))
+                userdata = cur.fetchall()
+                userdata = userdata[0]
+            except:
+                print('there was an error')
+                conn.close()
+            finally:
+                conn.close()
+
+            one_tap_data = {'TapID': item[0], 'Address': item[1], 'Longitude': item[3], 'Latitude': item[2], 'Image': tapImageRoute, 'Description': item[7], 'PostDate': item[6], 'UserLink': '/home/users/' + str(userdata[0]) + '/info', 'UserName': userdata[1]}
+            print(f"{one_tap_data['Longitude']} is Long for {one_tap_data['Address']}")
+            all_tap_data.append(one_tap_data)
+
+        return render_template('TapList.html', alltapdata = all_tap_data)
+
+@app.route("/home/taps/search=£<search>£/page=$<pagenum>$/!lat=<user_lat>&lng=<user_lng>", methods = ['GET'])
+def SearchTapPage(search, pagenum, user_lat, user_lng):
+    if request.method =='GET':
+        # try:
+        conn = sqlite3.connect(DATABASE)
+        cur = conn.cursor()
+        # https://gist.github.com/statickidz/8a2f0ce3bca9badbf34970b958ef8479
+        cur.execute("SELECT * FROM taps WHERE address LIKE ? ORDER BY ((latitude-?)*(latitude-?)) + ((longitude - ?)*(longitude - ?)) ASC LIMIT ?, 5;", ("%"+search+"%", user_lat, user_lat, user_lng, user_lng, int(pagenum)*5))
+        data = cur.fetchall()
+    # except:
+    #     print('there was an error')
+    #     conn.close()
+    # finally:
+        conn.close()
 
         all_tap_data = []
         for item in data:
@@ -205,9 +250,44 @@ def TapInfo(tapID):
         finally:
             conn.close()
 
+        try:
+            conn = sqlite3.connect(DATABASE)
+            cur = conn.cursor()
+            print(item[0])
+            cur.execute("SELECT * from reviews WHERE tapID IS ?", (str(item[0])))
+            commentdata = cur.fetchall()
+            print(commentdata)
+        except:
+            print('there was an error')
+            conn.close()
+        finally:
+            conn.close()
+
+        all_comment_data = []
+
+        for comment in commentdata:
+                
+            try:
+                conn = sqlite3.connect(DATABASE)
+                cur = conn.cursor()
+                cur.execute("SELECT id, userName from users WHERE id IS ?", (str(comment[4])))
+                commentuserdata = cur.fetchall()
+                print(commentuserdata)
+                commentuserdata = commentuserdata[0]
+            except:
+                print('there was an error')
+                conn.close()
+            finally:
+                conn.close()
+            
+            print(commentuserdata)
+            one_comment_data= {'data': comment[1], 'date': comment[2], 'user-id': commentuserdata[0], 'username': commentuserdata[1]}
+            all_comment_data.append(one_comment_data)
+
+
         one_tap_data = {'TapID': item[0], 'Address': item[1], 'Longitude': item[3], 'Latitude': item[2], 'Image': tapImageRoute, 'Description': item[7], 'PostDate': item[6], 'UserLink': '/home/users/' + str(userdata[0]) + '/info', 'UserName': userdata[1]}
 
-        return render_template('TapInfo.html', alltapdata = one_tap_data)
+        return render_template('TapInfo.html', alltapdata = one_tap_data, allcommentdata = all_comment_data)
 
 @app.route("/home/taps/<tapID>/location", methods = ['GET'])
 def MapPage(tapID):
@@ -356,6 +436,31 @@ def AdminPage():
     else:
         return render_template('HomePage.html', username = username)
 
+@app.route("/home/signup", methods = ['GET','POST'])
+def SignupPage():
+    if request.method =='GET':
+        return render_template('Signup.html')
+    if request.method =='POST':
+        UN = request.form.get('UN', default="Error")
+        PW = request.form.get('PW', default="Error")
+        try:
+            conn = sqlite3.connect(DATABASE)
+            cur = conn.cursor()
+            cur.execute("INSERT INTO users ('userName', 'password', 'role')\
+                        VALUES (?,?,?)",(UN, PW, '0') )
+            data = cur.fetchall()
+            print(data)
+            print("Hello")
+            #msg = "added successfully"
+        except:
+            print('there was an error', data)
+            conn.rollback()
+            return redirect("/", code=302)
+        finally:
+            conn.close()
+            #return msg
+            return render_template('Signup.html', data = data)
+
 @app.route("/home/login", methods = ['GET','POST'])
 def LoginPage():
     if request.method =='GET':
@@ -363,27 +468,23 @@ def LoginPage():
     if request.method=='POST':
         uName = request.form.get('username', default="Error")
         pw = request.form.get('password', default="Error")
-        if checkCredentials(uName, pw):
-            resp = make_response(render_template('adminPage.html', msg='hello '+uName, username = uName))
-            session['username'] = request.form['username']
-            print('username')
-            session['password'] = request.form['password']
-            print('password')
-            if (uName == 'Osama'):
-                 session['usertype'] = 'Admin'
-                 return redirect("/home/login/admin", code=302)
-            else:
-                 session['usertype'] = 'Customer'
-                 return redirect("/home", code=302)
-
+        conn = sqlite3.connect(DATABASE)
+        cur = conn.cursor()
+        cur.execute("SELECT id, role FROM users WHERE userName IS ? AND password IS ?", (uName, pw))
+        data = cur.fetchall()
+        data = data[0]
+        conn.commit()
+        if data[1] == 1:
+            session['usertype'] = 'Admin'
+            print("YOU ARE ADMIN")
+            return redirect("/home/login/admin", code=302)
         else:
-            resp = make_response(render_template('login_page.html', msg='Incorrect  login',username='Guest'))
-        return resp
+            session['usertype'] = 'Customer'
+            print("YOU ARE NOT ADMIN")
+            return redirect("/home", code=302)
+
     else:
-        username = 'none'
-        if 'username' in session:
-            username = escape(session['username'])
-        return render_template('login_page.html', msg='', username = username)
+        return render_template('login_page.html')
 
 @app.route("/home/login/admin/tapsDB", methods = ['GET', 'POST'])
 def tapsDBPage():

@@ -8,6 +8,8 @@ crossorigin=""/>
 <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"
 integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew=="
 crossorigin=""></script>
+<script type="text/javascript" src="/static/js/Search.js"></script>
+
 
   <div class="container">
 
@@ -63,15 +65,16 @@ crossorigin=""></script>
           </div>
         </div>
 
-        <!-- Single Comment -->
+        {%for comment in allcommentdata%}                        
         <div class="media mb-4">
           <img class="d-flex mr-3 rounded-circle" src="http://placehold.it/50x50" alt="">
           <div class="media-body">
-            <h5 class="mt-0">Commenter Name</h5>
-            Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
+            <h5 class="mt-0">{{comment.username}}</h5>
+            {{comment.data}}
+            <p>Posted on: {{comment.date}}</p>
           </div>
         </div>
-
+        {%endfor%}
       </div>
 
       <div class="col-md-4">
@@ -87,10 +90,10 @@ crossorigin=""></script>
           <h5 class="card-header">Search</h5>
           <div class="card-body">
             <div class="input-group">
-              <input type="text" class="form-control" placeholder="Search for...">
-              <span class="input-group-btn">
-                <button class="btn btn-secondary" type="button">Go!</button>
-              </span>
+                <input type="text" class="form-control" id="SearchInput" placeholder="Search for...">
+                <span class="input-group-btn">
+                    <button class="btn btn-secondary" onclick="LoadSearch()" type="button">Go!</button>
+                </span>
             </div>
           </div>
         </div>

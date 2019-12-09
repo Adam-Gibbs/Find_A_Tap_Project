@@ -12,25 +12,25 @@
         <li class="breadcrumb-item">
             <a href="/home">Home</a>
         </li>
-        {% if request.path == '/home/login'%} 
-        <li class="breadcrumb-item active">Login</li>
+        {% if request.path == '/home/signup'%} 
+        <li class="breadcrumb-item active">Signup</li>
         {%endif%}
     </ol>
     <!-- action='/WeDontWantThis' method='get' onsubmit="return loadName()" -->
     <!-- Login form -->
     <div class="row">
         <div class="col-lg-8 mb-4">
-            <form id='loginForm' name="loginMessage" method="post" action="/home/login">
+            <form id='signupForm' name="loginMessage" method="post" action="/home/signup">
             <div class="control-group form-group">
             <div class="controls">
-                <label>Username</label>
-                <input type="text" class="form-control" name="username" required data-validation-required-message="Please Enter Username.">
+                <label>Enter Your new Username:</label>
+                <input type="text" class="form-control" name="UN" required data-validation-required-message="Please Enter Username.">
             </div>
             </div>
             <div class="control-group form-group">
             <div class="controls">
-                <label class="text-center">Password</label>
-                <input type = "password" class="form-control" name="password" required data-validation-required-message="Please Enter Password.">
+                <label class="text-center">Enter your new Password:</label>
+                <input type = "password" class="form-control" name="PW" required data-validation-required-message="Please Enter Password.">
             </div>
             </div>
             <div id="success"></div>
@@ -43,12 +43,12 @@
 
     <!-- <p> result of operation : {{ msg }} </p> -->
     <script>
-        function loaduserName() {
-          var username = document.forms["loginForm"]["username"].value;
-          var password = document.forms["loginForm"]["password"].value;
-          var params = 'username='+username+'&password='+password;
+        function loadlogin() {
+          var UN = document.forms["signupForm"]["UN"].value;
+          var PW = document.forms["signupForm"]["PW"].value;
+          var params = 'UN='+UN+'&PW='+UN;
           var xhttp = new XMLHttpRequest();
-          xhttp.open("POST", '/LoginPage', true); // true is asynchronous
+          xhttp.open("POST", '/SignupPage', true); // true is asynchronous
           xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
           xhttp.onreadystatechange = function() {
             if (xhttp.readyState === 4 && xhttp.status === 200) {
