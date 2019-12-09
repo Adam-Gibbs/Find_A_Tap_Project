@@ -303,12 +303,38 @@ def UserInfo(userID):
             data = cur.fetchall()
             data = data[0]
         except:
-            print('there was an error 10')
+            print('there was an error')
             conn.close()
         finally:
             conn.close()
 
-        return render_template('UserInfo.html', data=data)
+        try:
+            conn = sqlite3.connect(DATABASE)
+            cur = conn.cursor()
+            cur.execute("SELECT id, address, picture, description FROM taps WHERE userID IS ? ORDER BY postDate DESC Limit 4;", [userID])
+            tapdata = cur.fetchall()
+        except:
+            print('there was an error')
+            conn.close()
+        finally:
+            conn.close()
+
+        all_tap_data = []
+        for item in tapdata:
+            try:
+                tapImage = Image.open(f"{APP_ROOT}{item[2]}",mode='r')
+                tapImageRoute = item[2]
+            except Exception as e:
+                print(e)
+                tapImageRoute = "https://placehold.it/700x400?text=Tap+Image+Here"
+                print("failed to load")
+
+
+            one_tap_data = {'TapID': item[0], 'Address': item[1], 'Picture': tapImageRoute, 'Description': item[3]}
+            all_tap_data.append(one_tap_data)
+
+        return render_template('UserInfo.html', userdata=data, alltapdata=all_tap_data)
+
 
 @app.route("/home/taps/new", methods = ['GET', 'POST'])
 def NewTapPageAuto():
@@ -330,8 +356,8 @@ def NewTapPageAuto():
             coor_exist = cur.fetchall()
             if len(coor_exist) == 0: # THIS IF STATEMENT MAKES SURE THAT TAPS THAT ALREADY EXIST IN THE DATABASE CANNOT BE INPUTTEED AGAIN
                 if picture.filename == '': # This means that no picture was given
-                    cur.execute("INSERT INTO taps (address, latitude, longitude, picture, userID, postDate) VALUES (?,?,?,?,?,?)",
-                    (address, latitude, longitude, None, 1, date.today()))
+                    cur.execute("INSERT INTO taps (address, latitude, longitude, picture, userID, postDate) VALUES (?,?,?,?,?,date(julianday('now')))",
+                    (address, latitude, longitude, None, 1))
                     conn.commit()
                     msg = "Tap saved"
                     return render_template('addTapAuto.html', msg=msg)
@@ -340,8 +366,8 @@ def NewTapPageAuto():
                     geotags = get_coordinates(get_geotagging(img_data)) # for some reason it needs to be run twice to work
                     dist = getDistance(float(geotags[0]), float(geotags[1]), latitude, longitude)
                     if dist == True:
-                        cur.execute("INSERT INTO taps (address, latitude, longitude, picture, userID, postDate) VALUES (?,?,?,?,?,?)",
-                        (address, latitude, longitude, f"/static/uploads/{picture.filename}", 1, date.today()))
+                        cur.execute("INSERT INTO taps (address, latitude, longitude, picture, userID, postDate) VALUES (?,?,?,?,?,date(julianday('now')))",
+                        (address, latitude, longitude, f"/static/uploads/{picture.filename}", 1))
                         if picture and allowed_file(picture.filename): # we already know that a picture was given
                             filename = secure_filename(picture.filename)
                             filePath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
