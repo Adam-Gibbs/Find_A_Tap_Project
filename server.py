@@ -150,7 +150,7 @@ def NearTapPage(pagenum, user_lat, user_lng):
                 tapImageRoute = item[4]
             except Exception as e:
                 print(e)
-                tapImageRoute = "http://placehold.it/750x300"
+                tapImageRoute = "https://placehold.it/750x300"
                 print("failed to load")
 
             try:
@@ -193,7 +193,7 @@ def SearchTapPage(search, pagenum, user_lat, user_lng):
                 tapImageRoute = item[4]
             except Exception as e:
                 print(e)
-                tapImageRoute = "http://placehold.it/750x300"
+                tapImageRoute = "https://placehold.it/750x300"
                 print("failed to load")
 
             try:
@@ -235,7 +235,7 @@ def TapInfo(tapID):
             tapImageRoute = item[4]
         except Exception as e:
             print(e)
-            tapImageRoute = "http://placehold.it/900x300"
+            tapImageRoute = "https://placehold.it/900x300"
             print("failed to load")
 
         try:
@@ -321,7 +321,32 @@ def UserInfo(userID):
         finally:
             conn.close()
 
-        return render_template('UserInfo.html', data=data)
+        try:
+            conn = sqlite3.connect(DATABASE)
+            cur = conn.cursor()
+            cur.execute("SELECT id, address, picture, description FROM taps WHERE userID IS ? ORDER BY postDate DESC Limit 4;", [userID])
+            tapdata = cur.fetchall()
+        except:
+            print('there was an error')
+            conn.close()
+        finally:
+            conn.close()
+
+        all_tap_data = []
+        for item in tapdata:
+            try:
+                tapImage = Image.open(f"{APP_ROOT}{item[2]}",mode='r')
+                tapImageRoute = item[2]
+            except Exception as e:
+                print(e)
+                tapImageRoute = "https://placehold.it/700x400"
+                print("failed to load")
+
+
+            one_tap_data = {'TapID': item[0], 'Address': item[1], 'Picture': tapImageRoute, 'Description': item[3]}
+            all_tap_data.append(one_tap_data)
+
+        return render_template('UserInfo.html', userdata=data, alltapdata=all_tap_data)
 
 @app.route("/home/taps/new/auto", methods = ['GET', 'POST'])
 def NewTapPageAuto():
