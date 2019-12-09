@@ -9,6 +9,7 @@ crossorigin=""/>
 integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew=="
 crossorigin=""></script>
 <script type="text/javascript" src="/static/js/Search.js"></script>
+<script type="text/javascript" src="/static/js/comments.js"></script>
 
 
   <div class="container">
@@ -56,9 +57,9 @@ crossorigin=""></script>
         <div class="card my-4">
           <h5 class="card-header">Leave a Comment:</h5>
           <div class="card-body">
-            <form>
+            <form id='commentForm' onsubmit="Addcomment()">
               <div class="form-group">
-                <textarea class="form-control" rows="3"></textarea>
+                <textarea class="form-control" rows="3" name="inputComment"></textarea>
               </div>
               <button type="submit" class="btn btn-primary">Submit</button>
             </form>

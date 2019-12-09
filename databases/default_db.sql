@@ -33,3 +33,5 @@ CREATE TABLE IF NOT EXISTS "reviews"(
 	/* connects the tap-id in the taps table to the comments
 	table for when we start to store comments about the taps*/
 );
+
+INSERT INTO 'users'('id','username','password','role') VALUES ("1","Anonymus","password","0");

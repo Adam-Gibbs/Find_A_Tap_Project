@@ -30,6 +30,8 @@ function AddDragMarker(latitude, longitude) {
         var marker = e.target;
         var position = marker.getLatLng();
         console.log(new L.LatLng(position.lat, position.lng));
+        document.getElementById("longitude").value = position.lng;
+        document.getElementById("latitude").value = position.lat;
     });
 }
 

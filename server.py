@@ -86,28 +86,39 @@ def checkCredentials(uName, pw):
     pw == 'funky'
     return pw, uName
 
-@app.route("/AddComment", methods = ['POST','GET'])
-def studentAddDetails():
-    if request.method =='GET':
-        return redirect('CommentsTaps.html')
+@app.route("/AddComment", methods = ['POST'])
+def AddComment():
     if request.method =='POST':
-        add_comment_to_db = request.form.get('comments', default="Error")
-        add_date_to_db = request.form.get('date', default="Error")
-        print("inserting comment "+add_comment_to_db)
-        try:
-            conn = sqlite3.connect(DATABASE)
-            cur = conn.cursor()
-            sqlquery = 'INSERT INTO "main"."reviews" ("comment", "date") VALUES ("' + add_comment_to_db + '", "'+ add_date_to_db +'");'
-            print(sqlquery)
-            cur.execute(sqlquery)
-            conn.commit()
-            msg = add_comment_to_db
-        except:
-            conn.rollback()
-            msg = "error in insert operation"
-        finally:
-            conn.close()
-            return msg
+        # try:
+        userId = session['userID']
+        print("=====================")
+        print(userId)
+        conn = sqlite3.connect(DATABASE)
+        cur = conn.cursor()
+        # https://gist.github.com/statickidz/8a2f0ce3bca9badbf34970b958ef8479
+        cur.execute("SELECT * FROM taps WHERE id IS ?", [tapID])
+        data = cur.fetchall()
+        item = data[0]
+    # except:
+    #     print('there was an error')
+    #     conn.close()
+    # finally:
+        conn.close()
+
+        commentoftap = request.form.get('inputComment', default="Error")
+        #try:
+        conn = sqlite3.connect(DATABASE)
+        cur = conn.cursor()
+        dateofcomment = "date(julianday('now'))"
+        #INSERT INTO "main"."reviews" ("comment", "date", "tapID", "userID") VALUES ('Ok tap', '09/12/2019', 5, 1);
+        cur.execute("INSERT INTO reviews ('comment', 'date', 'tapID', 'userID')\
+                        VALUES (?,?,?,?)",(commentoftap, dateofcomment, tapID, userId) )
+        conn.commit()
+    # except:
+    #     conn.rollback()
+    # finally:
+        conn.close()
+    return "sucess"
 
 @app.route("/", methods = ['GET'])
 def HomeRedirect():
@@ -151,7 +162,7 @@ def NearTapPage(pagenum, user_lat, user_lng):
                 tapImageRoute = item[4]
             except Exception as e:
                 print(e)
-                tapImageRoute = "https://placehold.it/750x300?text=Tap+Image+Here"
+                tapImageRoute = "http://placehold.it/750x300"
                 print("failed to load")
 
             try:
@@ -167,7 +178,7 @@ def NearTapPage(pagenum, user_lat, user_lng):
                 conn.close()
 
             one_tap_data = {'TapID': item[0], 'Address': item[1], 'Longitude': item[3], 'Latitude': item[2], 'Image': tapImageRoute, 'Description': item[7], 'PostDate': item[6], 'UserLink': '/home/users/' + str(userdata[0]) + '/info', 'UserName': userdata[1]}
-            print(f"{one_tap_data['Longitude']} is Long for {one_tap_data['Address']}")
+            # print(f"{one_tap_data['Longitude']} is Long for {one_tap_data['Address']}")
             all_tap_data.append(one_tap_data)
 
         return render_template('TapList.html', alltapdata = all_tap_data)
@@ -194,7 +205,7 @@ def SearchTapPage(search, pagenum, user_lat, user_lng):
                 tapImageRoute = item[4]
             except Exception as e:
                 print(e)
-                tapImageRoute = "https://placehold.it/750x300?text=Tap+Image+Here"
+                tapImageRoute = "http://placehold.it/750x300"
                 print("failed to load")
 
             try:
@@ -205,12 +216,11 @@ def SearchTapPage(search, pagenum, user_lat, user_lng):
                 userdata = userdata[0]
             except:
                 print('there was an error')
-                conn.close()
             finally:
                 conn.close()
 
             one_tap_data = {'TapID': item[0], 'Address': item[1], 'Longitude': item[3], 'Latitude': item[2], 'Image': tapImageRoute, 'Description': item[7], 'PostDate': item[6], 'UserLink': '/home/users/' + str(userdata[0]) + '/info', 'UserName': userdata[1]}
-            print(f"{one_tap_data['Longitude']} is Long for {one_tap_data['Address']}")
+            # print(f"{one_tap_data['Longitude']} is Long for {one_tap_data['Address']}")
             all_tap_data.append(one_tap_data)
 
         return render_template('TapList.html', alltapdata = all_tap_data)
@@ -236,7 +246,7 @@ def TapInfo(tapID):
             tapImageRoute = item[4]
         except Exception as e:
             print(e)
-            tapImageRoute = "https://placehold.it/900x300?text=Tap+Image+Here"
+            tapImageRoute = "http://placehold.it/900x300"
             print("failed to load")
 
         try:
@@ -254,12 +264,13 @@ def TapInfo(tapID):
         try:
             conn = sqlite3.connect(DATABASE)
             cur = conn.cursor()
-            print(item[0])
+            # print(item[0])
             cur.execute("SELECT * from reviews WHERE tapID IS ?", (str(item[0])))
             commentdata = cur.fetchall()
-            print(commentdata)
+            # print(commentdata)
         except:
             print('there was an error')
+            commentdata = []
             conn.close()
         finally:
             conn.close()
@@ -273,7 +284,7 @@ def TapInfo(tapID):
                 cur = conn.cursor()
                 cur.execute("SELECT id, userName from users WHERE id IS ?", (str(comment[4])))
                 commentuserdata = cur.fetchall()
-                print(commentuserdata)
+                # print(commentuserdata)
                 commentuserdata = commentuserdata[0]
             except:
                 print('there was an error')
@@ -281,7 +292,7 @@ def TapInfo(tapID):
             finally:
                 conn.close()
 
-            print(commentuserdata)
+            # print(commentuserdata)
             one_comment_data= {'data': comment[1], 'date': comment[2], 'user-id': commentuserdata[0], 'username': commentuserdata[1]}
             all_comment_data.append(one_comment_data)
 
@@ -322,34 +333,9 @@ def UserInfo(userID):
         finally:
             conn.close()
 
-        try:
-            conn = sqlite3.connect(DATABASE)
-            cur = conn.cursor()
-            cur.execute("SELECT id, address, picture, description FROM taps WHERE userID IS ? ORDER BY postDate DESC Limit 4;", [userID])
-            tapdata = cur.fetchall()
-        except:
-            print('there was an error')
-            conn.close()
-        finally:
-            conn.close()
+        return render_template('UserInfo.html', data=data)
 
-        all_tap_data = []
-        for item in tapdata:
-            try:
-                tapImage = Image.open(f"{APP_ROOT}{item[2]}",mode='r')
-                tapImageRoute = item[2]
-            except Exception as e:
-                print(e)
-                tapImageRoute = "https://placehold.it/700x400?text=Tap+Image+Here"
-                print("failed to load")
-
-
-            one_tap_data = {'TapID': item[0], 'Address': item[1], 'Picture': tapImageRoute, 'Description': item[3]}
-            all_tap_data.append(one_tap_data)
-
-        return render_template('UserInfo.html', userdata=data, alltapdata=all_tap_data)
-
-@app.route("/home/taps/new/auto", methods = ['GET', 'POST'])
+@app.route("/home/taps/new", methods = ['GET', 'POST'])
 def NewTapPageAuto():
     msg = ''
     if request.method == 'GET':
@@ -372,57 +358,45 @@ def NewTapPageAuto():
                     cur.execute("INSERT INTO taps (address, latitude, longitude, picture, userID) VALUES (?,?,?,?,?)",
                     (address, latitude, longitude, None, 1))
                     conn.commit()
+                    msg = "Tap saved"
+                    return render_template('addTapAuto.html', msg=msg)
                 else:
                     img_data = get_exif(picture)
                     geotags = get_coordinates(get_geotagging(img_data)) # for some reason it needs to be run twice to work
-                    print((latitude, longitude))
-                    print(geotags)
+                    # print((latitude, longitude))
+                    # print(geotags)
                     dist = getDistance(float(geotags[0]), float(geotags[1]), latitude, longitude)
                     if dist == True:
-                        print(dist)
                         cur.execute("INSERT INTO taps (address, latitude, longitude, picture, userID) VALUES (?,?,?,?,?)",
                         (address, latitude, longitude, f"/static/uploads/{picture.filename}", 1))
-                        conn.commit()
                         if picture and allowed_file(picture.filename): # we already know that a picture was given
                             filename = secure_filename(picture.filename)
                             filePath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
                             if not os.path.exists(app.config['UPLOAD_FOLDER']):
                                 os.makedirs(app.config['UPLOAD_FOLDER'])
                             picture.save(filePath)
-                            msg += "picture was saved"
-                            # return render_template("addTapAuto.html", msg=msg)
-                            flash(msg)
-                            return redirect('auto')
+                            msg = "Tap & Picture saved"
+                        conn.commit()
+                        return render_template('addTapAuto.html', msg=msg)
                     elif dist == False:
                         msg = "You and the picture are not close enough"
-                        # return render_template("addTapManual.html", msg=msg)
-                        flash(msg)
-                        return redirect('manual')
+                        return render_template('addTapManual.html', msg=msg)
                     else:
                         msg = "Image didn't have location data"
-                        # return render_template("addTapManual.html", msg=msg)
-                        flash(msg)
-                        return redirect('manual')
+                        return render_template('addTapManual.html', msg=msg)
             else:
                 msg = "Tap already exists in the database"
-                flash(msg)
-                return redirect('auto')
-            # return render_template("addTapAuto.html", msg=msg)
+                return render_template('addTapAuto.html', msg=msg)
         except Exception as e:
-            print(e)
+            if str(e) == "No EXIF metadata found":
+                msg = "Picture doesn't have loaction data"
+            else:
+                msg = e
             conn.rollback()
-            print(msg)
-            # return render_template("addTapManual.html", msg=msg)
-            flash(msg)
+            # print(msg)
             return redirect('manual')
         finally:
             conn.close()
-
-@app.route("/home/taps/new/manual", methods = ['GET','POST'])
-def NewTapPageManual():
-    msg = ''
-    if request.method == 'GET':
-        return render_template('addTapManual.html')
 
 @app.route("/givetaps", methods = ['POST'])
 def GiveTaps():
@@ -480,9 +454,9 @@ def AdminPage():
     usertype = "null"
     if 'usertype' in session:
         usertype = escape(session['usertype'])
-        print(usertype)
+        # print(usertype)
     if usertype == "Admin":
-        print(usertype)
+        # print(usertype)
         if request.method =='GET':
             return render_template('adminPage.html', msg = '', username = username)
     else:
@@ -501,10 +475,9 @@ def SignupPage():
             cur.execute("INSERT INTO users ('userName', 'password', 'role')\
                         VALUES (?,?,?)",(usern, passw, '0') )
             conn.commit()
-            print("Hello")
+            # print("Hello")
             #msg = "added successfully"
         except:
-            print('there was an error', data)
             conn.rollback()
             return redirect("/", code=302)
         finally:
@@ -524,14 +497,14 @@ def LoginPage():
         cur.execute("SELECT id, role FROM users WHERE userName IS ? AND password IS ?", (uName, pw))
         data = cur.fetchall()
         data = data[0]
-        conn.commit()
+        # conn.commit()
         if data[1] == 1:
             session['usertype'] = 'Admin'
-            print("YOU ARE ADMIN")
+            session['userID'] = data[0]
             return redirect("/home/login/admin", code=302)
         else:
             session['usertype'] = 'Customer'
-            print("YOU ARE NOT ADMIN")
+            session['userID'] = data[0]
             return redirect("/home", code=302)
 
     else:
@@ -542,13 +515,11 @@ def tapsDBPage():
 	if request.method =='GET':
             try:
                 conn = sqlite3.connect(DATABASE)
-                print(DATABASE)
                 cur = conn.cursor()
                 cur.execute("SELECT * FROM taps")
                 data = cur.fetchall()
-                print(data)
             except:
-                print('there was an error', data)
+                print('there was an error')
                 conn.close()
                 return redirect("/home/login/admin", code=302)
             finally:
@@ -560,13 +531,11 @@ def reviewsDBPage():
 	if request.method =='GET':
             try:
                 conn = sqlite3.connect(DATABASE)
-                print(DATABASE)
                 cur = conn.cursor()
                 cur.execute("SELECT * FROM reviews")
                 data = cur.fetchall()
-                print(data)
             except:
-                print('there was an error', data)
+                print('there was an error')
                 conn.close()
                 return redirect("/home/login/admin", code=302)
             finally:
@@ -578,18 +547,64 @@ def usersDBPage():
 	if request.method =='GET':
             try:
                 conn = sqlite3.connect(DATABASE)
-                print(DATABASE)
                 cur = conn.cursor()
                 cur.execute("SELECT * FROM users")
                 data = cur.fetchall()
-                print(data)
             except:
-                print('there was an error', data)
+                print('there was an error')
                 conn.close()
                 return redirect("/home/login/admin", code=302)
             finally:
                 conn.close()
                 return render_template('usersAP.html', data = data)
+
+@app.route("/deleteTap", methods = ['DELETE'])
+def deleteTapPage():
+	if request.method =='DELETE':
+            tapDelete = request.form.get('idDelete', default="Error")
+            try:
+                conn = sqlite3.connect(DATABASE)
+                cur = conn.cursor()
+                cur.execute("DELETE FROM taps WHERE id IS ?;", (tapDelete))
+                conn.commit()
+            except:
+                print('there was an error')
+                conn.rollback()
+            finally:
+                conn.close()
+                return render_template('tapsAP.html')
+
+@app.route("/deleteUser", methods = ['DELETE'])
+def deleteUserPage():
+	if request.method =='DELETE':
+            userDelete = request.form.get('idDelete', default="Error")
+            try:
+                conn = sqlite3.connect(DATABASE)
+                cur = conn.cursor()
+                cur.execute("DELETE FROM users WHERE id IS ?;", (userDelete))
+                conn.commit()
+            except:
+                print('there was an error')
+                conn.rollback()
+            finally:
+                conn.close()
+                return render_template('usersAP.html')
+
+@app.route("/deleteReview", methods = ['DELETE'])
+def deleteReviewPage():
+	if request.method =='DELETE':
+            reviewDelete = request.form.get('idDelete', default="Error")
+            try:
+                conn = sqlite3.connect(DATABASE)
+                cur = conn.cursor()
+                cur.execute("DELETE FROM reviews WHERE id IS ?;", (reviewDelete))
+                conn.commit()
+            except:
+                print('there was an error')
+                conn.rollback()
+            finally:
+                conn.close()
+                return render_template('reviewAP.html')
 
 @app.errorhandler(404)
 def page_not_found(e):
