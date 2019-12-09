@@ -151,7 +151,7 @@ def NearTapPage(pagenum, user_lat, user_lng):
                 tapImageRoute = item[4]
             except Exception as e:
                 print(e)
-                tapImageRoute = "https://placehold.it/750x300"
+                tapImageRoute = "https://placehold.it/750x300?text=Tap+Image+Here"
                 print("failed to load")
 
             try:
@@ -194,7 +194,7 @@ def SearchTapPage(search, pagenum, user_lat, user_lng):
                 tapImageRoute = item[4]
             except Exception as e:
                 print(e)
-                tapImageRoute = "https://placehold.it/750x300"
+                tapImageRoute = "https://placehold.it/750x300?text=Tap+Image+Here"
                 print("failed to load")
 
             try:
@@ -236,7 +236,7 @@ def TapInfo(tapID):
             tapImageRoute = item[4]
         except Exception as e:
             print(e)
-            tapImageRoute = "https://placehold.it/900x300"
+            tapImageRoute = "https://placehold.it/900x300?text=Tap+Image+Here"
             print("failed to load")
 
         try:
@@ -340,7 +340,7 @@ def UserInfo(userID):
                 tapImageRoute = item[2]
             except Exception as e:
                 print(e)
-                tapImageRoute = "https://placehold.it/700x400"
+                tapImageRoute = "https://placehold.it/700x400?text=Tap+Image+Here"
                 print("failed to load")
 
 
