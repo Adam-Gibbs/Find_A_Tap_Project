@@ -576,21 +576,21 @@ def deleteTapPage():
                 conn.close()
                 return render_template('tapsAP.html')
 
-# @app.route("/deleteUser", methods = ['DELETE'])
-# def deleteUserPage():
-# 	if request.method =='DELETE':
-#             userDelete = request.form.get('idDelete', default="Error")
-#             try:
-#                 conn = sqlite3.connect(DATABASE)
-#                 cur = conn.cursor()
-#                 cur.execute("DELETE FROM users WHERE id IS ?;", (userDelete))
-#                 conn.commit()
-#             except:
-#                 print('there was an error')
-#                 conn.rollback()
-#             finally:
-#                 conn.close()
-#                 return render_template('usersAP.html')
+@app.route("/deleteUser", methods = ['DELETE'])
+def deleteUserPage():
+	if request.method =='DELETE':
+            userDelete = request.form.get('idDelete', default="Error")
+            try:
+                conn = sqlite3.connect(DATABASE)
+                cur = conn.cursor()
+                cur.execute("DELETE FROM users WHERE id IS ?;", (userDelete))
+                conn.commit()
+            except:
+                print('there was an error')
+                conn.rollback()
+            finally:
+                conn.close()
+                return render_template('usersAP.html')
 
 @app.errorhandler(404)
 def page_not_found(e):
