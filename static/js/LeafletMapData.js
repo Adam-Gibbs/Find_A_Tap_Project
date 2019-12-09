@@ -26,10 +26,6 @@ function AddDragMarker(latitude, longitude) {
     });
 }
 
-function onMarkerDragEnd() {
-    alert("HI")
-}
-
 function GoTo(position) {
     mymap.setView(new L.LatLng(position.coords.latitude, position.coords.longitude), 15);
 }
