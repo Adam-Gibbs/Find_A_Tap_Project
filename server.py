@@ -75,14 +75,15 @@ def getDistance(latitude1, longitude1, latitude2, longitude2):
 
     d = 2*R*math.atan2(math.sqrt(a), math.sqrt(1 - a))
     # finish reference
-    if d <= 0.01: # This is 10 m
+    print(d)
+    if d <= 10: # This is 10 m (I think)
         return True
     else:
         return False
 
 def checkCredentials(uName, pw):
     uName == 'Osama'
-    pw == 'funky' 
+    pw == 'funky'
     return pw, uName
 
 @app.route("/AddComment", methods = ['POST'])
@@ -178,7 +179,7 @@ def NearTapPage(pagenum, user_lat, user_lng):
                 tapImageRoute = item[4]
             except Exception as e:
                 print(e)
-                tapImageRoute = "http://placehold.it/750x300"
+                tapImageRoute = "https://placehold.it/750x300?text=Tap+Image+Here"
                 print("failed to load")
 
             try:
@@ -221,7 +222,7 @@ def SearchTapPage(search, pagenum, user_lat, user_lng):
                 tapImageRoute = item[4]
             except Exception as e:
                 print(e)
-                tapImageRoute = "http://placehold.it/750x300"
+                tapImageRoute = "https://placehold.it/750x300?text=Tap+Image+Here"
                 print("failed to load")
 
             try:
@@ -263,7 +264,7 @@ def TapInfo(tapID):
             tapImageRoute = item[4]
         except Exception as e:
             print(e)
-            tapImageRoute = "http://placehold.it/900x300"
+            tapImageRoute = "https://placehold.it/900x300?text=Tap+Image+Here"
             print("failed to load")
 
         try:
@@ -295,7 +296,7 @@ def TapInfo(tapID):
         all_comment_data = []
 
         for comment in commentdata:
-                
+
             try:
                 conn = sqlite3.connect(DATABASE)
                 cur = conn.cursor()
@@ -308,8 +309,13 @@ def TapInfo(tapID):
                 conn.close()
             finally:
                 conn.close()
+<<<<<<< HEAD
             
             # print(commentuserdata)
+=======
+
+            print(commentuserdata)
+>>>>>>> 3cb3aaa4938e8d4038b8d931dd1f7dc5aff7f4ba
             one_comment_data= {'data': comment[1], 'date': comment[2], 'user-id': commentuserdata[0], 'username': commentuserdata[1]}
             all_comment_data.append(one_comment_data)
 
@@ -350,9 +356,34 @@ def UserInfo(userID):
         finally:
             conn.close()
 
-        return render_template('UserInfo.html', data=data)
+        try:
+            conn = sqlite3.connect(DATABASE)
+            cur = conn.cursor()
+            cur.execute("SELECT id, address, picture, description FROM taps WHERE userID IS ? ORDER BY postDate DESC Limit 4;", [userID])
+            tapdata = cur.fetchall()
+        except:
+            print('there was an error')
+            conn.close()
+        finally:
+            conn.close()
 
-@app.route("/home/taps/new/auto", methods = ['GET', 'POST'])
+        all_tap_data = []
+        for item in tapdata:
+            try:
+                tapImage = Image.open(f"{APP_ROOT}{item[2]}",mode='r')
+                tapImageRoute = item[2]
+            except Exception as e:
+                print(e)
+                tapImageRoute = "https://placehold.it/700x400?text=Tap+Image+Here"
+                print("failed to load")
+
+
+            one_tap_data = {'TapID': item[0], 'Address': item[1], 'Picture': tapImageRoute, 'Description': item[3]}
+            all_tap_data.append(one_tap_data)
+
+        return render_template('UserInfo.html', userdata=data, alltapdata=all_tap_data)
+
+@app.route("/home/taps/new", methods = ['GET', 'POST'])
 def NewTapPageAuto():
     msg = ''
     if request.method == 'GET':
@@ -374,15 +405,19 @@ def NewTapPageAuto():
                 if picture.filename == '': # This means that no picture was given
                     cur.execute("INSERT INTO taps (address, latitude, longitude, picture, userID) VALUES (?,?,?,?,?)",
                     (address, latitude, longitude, None, 1))
+                    conn.commit()
+                    msg = "Tap saved"
+                    return render_template('addTapAuto.html', msg=msg)
                 else:
                     img_data = get_exif(picture)
                     geotags = get_coordinates(get_geotagging(img_data)) # for some reason it needs to be run twice to work
                     # print((latitude, longitude))
                     # print(geotags)
                     dist = getDistance(float(geotags[0]), float(geotags[1]), latitude, longitude)
-                    if  dist == True:
+                    if dist == True:
                         cur.execute("INSERT INTO taps (address, latitude, longitude, picture, userID) VALUES (?,?,?,?,?)",
                         (address, latitude, longitude, f"/static/uploads/{picture.filename}", 1))
+                        conn.commit()
                         if picture and allowed_file(picture.filename): # we already know that a picture was given
                             filename = secure_filename(picture.filename)
                             filePath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
@@ -390,18 +425,23 @@ def NewTapPageAuto():
                                 os.makedirs(app.config['UPLOAD_FOLDER'])
                             picture.save(filePath)
                             msg += "picture was saved"
+                            return render_template('addTapAuto.html', msg=msg)
                     elif dist == False:
                         msg = "You and the picture are not close enough"
+                        return render_template('addTapManual.html', msg=msg)
                     else:
                         msg = "Image didn't have location data"
-                conn.commit()
+                        return render_template('addTapManual.html', msg=msg)
             else:
                 msg = "Tap already exists in the database"
-            flash(msg)
-            return redirect('auto')
+                return render_template('addTapAuto.html', msg=msg)
         except Exception as e:
-            print(e)
+            if str(e) == "No EXIF metadata found":
+                msg = "Picture doesn't have loaction data"
+            else:
+                msg = e
             conn.rollback()
+<<<<<<< HEAD
             # print(msg)
             return redirect('manual')
         finally:
@@ -414,6 +454,12 @@ def NewTapPageManual():
         # print("hello2")
         return render_template('addTapManual.html')
 
+=======
+            return render_template('addTapManual.html', msg=msg)
+        finally:
+            conn.close()
+
+>>>>>>> 3cb3aaa4938e8d4038b8d931dd1f7dc5aff7f4ba
 @app.route("/givetaps", methods = ['POST'])
 def GiveTaps():
     if request.method =='POST':

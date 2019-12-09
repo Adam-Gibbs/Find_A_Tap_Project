@@ -29,13 +29,13 @@
 </div>
 
 <!-- This is for adding a picture to the database: -->
-<form id="form" action="/home/taps/new/auto" method="post" enctype="multipart/form-data">
+<form id="form" action="/home/taps/new" method="post" enctype="multipart/form-data">
   <input type="hidden" name="latitude" id="latitude" step="any">
   <input type="hidden" name="longitude" id="longitude" step="any">
   <input type="file" name="picture"/> <br> <br>
   <button type="button" name="button" onclick="return getCoordinates()">Submit Tap</button> <br>
 </form>
-{% with messages = get_flashed_messages() %}
+<!-- {% with messages = get_flashed_messages() %}
   {% if messages %}
     <div class=flashes>
     {% for message in messages %}
@@ -43,8 +43,10 @@
     {% endfor %}
     </div>
   {% endif %}
-{% endwith %}
+{% endwith %} -->
 
+
+{{msg}}
 <p id="ERROR"></p>
 <script type="text/javascript" src="/static/js/newTapLocation.js"></script>
 </div>

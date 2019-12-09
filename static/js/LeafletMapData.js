@@ -13,6 +13,25 @@ function AddMarker(latitude, longitude, popup) {
         .bindPopup(popup).openPopup();
 }
 
+function AddDragMarker(latitude, longitude) {
+    var dragMark = L.marker([latitude, longitude],{
+        draggable: true
+    }).addTo(mymap)
+    .bindPopup("Drag to the tap location").openPopup();
+
+    dragMark.on("drag", function(e) {
+        var marker = e.target;
+        var position = marker.getLatLng();
+        console.log(new L.LatLng(position.lat, position.lng));
+        document.getElementById("longitude").value = position.lng;
+        document.getElementById("latitude").value = position.lat;
+    });
+}
+
+function onMarkerDragEnd() {
+    alert("HI")
+}
+
 function GoTo(position) {
     mymap.setView(new L.LatLng(position.coords.latitude, position.coords.longitude), 15);
 }
