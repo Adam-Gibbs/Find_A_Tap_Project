@@ -291,13 +291,8 @@ def TapInfo(tapID):
                 conn.close()
             finally:
                 conn.close()
-<<<<<<< HEAD
             
             # print(commentuserdata)
-=======
-
-            print(commentuserdata)
->>>>>>> ec8192f02334c3be43690b9943c5aa7bb309a516
             one_comment_data= {'data': comment[1], 'date': comment[2], 'user-id': commentuserdata[0], 'username': commentuserdata[1]}
             all_comment_data.append(one_comment_data)
 
@@ -403,7 +398,6 @@ def NewTapPageAuto():
         finally:
             conn.close()
 
-<<<<<<< HEAD
 @app.route("/home/taps/new/manual", methods = ['GET'])
 def NewTapPageManual():
     msg = ''
@@ -411,8 +405,6 @@ def NewTapPageManual():
         # print("hello2")
         return render_template('addTapManual.html')
 
-=======
->>>>>>> ec8192f02334c3be43690b9943c5aa7bb309a516
 @app.route("/givetaps", methods = ['POST'])
 def GiveTaps():
     if request.method =='POST':
@@ -591,6 +583,22 @@ def deleteUserPage():
             finally:
                 conn.close()
                 return render_template('usersAP.html')
+
+@app.route("/deleteReview", methods = ['DELETE'])
+def deleteReviewPage():
+	if request.method =='DELETE':
+            reviewDelete = request.form.get('idDelete', default="Error")
+            try:
+                conn = sqlite3.connect(DATABASE)
+                cur = conn.cursor()
+                cur.execute("DELETE FROM reviews WHERE id IS ?;", (reviewDelete))
+                conn.commit()
+            except:
+                print('there was an error')
+                conn.rollback()
+            finally:
+                conn.close()
+                return render_template('reviewAP.html')
 
 @app.errorhandler(404)
 def page_not_found(e):
