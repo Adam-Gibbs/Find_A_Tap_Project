@@ -308,13 +308,8 @@ def TapInfo(tapID):
                 conn.close()
             finally:
                 conn.close()
-<<<<<<< HEAD
-            
-            # print(commentuserdata)
-=======
 
             print(commentuserdata)
->>>>>>> 3cb3aaa4938e8d4038b8d931dd1f7dc5aff7f4ba
             one_comment_data= {'data': comment[1], 'date': comment[2], 'user-id': commentuserdata[0], 'username': commentuserdata[1]}
             all_comment_data.append(one_comment_data)
 
