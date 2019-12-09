@@ -119,23 +119,6 @@ def AddComment():
     # finally:
         conn.close()
     return "sucess"
-        # add_comment_to_db = request.form.get('comments', default="Error")
-        # add_date_to_db = request.form.get('date', default="Error")
-        # print("inserting comment "+add_comment_to_db)
-        # try:
-        #     conn = sqlite3.connect(DATABASE)
-        #     cur = conn.cursor()
-        #     sqlquery = 'INSERT INTO "main"."reviews" ("comment", "date") VALUES ("' + add_comment_to_db + '", "'+ add_date_to_db +'");'
-        #     print(sqlquery)
-        #     cur.execute(sqlquery)
-        #     conn.commit()
-        #     msg = add_comment_to_db
-        # except:
-        #     conn.rollback()
-        #     msg = "error in insert operation"
-        # finally:
-        #     conn.close()
-        #     return msg
 
 @app.route("/", methods = ['GET'])
 def HomeRedirect():
@@ -308,8 +291,8 @@ def TapInfo(tapID):
                 conn.close()
             finally:
                 conn.close()
-
-            print(commentuserdata)
+            
+            # print(commentuserdata)
             one_comment_data= {'data': comment[1], 'date': comment[2], 'user-id': commentuserdata[0], 'username': commentuserdata[1]}
             all_comment_data.append(one_comment_data)
 
@@ -414,6 +397,13 @@ def NewTapPageAuto():
             return redirect('manual')
         finally:
             conn.close()
+
+@app.route("/home/taps/new/manual", methods = ['GET'])
+def NewTapPageManual():
+    msg = ''
+    if request.method == 'GET':
+        # print("hello2")
+        return render_template('addTapManual.html')
 
 @app.route("/givetaps", methods = ['POST'])
 def GiveTaps():
@@ -561,6 +551,54 @@ def usersDBPage():
             finally:
                 conn.close()
                 return render_template('usersAP.html', data = data)
+
+@app.route("/deleteTap", methods = ['DELETE'])
+def deleteTapPage():
+	if request.method =='DELETE':
+            tapDelete = request.form.get('idDelete', default="Error")
+            try:
+                conn = sqlite3.connect(DATABASE)
+                cur = conn.cursor()
+                cur.execute("DELETE FROM taps WHERE id IS ?;", (tapDelete))
+                conn.commit()
+            except:
+                print('there was an error')
+                conn.rollback()
+            finally:
+                conn.close()
+                return render_template('tapsAP.html')
+
+@app.route("/deleteUser", methods = ['DELETE'])
+def deleteUserPage():
+	if request.method =='DELETE':
+            userDelete = request.form.get('idDelete', default="Error")
+            try:
+                conn = sqlite3.connect(DATABASE)
+                cur = conn.cursor()
+                cur.execute("DELETE FROM users WHERE id IS ?;", (userDelete))
+                conn.commit()
+            except:
+                print('there was an error')
+                conn.rollback()
+            finally:
+                conn.close()
+                return render_template('usersAP.html')
+
+@app.route("/deleteReview", methods = ['DELETE'])
+def deleteReviewPage():
+	if request.method =='DELETE':
+            reviewDelete = request.form.get('idDelete', default="Error")
+            try:
+                conn = sqlite3.connect(DATABASE)
+                cur = conn.cursor()
+                cur.execute("DELETE FROM reviews WHERE id IS ?;", (reviewDelete))
+                conn.commit()
+            except:
+                print('there was an error')
+                conn.rollback()
+            finally:
+                conn.close()
+                return render_template('reviewAP.html')
 
 @app.errorhandler(404)
 def page_not_found(e):

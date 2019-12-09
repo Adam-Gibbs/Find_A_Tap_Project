@@ -51,4 +51,39 @@
    {% endfor %}
 </table>
 
+<div class="row">
+    <div class="col-lg-8 mb-4">
+        <form id='deleteTapForm' name="loginMessage" onsubmit="return deleteName()">
+            <div class="control-group form-group">
+            <div class="controls">
+                <label>What id would you like to delete:</label>
+                <input type="number" class="form-control" name="idDelete" required data-validation-required-message="Please Enter Username.">
+            </div>
+            </div>
+            <div id="delete"></div>
+            <!-- For success/fail messages -->
+            <button type="submit" class="btn btn-primary" id="deleteButton">Submit</button>
+        </form>
+        <span id='txt'></span>
+
+        <script>
+            function deleteName() {
+            var idDelete = document.forms["deleteTapForm"]["idDelete"].value;
+            var params = 'idDelete='+idDelete;
+            var xhttp = new XMLHttpRequest();
+            xhttp.open("DELETE", '/deleteTap', true); // true is asynchronous
+            xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            xhttp.onreadystatechange = function() {
+                if (xhttp.readyState === 4 && xhttp.status === 200) {
+                console.log(xhttp.responseText);
+                document.getElementById("txt").innerHTML = xhttp.responseText;
+                } else {
+                console.error(xhttp.statusText);
+                }
+            };
+            xhttp.send(params);
+            return false;
+            }
+      </script>
+
 {%endblock%}
