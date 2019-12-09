@@ -1,0 +1,67 @@
+{%extends 'generalPageStyling.html'%}
+
+
+{%block mainBlock%}
+<div class="container">
+
+    <!-- Page Heading/Breadcrumbs -->
+    <h1 class="mt-4 mb-3">Login
+    </h1>
+
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a href="/home">Home</a>
+        </li>
+        {% if request.path == '/home/signup'%} 
+        <li class="breadcrumb-item active">Signup</li>
+        {%endif%}
+    </ol>
+    <!-- action='/WeDontWantThis' method='get' onsubmit="return loadName()" -->
+    <!-- Login form -->
+    <div class="row">
+        <div class="col-lg-8 mb-4">
+            <form id='signupForm' name="loginMessage" method="post" action="/home/signup">
+            <div class="control-group form-group">
+            <div class="controls">
+                <label>Enter Your new Username:</label>
+                <input type="text" class="form-control" name="UN" required data-validation-required-message="Please Enter Username.">
+            </div>
+            </div>
+            <div class="control-group form-group">
+            <div class="controls">
+                <label class="text-center">Enter your new Password:</label>
+                <input type = "password" class="form-control" name="PW" required data-validation-required-message="Please Enter Password.">
+            </div>
+            </div>
+            <div id="success"></div>
+            <!-- For success/fail messages -->
+            <button type="submit" class="btn btn-primary" id="sendMessageButton">Submit</button>
+            </form>
+            <span id='txt'></span>
+        </div>
+    </div>
+
+    <!-- <p> result of operation : {{ msg }} </p> -->
+    <script>
+        function loadlogin() {
+          var UN = document.forms["signupForm"]["UN"].value;
+          var PW = document.forms["signupForm"]["PW"].value;
+          var params = 'UN='+UN+'&PW='+UN;
+          var xhttp = new XMLHttpRequest();
+          xhttp.open("POST", '/SignupPage', true); // true is asynchronous
+          xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+          xhttp.onreadystatechange = function() {
+            if (xhttp.readyState === 4 && xhttp.status === 200) {
+              console.log(xhttp.responseText);
+              document.getElementById("txt").innerHTML = xhttp.responseText;
+            } else {
+              console.error(xhttp.statusText);
+            }
+          };
+          xhttp.send(params);
+          return false;
+        }
+      </script>
+
+</div>
+{%endblock%}
