@@ -14,14 +14,10 @@ crossorigin=""></script>
     <li class="breadcrumb-item">
         <a href="/home">Home</a>
     </li>
-    {% if request.path == '/home/taps/new'%}
-      <li class="breadcrumb-item">
-              <a href="/home/taps">Taps</a>
-          </li>
-      <li class="breadcrumb-item active">New</li>
-    {%else%}
-      <li class="breadcrumb-item active">Taps</li>
-    {%endif%}
+    <li class="breadcrumb-item">
+            <a href="/home/taps">Taps</a>
+        </li>
+    <li class="breadcrumb-item active">New</li>
 </ol>
 
 <div class="row">
@@ -51,7 +47,7 @@ crossorigin=""></script>
   Latitude: <input type="number" name="latitude" value="">
   Longitude: <input type="number" name="" value=""> <br>
 
-  <div id="mapid" style="width: 100%; height: 82vh;"></div>
+  <div id="mapid" class="DraggableMarker" style="width: 100%; height: 82vh;"></div>
 
 
   <input type="file" name="picture"/> <br>
@@ -61,7 +57,8 @@ crossorigin=""></script>
 
 <p id="ERROR"></p>
 <script type="text/javascript" src="/static/js/newTapLocation.js"></script>
-<script type="text/javascript" src="static/js/LeafletMapData.js"></script>
+<script type="text/javascript" src="/static/js/LeafletMapData.js"></script>
+<script type="text/javascript" src="/static/js/Location.js"></script>
 
 </div>
 {%endblock%}

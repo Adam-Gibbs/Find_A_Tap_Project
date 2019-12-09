@@ -17,6 +17,10 @@ function setLink(position) {
       showPosition(position);
     }
 
+    if(myMap.classList.contains('DraggableMarker')){
+      AddDragMarker(position.coords.latitude, position.coords.longitude)
+    }
+
     if(myMap.classList.contains('TapWaypoint')){
       AddMarker(document.getElementById('lat').innerHTML, document.getElementById('lng').innerHTML, document.getElementById('pop').innerHTML)
     }

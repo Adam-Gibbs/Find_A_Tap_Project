@@ -455,15 +455,14 @@ def SignupPage():
     if request.method =='GET':
         return render_template('Signup.html')
     if request.method =='POST':
-        UN = request.form.get('UN', default="Error")
-        PW = request.form.get('PW', default="Error")
+        usern = request.form.get('UN', default="Error")
+        passw = request.form.get('PW', default="Error")
         try:
             conn = sqlite3.connect(DATABASE)
             cur = conn.cursor()
             cur.execute("INSERT INTO users ('userName', 'password', 'role')\
-                        VALUES (?,?,?)",(UN, PW, '0') )
-            data = cur.fetchall()
-            print(data)
+                        VALUES (?,?,?)",(usern, passw, '0') )
+            conn.commit()
             print("Hello")
             #msg = "added successfully"
         except:
@@ -472,8 +471,8 @@ def SignupPage():
             return redirect("/", code=302)
         finally:
             conn.close()
-            #return msg
-            return render_template('Signup.html', data = data)
+                #return msg
+            return render_template('Signup.html')
 
 @app.route("/home/login", methods = ['GET','POST'])
 def LoginPage():
