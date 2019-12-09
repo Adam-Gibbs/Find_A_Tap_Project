@@ -14,7 +14,7 @@ function setLink(position) {
   var myMap = document.getElementById("mapid");
   if(myMap){
     if(myMap.classList.contains('giveCurrentLoc')){
-      showPosition(position);
+      AddMarker(position.coords.latitude, position.coords.longitude, 'Current Location');
     }
 
     if(myMap.classList.contains('DraggableMarker')){
@@ -32,14 +32,10 @@ function setLink(position) {
         data: JSON.stringify({'lat':position.coords.latitude, 'lng': position.coords.longitude}),
         contentType: 'application/json;charset=UTF-8',
         success: function(result) {
-            result.forEach(item => AddMarker(item[2], item[3], item[1]));
+            result.forEach(item => AddTapMarker(item['Lat'], item['Lng'], item['Address'], item['Image'], item['ID']));
             GoTo(position)
         }
     });
     }
   }
-}
-
-function showPosition(position) {
-  AddMarker(position.coords.latitude, position.coords.longitude, "Current Position");
 }

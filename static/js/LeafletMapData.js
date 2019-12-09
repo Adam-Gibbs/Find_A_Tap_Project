@@ -8,16 +8,23 @@ L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=p
     id: 'mapbox.streets'
 }).addTo(mymap);
 
-function AddMarker(latitude, longitude, popup) {
+function AddTapMarker(latitude, longitude, address, imgaddress, tapID) {
+    var popup = '<p class="lead">' + address + '</p> <img style="width: 100%; border-radius: 5%;" src="' + imgaddress + '"alt="Tap Image"> <a href="/home/taps/' + tapID + '/info" class="btn btn-info" style="margin: 10px; color: white;">More Info</a> <a href="/home/taps/' + tapID + '/location" class="btn btn-primary" style="margin: 10px; color: white;">Go To &rarr;</a>';
+    console.log(popup)
     L.marker([latitude, longitude]).addTo(mymap)
         .bindPopup(popup).openPopup();
+}
+
+function AddMarker(latitude, longitude, popup) {
+    L.marker([latitude, longitude]).addTo(mymap)
+    .bindPopup(popup).openPopup();
 }
 
 function AddDragMarker(latitude, longitude) {
     var dragMark = L.marker([latitude, longitude],{
         draggable: true
     }).addTo(mymap)
-    .bindPopup("Drag to the tap location").openPopup();
+    .bindPopup('Drag me to the tap location').openPopup();
 
     dragMark.on("drag", function(e) {
         var marker = e.target;
@@ -26,10 +33,6 @@ function AddDragMarker(latitude, longitude) {
         document.getElementById("longitude").value = position.lng;
         document.getElementById("latitude").value = position.lat;
     });
-}
-
-function onMarkerDragEnd() {
-    alert("HI")
 }
 
 function GoTo(position) {

@@ -407,7 +407,7 @@ def GiveTaps():
             conn = sqlite3.connect(DATABASE)
             cur = conn.cursor()
             # https://gist.github.com/statickidz/8a2f0ce3bca9badbf34970b958ef8479
-            cur.execute("SELECT * FROM taps ORDER BY ((latitude-?)*(latitude-?)) + ((longitude - ?)*(longitude - ?)) ASC;", (user_lat, user_lat, user_lng, user_lng))
+            cur.execute("SELECT id, address, latitude, longitude, picture FROM taps ORDER BY ((latitude-?)*(latitude-?)) + ((longitude - ?)*(longitude - ?)) ASC;", (user_lat, user_lat, user_lng, user_lng))
             data = cur.fetchall()
         except:
             print('there was an error')
@@ -415,7 +415,20 @@ def GiveTaps():
         finally:
             conn.close()
 
-        return jsonify(data)
+        all_tap_data = []
+        for item in data:
+            try:
+                tapImage = Image.open(f"{APP_ROOT}{item[4]}",mode='r')
+                tapImage = item[4]
+            except Exception as e:
+                print(e)
+                tapImage = "https://placehold.it/500?text=Tap+Image+Here"
+                print("failed to load")
+            
+            one_tap_data = {'ID': item[0], 'Address': item[1], 'Lat': item[2], 'Lng': item[3], 'Image': tapImage}
+            all_tap_data.append(one_tap_data)
+
+        return jsonify(all_tap_data)
 
 @app.route("/home/faq", methods = ['GET'])
 def FAQPage():
