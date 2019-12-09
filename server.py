@@ -3,6 +3,7 @@ import json
 from flask import Flask, redirect, request,render_template, jsonify, session, make_response, escape, flash
 import sqlite3
 import math
+from datetime import date
 from PIL import Image
 from PIL.ExifTags import TAGS, GPSTAGS
 # Below 4 lines are for Geocode coordinate and error handling for all geocoder files
@@ -355,8 +356,8 @@ def NewTapPageAuto():
             coor_exist = cur.fetchall()
             if len(coor_exist) == 0: # THIS IF STATEMENT MAKES SURE THAT TAPS THAT ALREADY EXIST IN THE DATABASE CANNOT BE INPUTTEED AGAIN
                 if picture.filename == '': # This means that no picture was given
-                    cur.execute("INSERT INTO taps (address, latitude, longitude, picture, userID) VALUES (?,?,?,?,?)",
-                    (address, latitude, longitude, None, 1))
+                    cur.execute("INSERT INTO taps (address, latitude, longitude, picture, userID, postDate) VALUES (?,?,?,?,?,?)",
+                    (address, latitude, longitude, None, 1, date.today()))
                     conn.commit()
                     msg = "Tap saved"
                     return render_template('addTapAuto.html', msg=msg)
@@ -367,8 +368,8 @@ def NewTapPageAuto():
                     # print(geotags)
                     dist = getDistance(float(geotags[0]), float(geotags[1]), latitude, longitude)
                     if dist == True:
-                        cur.execute("INSERT INTO taps (address, latitude, longitude, picture, userID) VALUES (?,?,?,?,?)",
-                        (address, latitude, longitude, f"/static/uploads/{picture.filename}", 1))
+                        cur.execute("INSERT INTO taps (address, latitude, longitude, picture, userID, postDate) VALUES (?,?,?,?,?,?)",
+                        (address, latitude, longitude, f"/static/uploads/{picture.filename}", 1, date.today()))
                         if picture and allowed_file(picture.filename): # we already know that a picture was given
                             filename = secure_filename(picture.filename)
                             filePath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
@@ -393,8 +394,9 @@ def NewTapPageAuto():
             else:
                 msg = e
             conn.rollback()
-            # print(msg)
-            return redirect('manual')
+            print(e)
+            print(msg)
+            return render_template('addTapManual.html', msg=msg)
         finally:
             conn.close()
 
@@ -424,7 +426,7 @@ def GiveTaps():
                 print(e)
                 tapImage = "https://placehold.it/500?text=Tap+Image+Here"
                 print("failed to load")
-            
+
             one_tap_data = {'ID': item[0], 'Address': item[1], 'Lat': item[2], 'Lng': item[3], 'Image': tapImage}
             all_tap_data.append(one_tap_data)
 
