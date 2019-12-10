@@ -59,7 +59,6 @@ def get_decimal_from_dms(dms, ref):
     return round(degrees + minutes + seconds, 5)
 def get_coordinates(geotags):
     if geotags == None:
-        print("HELLOOOOO")
         lat = None
         lon = None
     elif len(geotags) == 0:
