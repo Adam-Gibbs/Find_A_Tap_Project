@@ -629,7 +629,7 @@ def deleteTapPage():
                 conn.rollback()
             finally:
                 conn.close()
-                return render_template('tapsAP.html')
+                return "Success"
 
 @app.route("/deleteUser", methods = ['DELETE'])
 def deleteUserPage():
@@ -645,7 +645,7 @@ def deleteUserPage():
                 conn.rollback()
             finally:
                 conn.close()
-                return render_template('usersAP.html')
+                return "Success"
 
 @app.route("/deleteReview", methods = ['DELETE'])
 def deleteReviewPage():
@@ -661,7 +661,7 @@ def deleteReviewPage():
                 conn.rollback()
             finally:
                 conn.close()
-                return render_template('reviewAP.html')
+                return "Success"
 
 @app.errorhandler(404)
 def page_not_found(e):
