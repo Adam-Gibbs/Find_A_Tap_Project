@@ -358,18 +358,16 @@ def NewTapPageAuto():
         picture = request.files['picture']
         # if user does not select file, browser also submit a empty part without filename
         try:
+            userId = session['userID']
             conn = sqlite3.connect(DATABASE)
             cur = conn.cursor()
             cur.execute("SELECT latitude, longitude FROM taps WHERE latitude=? AND  longitude=?", (latitude, longitude))
             coor_exist = cur.fetchall()
             if len(coor_exist) == 0: # THIS IF STATEMENT MAKES SURE THAT TAPS THAT ALREADY EXIST IN THE DATABASE CANNOT BE INPUTTEED AGAIN
                 if picture.filename == '': # This means that no picture was given
-                    cur.execute("INSERT INTO taps (address, latitude, longitude, picture, userID, postDate) VALUES (?,?,?,?,?,date(julianday('now')))",
-                    (address, latitude, longitude, None, 1))
-                    conn.commit()
-                    msg = "Tap saved"
-                    flash(msg)
-                    return redirect('/home')
+                        msg = "You have no picture, using manual to select location"
+                        flash(msg)
+                        return redirect('manual')
                 else:
                     img_data = get_exif(picture)
                     geotags = get_coordinates(get_geotagging(img_data))
@@ -381,7 +379,7 @@ def NewTapPageAuto():
                         return redirect('manual')
                     if dist == True:
                         cur.execute("INSERT INTO taps (address, latitude, longitude, picture, userID, postDate) VALUES (?,?,?,?,?,date(julianday('now')))",
-                        (address, latitude, longitude, f"/static/uploads/{picture.filename}", 1))
+                        (address, latitude, longitude, f"/static/uploads/{picture.filename}", userId))
                         if picture and allowed_file(picture.filename): # we already know that a picture was given
                             filename = secure_filename(picture.filename)
                             filePath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
@@ -423,6 +421,7 @@ def NewTapPageManual():
         picture = request.files['picture']
         # if user does not select file, browser also submit a empty part without filename
         try:
+            userId = session['userID']
             conn = sqlite3.connect(DATABASE)
             cur = conn.cursor()
             cur.execute("SELECT latitude, longitude FROM taps WHERE latitude=? AND  longitude=?", (latitude, longitude))
@@ -430,13 +429,13 @@ def NewTapPageManual():
             if len(coor_exist) == 0: # THIS IF STATEMENT MAKES SURE THAT TAPS THAT ALREADY EXIST IN THE DATABASE CANNOT BE INPUTTEED AGAIN
                 if picture.filename == '': # This means that no picture was given
                     cur.execute("INSERT INTO taps (address, latitude, longitude, picture, userID, postDate) VALUES (?,?,?,?,?,date(julianday('now')))",
-                    (address, latitude, longitude, None, 1))
+                    (address, latitude, longitude, None, userId))
                     conn.commit()
                     msg = "Tap saved"
 
                 else:
                     cur.execute("INSERT INTO taps (address, latitude, longitude, picture, userID, postDate) VALUES (?,?,?,?,?,date(julianday('now')))",
-                    (address, latitude, longitude, f"/static/uploads/{picture.filename}", 1))
+                    (address, latitude, longitude, f"/static/uploads/{picture.filename}", userId))
                     if picture and allowed_file(picture.filename): # we already know that a picture was given
                         filename = secure_filename(picture.filename)
                         filePath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
