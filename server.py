@@ -343,7 +343,7 @@ def UserInfo(userID):
         return render_template('UserInfo.html', userdata=data, alltapdata=all_tap_data)
 
 
-@app.route("/home/taps/new", methods = ['GET', 'POST'])
+@app.route("/home/taps/new/auto", methods = ['GET', 'POST'])
 def NewTapPageAuto():
     msg = ''
     if request.method == 'GET':
@@ -367,17 +367,19 @@ def NewTapPageAuto():
                     (address, latitude, longitude, None, 1))
                     conn.commit()
                     msg = "Tap saved"
-                    return render_template('addTapAuto.html', msg=msg)
+                    flash(msg)
+                    return redirect('auto')
                 else:
                     img_data = get_exif(picture)
                     geotags = get_coordinates(get_geotagging(img_data))
                     print(type(geotags[0]), type(geotags[1]))
                     print(geotags[0], geotags[1])
                     if geotags[0] and geotags[1] != None:
-                        print("hello")
                         dist = getDistance(float(geotags[0]), float(geotags[1]), latitude, longitude)
                     else:
-                        dist = True # This means that if picture doesn't have any geotags and the auto still works then it will allow it
+                        msg = "Picture doesn't have coordinates, please input the tap's location manualy"
+                        flash(msg)
+                        return redirect('manual')
                     if dist == True:
                         cur.execute("INSERT INTO taps (address, latitude, longitude, picture, userID, postDate) VALUES (?,?,?,?,?,date(julianday('now')))",
                         (address, latitude, longitude, f"/static/uploads/{picture.filename}", 1))
@@ -389,18 +391,88 @@ def NewTapPageAuto():
                             picture.save(filePath)
                             msg = "Tap & Picture saved"
                         conn.commit()
-                        return render_template('addTapAuto.html', msg=msg)
+                        flash(msg)
+                        return redirect('auto')
                     elif dist == False:
                         msg = "You and the picture are not close enough"
-                        return render_template('addTapManual.html', msg=msg)
+                        flash(msg)
+                        return redirect('manual')
             else:
                 msg = "Tap already exists in the database"
-                return render_template('addTapAuto.html', msg=msg)
+                flash(msg)
+                return redirect('auto')
         except Exception as e:
             msg = e
             conn.rollback()
             print(msg)
-            return render_template('addTapManual.html', msg=msg)
+            flash(msg)
+            return redirect('manual')
+        finally:
+            conn.close()
+
+
+@app.route("/home/taps/new/manual", methods = ['GET', 'POST'])
+def NewTapPageManual():
+    msg = ''
+    if request.method == 'GET':
+        return render_template('addTapManual.html')
+
+    if request.method == 'POST':
+        latitude = float(request.form["latitude"])
+        longitude = float(request.form["longitude"])
+        address = geocoder.reverse_geocode(latitude, longitude, language='en', no_annotations='1')
+        address = address[0]['formatted']
+        picture = request.files['picture']
+        # if user does not select file, browser also submit a empty part without filename
+        try:
+            conn = sqlite3.connect(DATABASE)
+            cur = conn.cursor()
+            cur.execute("SELECT latitude, longitude FROM taps WHERE latitude=? AND  longitude=?", (latitude, longitude))
+            coor_exist = cur.fetchall()
+            if len(coor_exist) == 0: # THIS IF STATEMENT MAKES SURE THAT TAPS THAT ALREADY EXIST IN THE DATABASE CANNOT BE INPUTTEED AGAIN
+                if picture.filename == '': # This means that no picture was given
+                    cur.execute("INSERT INTO taps (address, latitude, longitude, picture, userID, postDate) VALUES (?,?,?,?,?,date(julianday('now')))",
+                    (address, latitude, longitude, None, 1))
+                    conn.commit()
+                    msg = "Tap saved"
+                    flash(msg)
+                    return redirect('manual')
+                else:
+                    img_data = get_exif(picture)
+                    geotags = get_coordinates(get_geotagging(img_data))
+                    print(type(geotags[0]), type(geotags[1]))
+                    print(geotags[0], geotags[1])
+                    if geotags[0] and geotags[1] != None:
+                        dist = getDistance(float(geotags[0]), float(geotags[1]), latitude, longitude)
+                    else:
+                        dist = True
+                    if dist == True:
+                        cur.execute("INSERT INTO taps (address, latitude, longitude, picture, userID, postDate) VALUES (?,?,?,?,?,date(julianday('now')))",
+                        (address, latitude, longitude, f"/static/uploads/{picture.filename}", 1))
+                        if picture and allowed_file(picture.filename): # we already know that a picture was given
+                            filename = secure_filename(picture.filename)
+                            filePath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                            if not os.path.exists(app.config['UPLOAD_FOLDER']):
+                                os.makedirs(app.config['UPLOAD_FOLDER'])
+                            picture.save(filePath)
+                            msg = "Tap & Picture saved"
+                        conn.commit()
+                        flash(msg)
+                        return redirect('manual')
+                    elif dist == False:
+                        msg = "You and the picture are not close enough"
+                        flash(msg)
+                        return redirect('manual')
+            else:
+                msg = "Tap already exists in the database"
+                flash(msg)
+                return redirect('manual')
+        except Exception as e:
+            msg = e
+            conn.rollback()
+            print(msg)
+            flash(msg)
+            return redirect('manual')
         finally:
             conn.close()
 
