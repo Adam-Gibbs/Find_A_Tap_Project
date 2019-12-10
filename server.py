@@ -33,7 +33,6 @@ def get_exif(filename):
     return image._getexif()
 
 def get_geotagging(exif):
-    print(exif)
     geotagging = {}
     if exif == None:
         pass
@@ -41,12 +40,12 @@ def get_geotagging(exif):
         for (idx, tag) in TAGS.items():
             if tag == 'GPSInfo':
                 if idx not in exif:
-                    raise ValueError("No EXIF geotagging found")
+                    return None
 
                 for (key, val) in GPSTAGS.items():
                     if key in exif[idx]:
                         geotagging[val] = exif[idx][key]
-    print(geotagging)
+
     return geotagging
 
 def get_decimal_from_dms(dms, ref):
@@ -59,7 +58,11 @@ def get_decimal_from_dms(dms, ref):
         seconds = -seconds
     return round(degrees + minutes + seconds, 5)
 def get_coordinates(geotags):
-    if len(geotags) == 0:
+    if geotags == None:
+        print("HELLOOOOO")
+        lat = None
+        lon = None
+    elif len(geotags) == 0:
         lat = None
         lon = None
     else:
@@ -207,7 +210,6 @@ def SearchTapPage(search, pagenum, user_lat, user_lng):
                 conn.close()
 
             one_tap_data = {'TapID': item[0], 'Address': item[1], 'Longitude': item[3], 'Latitude': item[2], 'Image': tapImageRoute, 'Description': item[7], 'PostDate': item[6], 'UserLink': '/home/users/' + str(userdata[0]) + '/info', 'UserName': userdata[1]}
-            # print(f"{one_tap_data['Longitude']} is Long for {one_tap_data['Address']}")
             all_tap_data.append(one_tap_data)
 
         return render_template('TapList.html', alltapdata = all_tap_data)
@@ -372,8 +374,6 @@ def NewTapPageAuto():
                 else:
                     img_data = get_exif(picture)
                     geotags = get_coordinates(get_geotagging(img_data))
-                    print(type(geotags[0]), type(geotags[1]))
-                    print(geotags[0], geotags[1])
                     if geotags[0] and geotags[1] != None:
                         dist = getDistance(float(geotags[0]), float(geotags[1]), latitude, longitude)
                     else:
@@ -404,7 +404,6 @@ def NewTapPageAuto():
         except Exception as e:
             msg = e
             conn.rollback()
-            print(msg)
             flash(msg)
             return redirect('manual')
         finally:
@@ -457,7 +456,6 @@ def NewTapPageManual():
         except Exception as e:
             msg = e
             conn.rollback()
-            print(msg)
             flash("There was an error inserting the tap")
             return redirect('manual')
         finally:
