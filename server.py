@@ -358,9 +358,12 @@ def NewTapPageAuto():
         picture = request.files['picture']
         # if user does not select file, browser also submit a empty part without filename
         try:
-            userId = session['userID']
             conn = sqlite3.connect(DATABASE)
             cur = conn.cursor()
+            if len(session) != 0:
+                userId = session['userID']
+            else:
+                userId = 1
             cur.execute("SELECT latitude, longitude FROM taps WHERE latitude=? AND  longitude=?", (latitude, longitude))
             coor_exist = cur.fetchall()
             if len(coor_exist) == 0: # THIS IF STATEMENT MAKES SURE THAT TAPS THAT ALREADY EXIST IN THE DATABASE CANNOT BE INPUTTEED AGAIN
@@ -421,9 +424,12 @@ def NewTapPageManual():
         picture = request.files['picture']
         # if user does not select file, browser also submit a empty part without filename
         try:
-            userId = session['userID']
             conn = sqlite3.connect(DATABASE)
             cur = conn.cursor()
+            if len(session) != 0:
+                userId = session['userID']
+            else:
+                userId = 1
             cur.execute("SELECT latitude, longitude FROM taps WHERE latitude=? AND  longitude=?", (latitude, longitude))
             coor_exist = cur.fetchall()
             if len(coor_exist) == 0: # THIS IF STATEMENT MAKES SURE THAT TAPS THAT ALREADY EXIST IN THE DATABASE CANNOT BE INPUTTEED AGAIN
@@ -444,15 +450,12 @@ def NewTapPageManual():
                         picture.save(filePath)
                         msg = "Tap & Picture saved"
                     conn.commit()
-
-                flash(msg)
                 return redirect('/home')
-
             else:
                 flash("Tap already exists in the database")
                 return redirect('manual')
         except Exception as e:
-            msg = e
+            print(e)
             conn.rollback()
             flash("There was an error inserting the tap")
             return redirect('manual')
