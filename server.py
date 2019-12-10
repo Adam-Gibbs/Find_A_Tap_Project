@@ -368,7 +368,7 @@ def NewTapPageAuto():
                     conn.commit()
                     msg = "Tap saved"
                     flash(msg)
-                    return redirect('auto')
+                    return redirect('/home')
                 else:
                     img_data = get_exif(picture)
                     geotags = get_coordinates(get_geotagging(img_data))
@@ -392,7 +392,7 @@ def NewTapPageAuto():
                             msg = "Tap & Picture saved"
                         conn.commit()
                         flash(msg)
-                        return redirect('auto')
+                        return redirect('/home')
                     elif dist == False:
                         msg = "You and the picture are not close enough"
                         flash(msg)
@@ -435,43 +435,30 @@ def NewTapPageManual():
                     (address, latitude, longitude, None, 1))
                     conn.commit()
                     msg = "Tap saved"
-                    flash(msg)
-                    return redirect('manual')
+
                 else:
-                    img_data = get_exif(picture)
-                    geotags = get_coordinates(get_geotagging(img_data))
-                    print(type(geotags[0]), type(geotags[1]))
-                    print(geotags[0], geotags[1])
-                    if geotags[0] and geotags[1] != None:
-                        dist = getDistance(float(geotags[0]), float(geotags[1]), latitude, longitude)
-                    else:
-                        dist = True
-                    if dist == True:
-                        cur.execute("INSERT INTO taps (address, latitude, longitude, picture, userID, postDate) VALUES (?,?,?,?,?,date(julianday('now')))",
-                        (address, latitude, longitude, f"/static/uploads/{picture.filename}", 1))
-                        if picture and allowed_file(picture.filename): # we already know that a picture was given
-                            filename = secure_filename(picture.filename)
-                            filePath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-                            if not os.path.exists(app.config['UPLOAD_FOLDER']):
-                                os.makedirs(app.config['UPLOAD_FOLDER'])
-                            picture.save(filePath)
-                            msg = "Tap & Picture saved"
-                        conn.commit()
-                        flash(msg)
-                        return redirect('manual')
-                    elif dist == False:
-                        msg = "You and the picture are not close enough"
-                        flash(msg)
-                        return redirect('manual')
-            else:
-                msg = "Tap already exists in the database"
+                    cur.execute("INSERT INTO taps (address, latitude, longitude, picture, userID, postDate) VALUES (?,?,?,?,?,date(julianday('now')))",
+                    (address, latitude, longitude, f"/static/uploads/{picture.filename}", 1))
+                    if picture and allowed_file(picture.filename): # we already know that a picture was given
+                        filename = secure_filename(picture.filename)
+                        filePath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                        if not os.path.exists(app.config['UPLOAD_FOLDER']):
+                            os.makedirs(app.config['UPLOAD_FOLDER'])
+                        picture.save(filePath)
+                        msg = "Tap & Picture saved"
+                    conn.commit()
+
                 flash(msg)
+                return redirect('/home')
+
+            else:
+                flash("Tap already exists in the database")
                 return redirect('manual')
         except Exception as e:
             msg = e
             conn.rollback()
             print(msg)
-            flash(msg)
+            flash("There was an error inserting the tap")
             return redirect('manual')
         finally:
             conn.close()
