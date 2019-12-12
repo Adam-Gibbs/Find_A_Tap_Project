@@ -1,5 +1,7 @@
-// https://stackoverflow.com/questions/27928/calculate-distance-between-two-latitude-longitude-points-haversine-formula
-// Author Chuck
+// JS Function to find tistance between two lat/long points in km
+// Author: Chuck
+// Date: 02/12/2019
+// Link: https://stackoverflow.com/questions/27928/calculate-distance-between-two-latitude-longitude-points-haversine-formula
 function getDistanceFromLatLonInKm(lat1, lng1, posID) {
   stuff_obj = readUrl()
   var lat2 = stuff_obj['lat']
@@ -16,7 +18,10 @@ function getDistanceFromLatLonInKm(lat1, lng1, posID) {
   document.getElementById(posID).innerHTML = d + " km"
 }
 
-// https://makitweb.com/read-and-get-parameters-from-url-with-javascript/
+// JS Function to read URL and pull data out of it based on special chars
+// Author: Yogesh Singh
+// Date: 04/12/2019
+// Link: https://makitweb.com/read-and-get-parameters-from-url-with-javascript/
 function readUrl(url){
  
   var para_str = '';

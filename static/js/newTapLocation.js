@@ -1,4 +1,7 @@
-// function getLocation taken from w3school - https://www.w3schools.com/html/html5_geolocation.asp
+// Function to get current user location
+// Date: 18/12/2019
+// Author:
+// Link: https://www.w3schools.com/html/html5_geolocation.asp
 function getCoordinates() {
   var x = document.getElementById('ERROR');
   if (navigator.geolocation) {

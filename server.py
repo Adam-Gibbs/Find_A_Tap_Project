@@ -136,7 +136,10 @@ def NearTapPage(pagenum, user_lat, user_lng):
         try:
             conn = sqlite3.connect(DATABASE)
             cur = conn.cursor()
-            # https://gist.github.com/statickidz/8a2f0ce3bca9badbf34970b958ef8479
+            # SQL command to order list by distance from longitude and latitude
+            # Author:  statickidz
+            # Date: 25/11/2019
+            # Link: https://gist.github.com/statickidz/8a2f0ce3bca9badbf34970b958ef8479
             cur.execute("SELECT * FROM taps ORDER BY ((latitude-?)*(latitude-?)) + ((longitude - ?)*(longitude - ?)) ASC LIMIT ?, 5;", (user_lat, user_lat, user_lng, user_lng, int(pagenum)*5))
             data = cur.fetchall()
         except:
@@ -178,7 +181,10 @@ def SearchTapPage(search, pagenum, user_lat, user_lng):
         try:
             conn = sqlite3.connect(DATABASE)
             cur = conn.cursor()
-            # https://gist.github.com/statickidz/8a2f0ce3bca9badbf34970b958ef8479
+            # SQL command to order list by distance from longitude and latitude
+            # Author:  statickidz
+            # Date: 25/11/2019
+            # Link: https://gist.github.com/statickidz/8a2f0ce3bca9badbf34970b958ef8479
             cur.execute("SELECT * FROM taps WHERE address LIKE ? ORDER BY ((latitude-?)*(latitude-?)) + ((longitude - ?)*(longitude - ?)) ASC LIMIT ?, 5;", ("%"+search+"%", user_lat, user_lat, user_lng, user_lng, int(pagenum)*5))
             data = cur.fetchall()
         except:
@@ -467,7 +473,10 @@ def GiveTaps():
         try:
             conn = sqlite3.connect(DATABASE)
             cur = conn.cursor()
-            # https://gist.github.com/statickidz/8a2f0ce3bca9badbf34970b958ef8479
+            # SQL command to order list by distance from longitude and latitude
+            # Author:  statickidz
+            # Date: 25/11/2019
+            # Link: https://gist.github.com/statickidz/8a2f0ce3bca9badbf34970b958ef8479
             cur.execute("SELECT id, address, latitude, longitude, picture FROM taps ORDER BY ((latitude-?)*(latitude-?)) + ((longitude - ?)*(longitude - ?)) ASC;", (user_lat, user_lat, user_lng, user_lng))
             data = cur.fetchall()
         except:
